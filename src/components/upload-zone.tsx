@@ -146,9 +146,9 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
     <>
       <div id="analizza" className="w-full max-w-xl mx-auto scroll-mt-24">
         {isUploading ? (
-          <div className="border-2 border-dashed border-blue-300 rounded-2xl p-12 text-center bg-blue-50/50">
-            <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700">
+          <div className="border-2 border-dashed border-brand-amber/40 rounded-2xl p-12 text-center bg-brand-amber-light/30">
+            <Loader2 className="h-12 w-12 text-brand-amber animate-spin mx-auto mb-4" />
+            <p className="text-lg font-medium text-foreground">
               Caricamento in corso...
             </p>
             <p className="text-sm text-muted-foreground mt-1">
@@ -156,11 +156,11 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
             </p>
           </div>
         ) : selectedFile && !showConsent ? (
-          <div className="border-2 border-blue-300 rounded-2xl p-8 text-center bg-blue-50/50">
+          <div className="border-2 border-brand-navy/30 rounded-2xl p-8 text-center bg-card">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <FileText className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-brand-navy" />
               <div className="text-left">
-                <p className="font-medium text-gray-900 truncate max-w-[250px]">
+                <p className="font-medium text-foreground truncate max-w-[250px]">
                   {selectedFile.name}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -169,9 +169,9 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
               </div>
               <button
                 onClick={removeFile}
-                className="ml-2 p-1 hover:bg-gray-200 rounded-full transition-colors"
+                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors"
               >
-                <X className="h-5 w-5 text-gray-500" />
+                <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </div>
             <Button
@@ -190,16 +190,16 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
             onClick={handleClick}
             className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-200 ${
               isDragging
-                ? "border-blue-500 bg-blue-50 scale-[1.02]"
-                : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/30"
+                ? "border-brand-amber bg-brand-amber-light/30 scale-[1.02]"
+                : "border-border hover:border-brand-amber/50 hover:bg-card"
             }`}
           >
             <Upload
               className={`h-12 w-12 mx-auto mb-4 ${
-                isDragging ? "text-blue-500" : "text-gray-400"
+                isDragging ? "text-brand-amber" : "text-muted-foreground"
               }`}
             />
-            <p className="text-lg font-medium text-gray-700 mb-1">
+            <p className="text-lg font-medium text-foreground mb-1">
               Carica la tua busta paga
             </p>
             <p className="text-sm text-muted-foreground mb-4">

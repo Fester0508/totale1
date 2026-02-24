@@ -25,8 +25,11 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // --- Demo mode: skip user auth ---
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  // --- Demo mode: skip user auth if Supabase not configured ---
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
     return NextResponse.next();
   }
 
@@ -67,6 +70,5 @@ export const config = {
     "/api/analizza",
     "/login",
     "/registrati",
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

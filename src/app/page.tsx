@@ -40,18 +40,31 @@ const jsonLd = {
       offers: [
         {
           "@type": "Offer",
-          name: "Piano Free",
+          name: "Free",
           price: "0",
           priceCurrency: "EUR",
-          description: "3 analisi al mese, verdetto rapido a semafori",
+          description: "Analisi base senza upload dati sensibili",
         },
         {
           "@type": "Offer",
-          name: "Piano Pro",
-          price: "4.99",
+          name: "Pay-Per-Error",
+          price: "3.99",
           priceCurrency: "EUR",
-          description:
-            "Analisi illimitate, chatbot AI, report PDF completo. Pagamento unico.",
+          description: "Paghi solo quando trovi anomalie",
+        },
+        {
+          "@type": "Offer",
+          name: "Abbonamento Ultra-Low",
+          price: "0.99",
+          priceCurrency: "EUR",
+          description: "Analisi illimitata, meno di 1 euro al mese",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro + Chatbot",
+          price: "9.99",
+          priceCurrency: "EUR",
+          description: "Chatbot specializzato in diritto del lavoro, consulenza personalizzata",
         },
       ],
       aggregateRating: {
