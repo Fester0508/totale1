@@ -75,27 +75,15 @@ export function KpiStrip({ lordo, netto, score, recuperabile, isPaid }: KpiStrip
           <p className="text-xs text-muted-foreground mt-1">punti / 100</p>
         </div>
       )}
-      {/* Card 4 - Recuperabile: locked for free */}
-      {isPaid ? (
-        <KpiCard
-          label="Recuperabile"
-          value={fmtEuro(recuperabile)}
-          unit="euro stimati"
-          status={recuperabile === 0 ? "Nessuna anomalia" : "Verifica consigliata"}
-          statusColor={recuperabile === 0 ? "text-[#2E7D32]" : "text-[#E65100]"}
-          underlineColor={recuperabile === 0 ? "bg-[#2E7D32]" : "bg-[#E65100]"}
-        />
-      ) : (
-        <div className="bg-card rounded-xl border p-5">
-          <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
-            Recuperabile
-          </p>
-          <div className="mt-3">
-            <PaywallLock />
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">euro stimati</p>
-        </div>
-      )}
+      {/* Card 4 - Recuperabile: SEMPRE visibile (gancio conversione) */}
+      <KpiCard
+        label="Recuperabile"
+        value={fmtEuro(recuperabile)}
+        unit="euro stimati"
+        status={recuperabile === 0 ? "Nessuna anomalia" : "Verifica consigliata"}
+        statusColor={recuperabile === 0 ? "text-[#2E7D32]" : "text-[#E65100]"}
+        underlineColor={recuperabile === 0 ? "bg-[#2E7D32]" : "bg-[#E65100]"}
+      />
     </div>
   );
 }

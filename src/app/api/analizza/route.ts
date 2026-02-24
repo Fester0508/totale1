@@ -5,6 +5,48 @@ const DEMO_MODE = !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export const maxDuration = 60;
 
+// GET: check access level for a given analysis
+export async function GET(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ accessLevel: "preview" });
+  }
+
+  // Check authenticated user tier
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    try {
+      const { createClient: createAuthClient } = await import("@/lib/supabase/server");
+      const supabaseAuth = await createAuthClient();
+      const { data: { user } } = await supabaseAuth.auth.getUser();
+
+      if (user) {
+        const { createAdminClient } = await import("@/lib/supabase/admin");
+        const supabase = createAdminClient();
+        const { data: profile } = await supabase
+          .from("user_profiles")
+          .select("tier")
+          .eq("user_id", user.id)
+          .single();
+
+        if (profile?.tier && profile.tier !== "free") {
+          return NextResponse.json({ accessLevel: "full" });
+        }
+      }
+    } catch {
+      // fallthrough to free-tier check
+    }
+  }
+
+  // Anonymous / free user: check cookie
+  const { getFreeTierStatus } = await import("@/lib/free-tier");
+  const { MAX_FREE_FULL } = await import("@/lib/free-tier");
+  const freeTier = await getFreeTierStatus(request);
+
+  // First analysis (uses <= MAX_FREE_FULL) = full access
+  const isFirstAnalysis = freeTier.uses <= MAX_FREE_FULL;
+  return NextResponse.json({ accessLevel: isFirstAnalysis ? "full" : "preview" });
+}
+
 export async function POST(request: NextRequest) {
   const { id, documentType = "busta-paga" } = await request.json();
 
@@ -19,7 +61,7 @@ export async function POST(request: NextRequest) {
   if (DEMO_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 4000));
     const mockData = MOCK_DATA_MAP[(documentType as DocumentType)] || MOCK_DATA_MAP["busta-paga"];
-    return NextResponse.json({ risultato: mockData });
+    return NextResponse.json({ risultato: mockData, accessLevel: "full" });
   }
 
   // --- Production mode: full AI pipeline ---
@@ -81,7 +123,24 @@ export async function POST(request: NextRequest) {
   }
 
   if (analisi.stato === "completed") {
-    return NextResponse.json({ risultato: analisi.risultato });
+    // Determine access level
+    let completedAccessLevel = "preview";
+    if (user) {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("tier")
+        .eq("user_id", user.id)
+        .single();
+      if (profile?.tier && profile.tier !== "free") {
+        completedAccessLevel = "full";
+      }
+    }
+    if (completedAccessLevel === "preview") {
+      const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
+      const freeTier = await getFreeTierStatus(request);
+      if (freeTier.uses <= MAX_FREE_FULL) completedAccessLevel = "full";
+    }
+    return NextResponse.json({ risultato: analisi.risultato, accessLevel: completedAccessLevel });
   }
 
   const { data: fileData, error: downloadError } = await supabase.storage
@@ -161,7 +220,25 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", id);
 
-    return NextResponse.json({ risultato });
+    // Determine access level for this user
+    let pipelineAccessLevel = "preview";
+    if (user) {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("tier")
+        .eq("user_id", user.id)
+        .single();
+      if (profile?.tier && profile.tier !== "free") {
+        pipelineAccessLevel = "full";
+      }
+    }
+    if (pipelineAccessLevel === "preview") {
+      const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
+      const freeTier = await getFreeTierStatus(request);
+      if (freeTier.uses <= MAX_FREE_FULL) pipelineAccessLevel = "full";
+    }
+
+    return NextResponse.json({ risultato, accessLevel: pipelineAccessLevel });
   } catch (error) {
     console.error("Analizza pipeline error:", error);
 

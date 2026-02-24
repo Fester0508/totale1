@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { VoceAnalisi } from "@/lib/types";
-import { PaywallBlur, PaywallLock } from "./PaywallBlur";
+import { PaywallBlur } from "./PaywallBlur";
 
 type Severity = "rosso" | "giallo" | "verde";
 
@@ -79,19 +79,13 @@ export function VoiceCard({ voce, isPaid }: VoiceCardProps) {
               </span>
               <p className={`text-xs font-semibold mt-1 ${c.chipText}`}>{c.chipLabel}</p>
             </>
-          ) : isPaid ? (
+          ) : (
             <>
+              {/* Importo SEMPRE visibile -- il gancio per convertire */}
               <p className="font-semibold text-foreground whitespace-nowrap">
                 {voce.stato === "rosso" ? "\u2013" : "~"} &euro;
                 {Math.abs(impatto ?? voce.importo).toLocaleString("it-IT", { minimumFractionDigits: 2 })}
               </p>
-              <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded ${c.chipBg} ${c.chipText} mt-1`}>
-                {c.chipLabel}
-              </span>
-            </>
-          ) : (
-            <>
-              <PaywallLock placeholder={`${voce.stato === "rosso" ? "\u2013" : "~"}\u20ac??`} />
               <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded ${c.chipBg} ${c.chipText} mt-1`}>
                 {c.chipLabel}
               </span>

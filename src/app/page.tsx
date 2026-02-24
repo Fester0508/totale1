@@ -34,7 +34,7 @@ const jsonLd = {
           price: "0",
           priceCurrency: "EUR",
           description:
-            "1 analisi/mese, referto parziale (titoli anomalie visibili, dettagli bloccati)",
+            "Prima analisi completa e gratuita, poi serve un piano a pagamento",
         },
         {
           "@type": "Offer",
@@ -69,7 +69,7 @@ const jsonLd = {
           name: "Quanto costa usare LavoroChiaro?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Il piano Free offre 1 analisi al mese con referto parziale, gratis. Pay-Per-Error costa 3,99 euro a singola analisi. L'abbonamento parte da 0,99 euro/mese (bloccato 6 mesi, poi 4,99/mese). Il piano Pro + Chatbot costa 9,99 euro/mese.",
+            text: "La prima analisi e' completa e gratuita: vedi tutto il referto, score, importi e anomalie. Dalla seconda analisi servono i piani a pagamento. Pay-Per-Error costa 3,99 euro a singola analisi. L'abbonamento parte da 0,99 euro/mese. Il piano Pro + Chatbot costa 9,99 euro/mese.",
           },
         },
         {
@@ -121,7 +121,7 @@ const plans = [
     name: "Free",
     price: "0",
     period: "",
-    desc: "1 analisi al mese con referto parziale",
+    desc: "Prima analisi completa e gratuita, poi paywall",
     features: [
       "1 analisi / mese",
       "Titoli anomalie visibili",
@@ -130,7 +130,7 @@ const plans = [
     ],
     highlight: false,
     badge: null as string | null,
-    cta: "Inizia gratis",
+    cta: "Analisi completa gratis",
     href: "#analizza",
   },
   {
@@ -186,7 +186,7 @@ const plans = [
 const faqs = [
   {
     q: "Quanto costa usare LavoroChiaro?",
-    a: "Il piano Free offre 1 analisi al mese con referto parziale, gratis e senza registrazione. Pay-Per-Error costa 3,99\u00a0\u20ac a singola analisi. L\u2019abbonamento parte da 0,99\u00a0\u20ac/mese (bloccato 6 mesi, poi 4,99\u00a0\u20ac/mese). Il piano Pro + Chatbot costa 9,99\u00a0\u20ac/mese.",
+    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi servono i piani a pagamento. Pay-Per-Error costa 3,99\u00a0\u20ac a singola analisi. L\u2019abbonamento parte da 0,99\u00a0\u20ac/mese. Il piano Pro + Chatbot costa 9,99\u00a0\u20ac/mese.",
   },
   {
     q: "I miei dati sono al sicuro?",
@@ -205,8 +205,8 @@ const faqs = [
     a: "No. LavoroChiaro \u00e8 uno strumento informativo che ti permette di arrivare dal consulente gi\u00e0 informato, con un referto dettagliato delle anomalie trovate.",
   },
   {
-    q: "Cosa significa referto parziale nel piano Free?",
-    a: "Nel piano Free vedi i titoli delle anomalie trovate (es. \u201CMaggiorazione straordinario notturno assente\u201D) ma i dettagli, gli importi e le raccomandazioni sono sfocati. Per sbloccarli puoi usare Pay-Per-Error o abbonarti.",
+    q: "Cosa succede dopo la prima analisi gratuita?",
+    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi in poi vedi i titoli e gli importi delle anomalie, ma le spiegazioni dettagliate e le raccomandazioni sono bloccate. Per sbloccarle puoi usare Pay-Per-Error (3,99\u00a0\u20ac) o abbonarti.",
   },
 ];
 
@@ -255,7 +255,7 @@ export default function Home() {
 
             {/* 5. TRUST BADGES */}
             <p className="text-xs text-primary-foreground/40">
-              Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
+                Prima analisi completa e gratuita &middot; Conforme GDPR &middot; 30 secondi
             </p>
 
           </div>
@@ -408,7 +408,7 @@ export default function Home() {
                 PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
               </p>
               <p className="text-sm font-bold text-brand-amber mt-3">
-                1 analisi gratuita &mdash; senza registrazione
+                Prima analisi completa e gratuita &mdash; senza registrazione
               </p>
             </div>
             <div className="max-w-2xl mx-auto">
