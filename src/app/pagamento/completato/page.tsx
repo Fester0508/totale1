@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/header";
@@ -8,6 +8,26 @@ import { Header } from "@/components/header";
 type PaymentStatus = "loading" | "accepted" | "pending" | "canceled" | "error";
 
 export default function PaymentCompletedPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <Header />
+          <main className="min-h-screen bg-background flex items-center justify-center p-4">
+            <div className="max-w-md w-full bg-card rounded-xl border p-8 text-center">
+              <div className="w-16 h-16 border-4 border-brand-amber border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+              <h1 className="text-xl font-bold text-brand-navy mb-2">Caricamento...</h1>
+            </div>
+          </main>
+        </>
+      }
+    >
+      <PaymentContent />
+    </Suspense>
+  );
+}
+
+function PaymentContent() {
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("payment_id");
   const [status, setStatus] = useState<PaymentStatus>("loading");
