@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
 import { UploadZone } from "@/components/upload-zone";
+import { RotatingHeadline } from "@/components/rotating-headline";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -266,6 +267,8 @@ export default function Home() {
                 [lavoroinchiaro.it]
               </p>
 
+              <RotatingHeadline cards={editorialCards} />
+
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-balance">
                 <span className="text-primary-foreground">La tua busta paga</span>
                 <br />
@@ -446,35 +449,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── EDITORIAL CAROUSEL ── */}
-        <section className="py-16 md:py-20 bg-card overflow-hidden">
-          <div className="container mx-auto px-6 mb-10">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center">
-              La campagna
-            </h2>
-          </div>
-          <div
-            className="flex gap-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory"
-            style={{ scrollbarWidth: "none" }}
-          >
-            {editorialCards.map((card) => (
-              <div
-                key={card.id}
-                className="shrink-0 snap-center rounded-lg overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-shadow w-[280px] md:w-[320px]"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={card.src}
-                  alt={card.alt}
-                  width={320}
-                  height={320}
-                  className="w-full h-auto"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+
 
         {/* ── PRICING ── */}
         <section id="prezzi" className="py-16 md:py-24">
