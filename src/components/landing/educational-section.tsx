@@ -51,7 +51,7 @@ const articles = [
 
 export function EducationalSection() {
   return (
-    <section className="py-20 md:py-28 bg-white dark:bg-background">
+    <section className="py-20 md:py-28 bg-card">
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <div className="text-center mb-14">
@@ -72,9 +72,9 @@ export function EducationalSection() {
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
           {articles.map((article, i) => (
             <AnimatedSection key={article.title} delay={i * 0.1}>
-              <article className="group bg-muted/20 dark:bg-muted/5 rounded-2xl border border-border/30 p-7 h-full transition-all duration-300 hover:shadow-lg hover:border-brand-navy/15 hover:-translate-y-1 hover:bg-white dark:hover:bg-muted/10 cursor-default">
+              <article className="group bg-background rounded-2xl border border-border/30 p-7 h-full transition-all duration-300 hover:shadow-lg hover:border-brand-navy/15 hover:-translate-y-1 cursor-default">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-blue-950/70">
+                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:bg-brand-amber/10">
                     <article.icon className="h-5 w-5 text-brand-navy transition-colors duration-300 group-hover:text-brand-amber" />
                   </div>
                   <h3 className="font-bold text-base text-brand-navy leading-tight">

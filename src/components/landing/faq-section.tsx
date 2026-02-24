@@ -58,7 +58,7 @@ const faqs = [
 
 export function FAQSection() {
   return (
-    <section id="faq" className="py-20 md:py-28 bg-white dark:bg-background">
+    <section id="faq" className="py-20 md:py-28 bg-card">
       <div className="container mx-auto px-4 max-w-3xl">
         <AnimatedSection>
           <div className="text-center mb-14">

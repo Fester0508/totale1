@@ -67,7 +67,7 @@ export function ServicesSection() {
             <AnimatedSection key={service.title} delay={i * 0.1}>
               <Link href={service.href} className="block group h-full">
                 <div
-                  className={`bg-white dark:bg-card rounded-2xl border p-7 h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                  className={`bg-card rounded-2xl border p-7 h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                     service.highlight
                       ? "border-brand-amber/40 shadow-md shadow-brand-amber/5"
                       : "border-border/50 hover:border-brand-navy/20"

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FileSearch } from "lucide-react";
 
 export function Footer() {
   return (
@@ -8,10 +7,11 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-10 md:gap-8">
           {/* Brand column */}
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <FileSearch className="h-5 w-5 text-brand-navy" />
-              <span className="text-lg font-bold text-brand-navy">
-                Lavoro<span className="text-brand-amber">Chiaro</span>
+            <Link href="/" className="flex items-center gap-1 mb-4">
+              <span className="text-lg font-bold uppercase tracking-wider">
+                <span className="text-brand-navy">LAVORO</span>
+                <span className="text-brand-gray mx-1 text-base font-normal">IN</span>
+                <span className="text-brand-amber">CHIARO</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">

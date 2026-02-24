@@ -157,7 +157,7 @@ export default function Home() {
         {/* Upload Section */}
         <section
           id="analizza"
-          className="py-20 md:py-24 bg-gradient-to-b from-blue-50/50 to-white dark:from-background dark:to-background"
+          className="py-20 md:py-24 bg-card"
         >
           <div className="container mx-auto px-4">
             <div className="text-center max-w-2xl mx-auto mb-10">
