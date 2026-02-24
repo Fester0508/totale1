@@ -205,20 +205,4 @@ CREATE POLICY "service_role_payments" ON payments FOR ALL USING (auth.role() = '
 CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
 CREATE INDEX IF NOT EXISTS idx_payments_satispay_id ON payments(satispay_payment_id);
 
--- ======= Storage bucket =======
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('documenti', 'documenti', false)
-ON CONFLICT (id) DO NOTHING;
-
--- Storage policy: allow service_role to manage all files
-DROP POLICY IF EXISTS "service_upload" ON storage.objects;
-CREATE POLICY "service_upload" ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'documenti' AND auth.role() = 'service_role');
-
-DROP POLICY IF EXISTS "service_select" ON storage.objects;
-CREATE POLICY "service_select" ON storage.objects FOR SELECT
-  USING (bucket_id = 'documenti' AND auth.role() = 'service_role');
-
-DROP POLICY IF EXISTS "service_delete" ON storage.objects;
-CREATE POLICY "service_delete" ON storage.objects FOR DELETE
-  USING (bucket_id = 'documenti' AND auth.role() = 'service_role');
+-- Storage bucket creation handled separately via Supabase API (see create-storage-bucket.mjs)
