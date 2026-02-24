@@ -110,35 +110,6 @@ const jsonLd = {
 };
 
 /* ── Data ── */
-const editorialCards = [
-  { id: "01", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/01%3A27-4hhvjGvYVtn2ZV2yIGpxjLQYtFtqdk.png", alt: "Anche Cesare si fido." },
-  { id: "02", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/02%3A27-gNwJRfl1zEK5BdG62tmClIVz5AhVpq.png", alt: "Bruto tradi in silenzio." },
-  { id: "03", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/03%3A27-lril61lPTPSMmIpaoXdNRgKWgk0eor.png", alt: "Il cavallo di Troia era un regalo." },
-  { id: "04", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/04%3A27-UQJTFqEzKzZtnFc2Y6709neWpMe287.png", alt: "Giuda lo fece per soldi." },
-  { id: "05", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/05%3A27-1tApasQNO8drFjcipRz1o6qbNX1d8t.png", alt: "Il 15 marzo cambio tutto." },
-  { id: "06", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/06%3A27-bxw7DjzWQOxTqzPmB3qMosvxIZeUFz.png", alt: "Watergate era un documento." },
-  { id: "07", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/07%3A27-pkz4WJ6vEApF7VYc6t86wnhGJdktXr.png", alt: "Enrico VIII cambio le regole." },
-  { id: "08", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/08%3A27-t8DSwOBfIHQjmUDsTxEihMUCfGvEKR.png", alt: "Suarez morse Chiellini." },
-  { id: "09", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/09%3A27-wDapLUXTPJl9FnPFQXJQ6QT735QKRc.png", alt: "Le telefonate cerano." },
-  { id: "10", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/10%3A27-bWbytmIT2IVy0d4jB2febj1wRIUfwf.png", alt: "7 Tour. Tutte bugie." },
-  { id: "11", src: "/headlines/11.png", alt: "Il gol fantasma." },
-  { id: "12", src: "/headlines/12.png", alt: "Lo fece in diretta." },
-  { id: "13", src: "/headlines/13.png", alt: "Rossi scommise contro." },
-  { id: "14", src: "/headlines/14.png", alt: "Calciopoli." },
-  { id: "15", src: "/headlines/15.png", alt: "Totti non vide il cartellino." },
-  { id: "16", src: "/headlines/16.png", alt: "Retrocessione." },
-  { id: "17", src: "/headlines/17.png", alt: "Madoff pagava tutti. Coi soldi degli altri." },
-  { id: "18", src: "/headlines/18.png", alt: "Enron valeva miliardi. Sulla carta." },
-  { id: "19", src: "/headlines/19.png", alt: "Theranos analizzava il sangue. Con niente." },
-  { id: "20", src: "/headlines/20.png", alt: "Fu assolto." },
-  { id: "21", src: "/headlines/21.png", alt: "Nixon nego tutto." },
-  { id: "22", src: "/headlines/22.png", alt: "Volkswagen truccava i motori." },
-  { id: "23", src: "/headlines/23.png", alt: "Il Muro cadde in una notte." },
-  { id: "24", src: "/headlines/24.png", alt: "Telefonava di notte." },
-  { id: "25", src: "/headlines/25.png", alt: "Pandora apri il vaso." },
-  { id: "26", src: "/headlines/26.png", alt: "Il lupo si vesti da agnello." },
-];
-
 const steps = [
   { num: "01", title: "Carica", desc: "Scatta una foto o carica il PDF della tua busta paga." },
   { num: "02", title: "Analisi AI", desc: "La nostra AI legge ogni voce e la confronta con il tuo CCNL." },
@@ -258,46 +229,90 @@ export default function Home() {
 
       <main>
         {/* ── HERO ── */}
-        <section className="relative px-6 pt-24 pb-16 md:pt-36 md:pb-24 bg-brand-navy">
-          <div className="container mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <section className="relative px-6 pt-24 pb-16 md:pt-32 md:pb-24 bg-brand-navy">
+          <div className="container mx-auto flex flex-col items-center text-center gap-8 md:gap-10">
 
-            {/* Left: copy */}
-            <div className="flex-1 text-center lg:text-left">
-              <p className="text-sm tracking-[0.25em] uppercase text-primary-foreground/50 mb-6">
-                [lavoroinchiaro.it]
-              </p>
+            {/* 1. CTA BUTTON */}
+            <Link
+              href="#analizza"
+              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Controlla la busta paga
+            </Link>
 
-              <RotatingHeadline cards={editorialCards} />
+            {/* 2. TITOLO GIGANTE */}
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05]">
+              <span className="text-primary-foreground">La tua busta paga</span>
+              <br />
+              <span className="text-brand-amber">ti mente?</span>
+            </h1>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-balance">
-                <span className="text-primary-foreground">La tua busta paga</span>
-                <br />
-                <span className="text-brand-amber">ti mente?</span>
-              </h1>
+            {/* 3. LINEA */}
+            <div className="w-20 h-[2px] bg-brand-amber" />
 
-              <div className="w-24 h-[2px] bg-brand-amber my-8 mx-auto lg:mx-0" />
+            {/* 4. FRASI ROTANTI */}
+            <RotatingHeadline />
 
-              <p className="text-lg md:text-xl text-primary-foreground/70 max-w-xl leading-relaxed mx-auto lg:mx-0">
-                Il 67% dei lavoratori italiani ha almeno un errore in busta paga.
-                <br className="hidden md:block" />
-                Scoprilo in 30 secondi. Gratis.
-              </p>
+            {/* 5. TRUST BADGES */}
+            <p className="text-xs text-primary-foreground/40">
+              Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
+            </p>
 
-              <Link
-                href="#analizza"
-                className="mt-10 inline-flex items-center justify-center bg-brand-amber text-white font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30"
-              >
-                Analizza la tua busta paga
-              </Link>
+          </div>
+        </section>
 
-              <p className="mt-4 text-xs text-primary-foreground/50">
-                Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
-              </p>
+        {/* ── DIVIDER ── */}
+        <div className="w-full max-w-4xl mx-auto h-px bg-brand-amber/30" />
+
+        {/* ── STATS ── */}
+        <section className="py-16 md:py-20 bg-background">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
+              {[
+                { value: "67%", label: "dei cedolini ha errori" },
+                { value: "30s", label: "tempo medio di analisi" },
+                { value: "\u20ac234", label: "euro medi recuperabili" },
+                { value: "50+", label: "CCNL supportati" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <p className="text-4xl md:text-5xl font-bold text-brand-navy">{s.value}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
+                </div>
+              ))}
             </div>
+          </div>
+        </section>
 
-            {/* Right: Mini Report Preview */}
-            <div className="flex-1 max-w-md w-full">
-              <div className="bg-card rounded-xl border shadow-2xl shadow-black/20 overflow-hidden">
+        {/* ── COME FUNZIONA ── */}
+        <section id="come-funziona" className="py-16 md:py-24 bg-card">
+          <div className="container mx-auto px-6">
+            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
+              Come funziona
+            </h2>
+            <div className="grid md:grid-cols-3 gap-10 max-w-4xl mx-auto">
+              {steps.map((step) => (
+                <div key={step.num} className="text-center md:text-left">
+                  <p className="text-5xl font-bold text-brand-amber mb-3">{step.num}</p>
+                  <h3 className="text-xl font-bold text-brand-navy mb-2">{step.title}</h3>
+                  <p className="text-sm text-foreground/60 leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── REPORT PREVIEW ── */}
+        <section className="py-16 md:py-20 bg-background">
+          <div className="container mx-auto px-6">
+            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
+              Ecco cosa ottieni
+            </h2>
+            <p className="text-center text-xl md:text-2xl font-bold text-brand-navy mb-10 text-balance">
+              Un referto chiaro, in 30 secondi
+            </p>
+
+            <div className="max-w-md mx-auto">
+              <div className="bg-card rounded-xl border shadow-xl overflow-hidden">
                 {/* Report header */}
                 <div className="p-5 border-b">
                   <div className="flex items-center justify-between mb-2">
@@ -381,46 +396,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── DIVIDER ── */}
-        <div className="w-full max-w-4xl mx-auto h-px bg-brand-amber/30" />
-
-        {/* ── STATS ── */}
-        <section className="py-16 md:py-20 bg-background">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
-              {[
-                { value: "67%", label: "dei cedolini ha errori" },
-                { value: "30s", label: "tempo medio di analisi" },
-                { value: "\u20ac234", label: "euro medi recuperabili" },
-                { value: "50+", label: "CCNL supportati" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <p className="text-4xl md:text-5xl font-bold text-brand-navy">{s.value}</p>
-                  <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── COME FUNZIONA ── */}
-        <section id="come-funziona" className="py-16 md:py-24 bg-card">
-          <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
-              Come funziona
-            </h2>
-            <div className="grid md:grid-cols-3 gap-10 max-w-4xl mx-auto">
-              {steps.map((step) => (
-                <div key={step.num} className="text-center md:text-left">
-                  <p className="text-5xl font-bold text-brand-amber mb-3">{step.num}</p>
-                  <h3 className="text-xl font-bold text-brand-navy mb-2">{step.title}</h3>
-                  <p className="text-sm text-foreground/60 leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── UPLOAD SECTION ── */}
         <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-brand-navy">
           <div className="container mx-auto px-6">
@@ -448,8 +423,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-
 
         {/* ── PRICING ── */}
         <section id="prezzi" className="py-16 md:py-24">
