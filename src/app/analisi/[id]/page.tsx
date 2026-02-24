@@ -24,7 +24,7 @@ export default function AnalisiPage({
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-background dark:to-background">
+    <div className="min-h-screen bg-background">
       <Header />
 
       <main className="container mx-auto px-4 py-8">
