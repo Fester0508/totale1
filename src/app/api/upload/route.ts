@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
       id: analisiId,
       session_id: sessionId,
       user_id: userId,
+      file_url: `inline://${analisiId}`,
       file_data: fileBase64,
       file_mime: finalMimeType,
       file_type: isPdf(file.type) ? "pdf" : "jpg",
