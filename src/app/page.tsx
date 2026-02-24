@@ -241,24 +241,24 @@ export default function Home() {
 
       <main>
         {/* ── HERO ── */}
-        <section className="relative px-6 pt-24 pb-16 md:pt-36 md:pb-24">
+        <section className="relative px-6 pt-24 pb-16 md:pt-36 md:pb-24 bg-brand-navy">
           <div className="container mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
             {/* Left: copy */}
             <div className="flex-1 text-center lg:text-left">
-              <p className="text-sm tracking-[0.25em] uppercase text-brand-gray mb-6">
+              <p className="text-sm tracking-[0.25em] uppercase text-primary-foreground/50 mb-6">
                 [lavoroinchiaro.it]
               </p>
 
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-balance">
-                <span className="text-brand-navy">La tua busta paga</span>
+                <span className="text-primary-foreground">La tua busta paga</span>
                 <br />
                 <span className="text-brand-amber">dice la verit\u00e0?</span>
               </h1>
 
               <div className="w-24 h-[2px] bg-brand-amber my-8 mx-auto lg:mx-0" />
 
-              <p className="text-lg md:text-xl text-foreground/70 max-w-xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-primary-foreground/70 max-w-xl leading-relaxed mx-auto lg:mx-0">
                 Il 67% dei lavoratori italiani ha almeno un errore in busta paga.
                 <br className="hidden md:block" />
                 Scoprilo in 30 secondi. Gratis.
@@ -266,19 +266,19 @@ export default function Home() {
 
               <Link
                 href="#analizza"
-                className="mt-10 inline-flex items-center justify-center bg-brand-navy text-primary-foreground font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-navy-light transition-colors"
+                className="mt-10 inline-flex items-center justify-center bg-brand-amber text-white font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30"
               >
                 Analizza la tua busta paga
               </Link>
 
-              <p className="mt-4 text-xs text-muted-foreground">
+              <p className="mt-4 text-xs text-primary-foreground/50">
                 Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
               </p>
             </div>
 
             {/* Right: Mini Report Preview */}
             <div className="flex-1 max-w-md w-full">
-              <div className="bg-card rounded-xl border shadow-lg overflow-hidden">
+              <div className="bg-card rounded-xl border shadow-2xl shadow-black/20 overflow-hidden">
                 {/* Report header */}
                 <div className="p-5 border-b">
                   <div className="flex items-center justify-between mb-2">
@@ -366,7 +366,7 @@ export default function Home() {
         <div className="w-full max-w-4xl mx-auto h-px bg-brand-amber/30" />
 
         {/* ── STATS ── */}
-        <section className="py-16 md:py-20">
+        <section className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
               {[
@@ -376,8 +376,8 @@ export default function Home() {
                 { value: "50+", label: "CCNL supportati" },
               ].map((s) => (
                 <div key={s.label}>
-                  <p className="text-3xl md:text-4xl font-bold text-brand-navy">{s.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
+                  <p className="text-4xl md:text-5xl font-bold text-brand-navy">{s.value}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -390,12 +390,12 @@ export default function Home() {
             <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
               Come funziona
             </h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-10 max-w-4xl mx-auto">
               {steps.map((step) => (
                 <div key={step.num} className="text-center md:text-left">
-                  <p className="text-4xl font-bold text-brand-amber/30 mb-2">{step.num}</p>
+                  <p className="text-5xl font-bold text-brand-amber mb-3">{step.num}</p>
                   <h3 className="text-xl font-bold text-brand-navy mb-2">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                  <p className="text-sm text-foreground/60 leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -403,22 +403,24 @@ export default function Home() {
         </section>
 
         {/* ── UPLOAD SECTION ── */}
-        <section id="analizza" className="py-20 md:py-28 scroll-mt-16">
+        <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-brand-navy">
           <div className="container mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="text-2xl md:text-4xl font-bold text-brand-navy mb-4">
+              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4">
                 Carica il tuo cedolino.
               </h2>
               <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-primary-foreground/70 leading-relaxed">
                 PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
               </p>
-              <p className="text-sm font-medium text-brand-navy mt-3">
+              <p className="text-sm font-bold text-brand-amber mt-3">
                 1 analisi gratuita &mdash; senza registrazione
               </p>
             </div>
-            <UploadZone />
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
+            <div className="max-w-2xl mx-auto">
+              <UploadZone />
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-primary-foreground/40">
               <span>AES-256 encryption</span>
               <span className="hidden sm:inline">&middot;</span>
               <span>Server EU / GDPR</span>
@@ -472,10 +474,10 @@ export default function Home() {
               {plans.map((plan) => (
                 <div
                   key={plan.name}
-                  className={`relative rounded-lg border p-6 flex flex-col transition-shadow hover:shadow-md ${
+                  className={`relative rounded-lg border p-6 flex flex-col transition-all hover:shadow-lg hover:-translate-y-1 ${
                     plan.highlight
-                      ? "border-brand-amber border-2 bg-card shadow-lg ring-1 ring-brand-amber/20"
-                      : "border-border bg-card"
+                      ? "border-brand-amber border-2 bg-card shadow-xl ring-2 ring-brand-amber/30 scale-[1.03]"
+                      : "border-border bg-card shadow-sm"
                   }`}
                 >
                   {/* Badge */}
@@ -557,23 +559,21 @@ export default function Home() {
         </section>
 
         {/* ── FINAL CTA ── */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-6 text-center">
-            <div className="bg-brand-navy rounded-lg p-10 md:p-16 max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4 text-balance">
-                Controlla prima di fidarti.
-              </h2>
-              <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-              <p className="text-primary-foreground/70 max-w-md mx-auto mb-8 leading-relaxed">
-                La tua busta paga potrebbe nascondere errori che ti costano centinaia di euro ogni anno.
-              </p>
-              <Link
-                href="#analizza"
-                className="inline-flex items-center justify-center bg-background text-brand-navy font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-background/90 transition-colors"
-              >
-                Analizza ora
-              </Link>
-            </div>
+        <section className="py-20 md:py-28 bg-brand-navy">
+          <div className="container mx-auto px-6 text-center max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4 text-balance">
+              Controlla prima di fidarti.
+            </h2>
+            <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
+            <p className="text-primary-foreground/60 max-w-md mx-auto mb-10 leading-relaxed text-lg">
+              La tua busta paga potrebbe nascondere errori che ti costano centinaia di euro ogni anno.
+            </p>
+            <Link
+              href="#analizza"
+              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30"
+            >
+              Analizza ora
+            </Link>
           </div>
         </section>
       </main>
