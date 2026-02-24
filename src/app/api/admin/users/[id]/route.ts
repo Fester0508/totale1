@@ -72,19 +72,13 @@ export async function DELETE(
     );
   }
 
-  // Recupera file delle analisi dell'utente
+  // Conta analisi utente per il log
   const { data: analisi } = await supabase
     .from("analisi")
-    .select("id, file_url")
+    .select("id")
     .eq("user_id", id);
 
-  const fileUrls = analisi?.map((a) => a.file_url).filter(Boolean) ?? [];
   const analisiCount = analisi?.length ?? 0;
-
-  // Elimina file da Storage
-  if (fileUrls.length > 0) {
-    await supabase.storage.from("documenti").remove(fileUrls);
-  }
 
   // Log GDPR
   const emailHash = await sha256(user.email ?? "");
@@ -93,7 +87,6 @@ export async function DELETE(
     deletion_type: "admin_request",
     items_deleted: {
       analisi_count: analisiCount,
-      files_count: fileUrls.length,
     },
     requested_by: "admin",
     completed_at: new Date().toISOString(),

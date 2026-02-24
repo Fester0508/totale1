@@ -23,28 +23,21 @@ export async function POST() {
 
   const supabase = createAdminClient();
 
-  // 1. Recupera tutte le analisi dell'utente per i file
+  // 1. Conta analisi dell'utente per il log
   const { data: analisi } = await supabase
     .from("analisi")
-    .select("id, file_url")
+    .select("id")
     .eq("user_id", user.id);
 
-  const fileUrls = analisi?.map((a) => a.file_url).filter(Boolean) ?? [];
   const analisiCount = analisi?.length ?? 0;
 
-  // 2. Elimina file da Supabase Storage
-  if (fileUrls.length > 0) {
-    await supabase.storage.from("documenti").remove(fileUrls);
-  }
-
-  // 3. Scrivi nel log GDPR (prima di eliminare l'utente)
+  // 2. Scrivi nel log GDPR (prima di eliminare l'utente)
   const emailHash = await sha256(user.email ?? "");
   await supabase.from("gdpr_deletion_log").insert({
     user_email_hash: emailHash,
     deletion_type: "user_request",
     items_deleted: {
       analisi_count: analisiCount,
-      files_count: fileUrls.length,
     },
     requested_by: "user",
     completed_at: new Date().toISOString(),

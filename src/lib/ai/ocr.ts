@@ -1,5 +1,4 @@
-import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { generateText, Output } from "ai";
 import { OCR_SYSTEM_PROMPT, getOCRUserMessage } from "./prompts";
 import { DatiEstrattiOCRSchema } from "../types";
 import type { DatiEstrattiOCR, AICallResult } from "../types";
@@ -14,14 +13,21 @@ export async function estraiDatiDocumento(
   const isPdf = mimeType === "application/pdf";
 
   const fileContent = isPdf
-    ? { type: "file" as const, data: base64Data, mediaType: "application/pdf" as const }
-    : { type: "image" as const, image: `data:${mimeType};base64,${base64Data}` };
+    ? {
+        type: "file" as const,
+        data: base64Data,
+        mediaType: "application/pdf" as const,
+      }
+    : {
+        type: "image" as const,
+        image: `data:${mimeType};base64,${base64Data}`,
+      };
 
-  const { object, usage } = await generateObject({
-    model: openai("gpt-4o"),
-    schema: DatiEstrattiOCRSchema,
-    schemaName: "DatiEstrattiOCR",
-    schemaDescription: "Dati estratti da un documento fiscale italiano",
+  const { output, usage } = await generateText({
+    model: "openai/gpt-4o",
+    output: Output.object({
+      schema: DatiEstrattiOCRSchema,
+    }),
     messages: [
       {
         role: "system",
@@ -39,12 +45,15 @@ export async function estraiDatiDocumento(
       },
     ],
     maxOutputTokens: 4000,
-    maxRetries: 3,
     temperature: 0,
   });
 
+  if (!output) {
+    throw new Error("OCR non ha prodotto risultati validi");
+  }
+
   return {
-    data: object,
+    data: output,
     tokensInput: usage.inputTokens ?? 0,
     tokensOutput: usage.outputTokens ?? 0,
     durata_ms: Date.now() - start,
