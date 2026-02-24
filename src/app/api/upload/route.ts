@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Demo mode: skip Supabase, return a fake ID
     if (DEMO_MODE) {
       const analisiId = uuidv4();
-      return NextResponse.json({ id: analisiId });
+      return NextResponse.json({ id: analisiId, mimeType: file.type });
     }
 
     // --- Production mode ---

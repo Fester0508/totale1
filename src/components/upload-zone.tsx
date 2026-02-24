@@ -196,6 +196,21 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
         throw new Error(data.error || "Errore durante il caricamento");
       }
 
+      // Salva file in sessionStorage per passarlo all'analisi (demo mode)
+      try {
+        const arrayBuffer = await selectedFile.arrayBuffer();
+        const base64 = btoa(
+          new Uint8Array(arrayBuffer).reduce(
+            (d, byte) => d + String.fromCharCode(byte),
+            ""
+          )
+        );
+        sessionStorage.setItem(`file_${data.id}`, base64);
+        sessionStorage.setItem(`mime_${data.id}`, selectedFile.type);
+      } catch (e) {
+        console.warn("Could not cache file for demo mode:", e);
+      }
+
       setProgressStep("done");
       setTimeout(() => {
         router.push(`/analisi/${data.id}?type=${documentType}`);

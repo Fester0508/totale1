@@ -33,8 +33,8 @@ export function useAnalysis(
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    // Timeout 60 secondi
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
+    // Timeout 90 secondi (OCR + analisi AI)
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
 
     isProcessing.current = true;
 
@@ -42,12 +42,23 @@ export function useAnalysis(
       setStato("processing");
       setError(null);
 
+      // Recupera file da sessionStorage (per demo mode)
+      let fileBase64: string | null = null;
+      let fileMime: string | null = null;
+      try {
+        fileBase64 = sessionStorage.getItem(`file_${analisiId}`);
+        fileMime = sessionStorage.getItem(`mime_${analisiId}`);
+      } catch {
+        // sessionStorage non disponibile
+      }
+
       const response = await fetch("/api/analizza", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: analisiId,
           documentType: documentType || "busta-paga",
+          ...(fileBase64 && fileMime ? { fileBase64, fileMime } : {}),
         }),
         signal: controller.signal,
       });
@@ -63,6 +74,12 @@ export function useAnalysis(
       setRisultato(data.risultato);
       if (data.accessLevel) setAccessLevel(data.accessLevel);
       setStato("completed");
+
+      // Pulisci sessionStorage
+      try {
+        sessionStorage.removeItem(`file_${analisiId}`);
+        sessionStorage.removeItem(`mime_${analisiId}`);
+      } catch {}
     } catch (err) {
       clearTimeout(timeoutId);
       if (err instanceof DOMException && err.name === "AbortError") {
