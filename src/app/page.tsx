@@ -120,6 +120,22 @@ const editorialCards = [
   { id: "08", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/08%3A27-t8DSwOBfIHQjmUDsTxEihMUCfGvEKR.png", alt: "Suarez morse Chiellini." },
   { id: "09", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/09%3A27-wDapLUXTPJl9FnPFQXJQ6QT735QKRc.png", alt: "Le telefonate cerano." },
   { id: "10", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/10%3A27-bWbytmIT2IVy0d4jB2febj1wRIUfwf.png", alt: "7 Tour. Tutte bugie." },
+  { id: "11", src: "/headlines/11.png", alt: "Il gol fantasma." },
+  { id: "12", src: "/headlines/12.png", alt: "Lo fece in diretta." },
+  { id: "13", src: "/headlines/13.png", alt: "Rossi scommise contro." },
+  { id: "14", src: "/headlines/14.png", alt: "Calciopoli." },
+  { id: "15", src: "/headlines/15.png", alt: "Totti non vide il cartellino." },
+  { id: "16", src: "/headlines/16.png", alt: "Retrocessione." },
+  { id: "17", src: "/headlines/17.png", alt: "Madoff pagava tutti. Coi soldi degli altri." },
+  { id: "18", src: "/headlines/18.png", alt: "Enron valeva miliardi. Sulla carta." },
+  { id: "19", src: "/headlines/19.png", alt: "Theranos analizzava il sangue. Con niente." },
+  { id: "20", src: "/headlines/20.png", alt: "Fu assolto." },
+  { id: "21", src: "/headlines/21.png", alt: "Nixon nego tutto." },
+  { id: "22", src: "/headlines/22.png", alt: "Volkswagen truccava i motori." },
+  { id: "23", src: "/headlines/23.png", alt: "Il Muro cadde in una notte." },
+  { id: "24", src: "/headlines/24.png", alt: "Telefonava di notte." },
+  { id: "25", src: "/headlines/25.png", alt: "Pandora apri il vaso." },
+  { id: "26", src: "/headlines/26.png", alt: "Il lupo si vesti da agnello." },
 ];
 
 const steps = [
@@ -253,7 +269,7 @@ export default function Home() {
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-balance">
                 <span className="text-primary-foreground">La tua busta paga</span>
                 <br />
-                <span className="text-brand-amber">dice la verit\u00e0?</span>
+                <span className="text-brand-amber">ti mente?</span>
               </h1>
 
               <div className="w-24 h-[2px] bg-brand-amber my-8 mx-auto lg:mx-0" />

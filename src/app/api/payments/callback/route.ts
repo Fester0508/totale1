@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPayment } from "@/lib/satispay";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Satispay callback -- called via GET when payment status changes.
- * Used to verify payment completion server-side.
+ * Verifies payment and activates plan / unlocks analysis.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -25,17 +26,52 @@ export async function GET(request: NextRequest) {
 
     const payment = await getPayment(paymentId);
 
-    // Log payment status for monitoring
     console.log(
-      `[Satispay] Callback for payment ${paymentId}: status=${payment.status}, amount=${payment.amount_unit}, metadata=`,
-      payment.metadata
+      `[Satispay] Callback for payment ${paymentId}: status=${payment.status}, amount=${payment.amount_unit}`
     );
 
     if (payment.status === "ACCEPTED") {
-      // Payment successful -- activate the plan for the user
-      // TODO: integrate with Supabase to update user subscription
+      const admin = createAdminClient();
+      const productId = payment.metadata?.product_id;
+      const analisiId = payment.metadata?.analisi_id;
+      const userId = payment.metadata?.user_id;
+
+      // 1. Log the payment in the audit table
+      await admin.from("payments").insert({
+        user_id: userId || null,
+        analisi_id: analisiId || null,
+        satispay_payment_id: payment.id,
+        product_id: productId || "unknown",
+        amount_cents: payment.amount_unit,
+        status: "accepted",
+        metadata: payment.metadata || {},
+      });
+
+      // 2. Handle per-product logic
+      if (productId === "pay-per-error") {
+        // Unlock the specific analysis
+        if (analisiId) {
+          await admin
+            .from("analisi")
+            .update({ access_level: "full" })
+            .eq("id", analisiId);
+        }
+      } else if (productId === "ultra-low" || productId === "pro-chatbot") {
+        // Update user subscription tier
+        if (userId) {
+          const tier = productId === "ultra-low" ? "sub_099" : "pro_999";
+          await admin
+            .from("user_profiles")
+            .update({
+              tier,
+              satispay_payment_id: payment.id,
+            })
+            .eq("id", userId);
+        }
+      }
+
       console.log(
-        `[Satispay] Payment ACCEPTED: ${paymentId}, product: ${payment.metadata?.product_id}`
+        `[Satispay] Payment ACCEPTED: ${paymentId}, product: ${productId}, analisi: ${analisiId}, user: ${userId}`
       );
     }
 
