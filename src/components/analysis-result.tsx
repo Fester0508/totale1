@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { RetribuzioneChart } from "./retribuzione-chart";
 import { TrafficLight } from "./semaforo";
 import { Button } from "@/components/ui/button";

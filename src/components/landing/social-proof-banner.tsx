@@ -1,7 +1,7 @@
 "use client";
 
 import { Star, FileCheck, Euro, ThumbsUp } from "lucide-react";
-import { useInView } from "framer-motion";
+import { useInView } from "motion/react";
 import { useRef } from "react";
 import { useCountUp } from "@/hooks/use-count-up";
 import { AnimatedSection } from "./animated-section";

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
