@@ -1,4 +1,5 @@
 import { generateText, Output } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { OCR_SYSTEM_PROMPT, getOCRUserMessage } from "./prompts";
 import { DatiEstrattiOCRSchema } from "../types";
 import type { DatiEstrattiOCR, AICallResult } from "../types";
@@ -24,7 +25,7 @@ export async function estraiDatiDocumento(
       };
 
   const { output, usage } = await generateText({
-    model: "openai/gpt-4o",
+    model: openai("gpt-4o"),
     output: Output.object({
       schema: DatiEstrattiOCRSchema,
     }),

@@ -1,4 +1,5 @@
 import { generateText, Output } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { getAnalisiSystemPrompt } from "./prompts";
 import { RisultatoAnalisiSchema } from "../types";
 import { generaContestoRiferimento, identificaCCNLDaPaga } from "../dati-riferimento";
@@ -21,7 +22,7 @@ export async function analizzaBustaPaga(
   const systemPrompt = getAnalisiSystemPrompt(contestoRiferimento);
 
   const { output, usage } = await generateText({
-    model: "openai/gpt-4o",
+    model: openai("gpt-4o"),
     output: Output.object({
       schema: RisultatoAnalisiSchema,
     }),

@@ -237,11 +237,18 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ risultato, accessLevel: pipelineAccessLevel });
   } catch (error) {
-    console.error("Analizza pipeline error:", error);
+    console.error("Analizza pipeline error:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      analisiId: id,
+      demoMode: DEMO_MODE,
+    });
 
     // Aggiorna stato DB a "error" per evitare record zombie
     try {
-      await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+      if (!DEMO_MODE) {
+        await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+      }
     } catch (dbError) {
       console.error("Errore aggiornamento stato error:", dbError);
     }

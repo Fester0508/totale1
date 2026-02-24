@@ -160,6 +160,10 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
     setProgressStep("upload");
     setError(null);
 
+    // Timeout protection
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
     try {
       const sessionId = uuidv4();
       const formData = new FormData();
@@ -170,7 +174,10 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -194,10 +201,16 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
         router.push(`/analisi/${data.id}?type=${documentType}`);
       }, 1200);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Errore durante il caricamento"
-      );
+      clearTimeout(timeoutId);
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Il caricamento ha impiegato troppo tempo. Riprova.");
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Errore durante il caricamento"
+        );
+      }
       setIsUploading(false);
+      setSelectedFile(null);
     }
   };
 
