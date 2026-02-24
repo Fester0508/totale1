@@ -251,7 +251,7 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
       {/* ── HEADER ── */}
       <motion.div
         variants={fadeUp}
-        className="bg-white dark:bg-card rounded-xl border shadow-sm p-6 md:p-8 transition-shadow duration-300 hover:shadow-md"
+        className="bg-card rounded-xl border shadow-sm p-6 md:p-8 transition-shadow duration-300 hover:shadow-md"
       >
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
           <div>
@@ -333,19 +333,13 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
           color="green"
         />
         {score != null && (
-          <div className="bg-white dark:bg-card rounded-xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default flex items-center gap-3">
-            <TrafficLight colore={risultato.semaforo_globale} size="md" />
-            <div>
-              <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
-                SCORE
-              </p>
-              <p className="text-3xl font-bold text-foreground mt-1">{score}</p>
-              <p className="text-xs text-muted-foreground">punti / 100</p>
-              <p className={`text-xs font-semibold mt-1 ${statusTextCls[scoreColor]}`}>
-                {scoreLabel}
-              </p>
-            </div>
-          </div>
+          <MetricCard
+            label="SCORE BUSTA PAGA"
+            value={String(score)}
+            unit="punti / 100"
+            status={scoreLabel}
+            color={scoreColor}
+          />
         )}
         <MetricCard
           label="RECUPERABILE"
@@ -360,7 +354,7 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
       {risultato.ferie_permessi && (
         <motion.div
           variants={fadeUp}
-          className="bg-white dark:bg-card rounded-xl border p-6 transition-shadow duration-300 hover:shadow-md"
+          className="bg-card rounded-xl border p-6 transition-shadow duration-300 hover:shadow-md"
         >
           <h2 className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium mb-4">
             Ferie, Permessi e Assenze
@@ -404,7 +398,7 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
       {risultato.tfr && (
         <motion.div
           variants={fadeUp}
-          className="bg-white dark:bg-card rounded-xl border p-6 transition-shadow duration-300 hover:shadow-md"
+          className="bg-card rounded-xl border p-6 transition-shadow duration-300 hover:shadow-md"
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
