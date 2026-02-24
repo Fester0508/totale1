@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
+import { SatispayButton } from "@/components/satispay-button";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -101,38 +102,42 @@ const steps = [
   { num: "03", title: "Referto", desc: "Ricevi un report chiaro con errori, anomalie e soldi da recuperare." },
 ];
 
-const plans = [
+  const plans = [
   {
-    name: "Free",
-    price: "0",
-    period: "",
-    desc: "Analisi base senza upload dati sensibili",
-    features: ["Verifica cedolino base", "Rilevamento anomalie comuni", "Report semplice", "Nessun dato salvato"],
-    highlight: false,
+  name: "Free",
+  price: "0",
+  period: "",
+  desc: "Analisi base senza upload dati sensibili",
+  features: ["Verifica cedolino base", "Rilevamento anomalie comuni", "Report semplice", "Nessun dato salvato"],
+  highlight: false,
+  productId: null as string | null,
   },
   {
-    name: "Pay-Per-Error",
-    price: "3,99",
-    period: "",
-    desc: "Paghi solo quando trovi anomalie",
-    features: ["Analisi completa", "Rilevamento anomalie avanzate", "Report dettagliato", "Storico cedolini"],
-    highlight: true,
+  name: "Pay-Per-Error",
+  price: "3,99",
+  period: "",
+  desc: "Paghi solo quando trovi anomalie",
+  features: ["Analisi completa", "Rilevamento anomalie avanzate", "Report dettagliato", "Storico cedolini"],
+  highlight: true,
+  productId: "pay-per-error",
   },
   {
-    name: "Ultra-Low",
-    price: "0,99",
-    period: "/mese",
-    desc: "Illimitato, meno di 1 euro al mese",
-    features: ["Analisi illimitata", "Alert automatici", "Storico completo", "Supporto email"],
-    highlight: false,
+  name: "Ultra-Low",
+  price: "0,99",
+  period: "/mese",
+  desc: "Illimitato, meno di 1 euro al mese",
+  features: ["Analisi illimitata", "Alert automatici", "Storico completo", "Supporto email"],
+  highlight: false,
+  productId: "ultra-low",
   },
   {
-    name: "Pro + Chatbot",
-    price: "9,99",
-    period: "/mese",
-    desc: "Chatbot specializzato in diritto del lavoro",
-    features: ["Tutto di Ultra-Low", "Chatbot 24/7", "Consulenza personalizzata", "Priorita' support"],
+  name: "Pro + Chatbot",
+  price: "9,99",
+  period: "/mese",
+  desc: "Chatbot specializzato in diritto del lavoro",
+  features: ["Tutto di Ultra-Low", "Chatbot 24/7", "Consulenza personalizzata", "Priorita' supporto"],
     highlight: false,
+    productId: "pro-chatbot",
   },
 ];
 
@@ -341,16 +346,20 @@ export default function Home() {
                     ))}
                   </ul>
 
-                  <Link
-                    href="/registrati"
-                    className={`mt-6 block text-center py-3 rounded-sm font-semibold text-sm uppercase tracking-wider transition-colors ${
-                      plan.highlight
-                        ? "bg-brand-amber text-accent-foreground hover:bg-brand-amber-dark"
-                        : "bg-brand-navy text-primary-foreground hover:bg-brand-navy-light"
-                    }`}
-                  >
-                    {plan.price === "0" ? "Inizia gratis" : "Scegli piano"}
-                  </Link>
+                  {plan.productId ? (
+                    <SatispayButton
+                      productId={plan.productId}
+                      label="Paga con Satispay"
+                      highlight={plan.highlight}
+                    />
+                  ) : (
+                    <Link
+                      href="#analizza"
+                      className="mt-6 block text-center py-3 rounded-sm font-semibold text-sm uppercase tracking-wider transition-colors bg-brand-navy text-primary-foreground hover:bg-brand-navy-light"
+                    >
+                      Inizia gratis
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
