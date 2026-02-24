@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
+import { UploadZone } from "@/components/upload-zone";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -10,8 +11,14 @@ const jsonLd = {
       "@type": "Organization",
       name: "LavoroChiaro",
       url: "https://lavoroinchiaro.it",
-      description: "Il primo servizio italiano di analisi buste paga con intelligenza artificiale.",
-      contactPoint: { "@type": "ContactPoint", email: "info@lavoroinchiaro.it", contactType: "customer service", availableLanguage: "Italian" },
+      description:
+        "Il primo servizio italiano di analisi buste paga con intelligenza artificiale.",
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "info@lavoroinchiaro.it",
+        contactType: "customer service",
+        availableLanguage: "Italian",
+      },
     },
     {
       "@type": "WebApplication",
@@ -20,10 +27,82 @@ const jsonLd = {
       applicationCategory: "FinanceApplication",
       operatingSystem: "All",
       offers: [
-        { "@type": "Offer", name: "Free", price: "0", priceCurrency: "EUR", description: "Analisi base senza upload dati sensibili" },
-        { "@type": "Offer", name: "Pay-Per-Error", price: "3.99", priceCurrency: "EUR", description: "Paghi solo quando trovi anomalie" },
-        { "@type": "Offer", name: "Ultra-Low", price: "0.99", priceCurrency: "EUR", description: "Analisi illimitata" },
-        { "@type": "Offer", name: "Pro + Chatbot", price: "9.99", priceCurrency: "EUR", description: "Chatbot specializzato in diritto del lavoro" },
+        {
+          "@type": "Offer",
+          name: "Free",
+          price: "0",
+          priceCurrency: "EUR",
+          description:
+            "1 analisi/mese, referto parziale (titoli anomalie visibili, dettagli bloccati)",
+        },
+        {
+          "@type": "Offer",
+          name: "Pay-Per-Error",
+          price: "3.99",
+          priceCurrency: "EUR",
+          description: "Analisi singola completa, paghi una tantum",
+        },
+        {
+          "@type": "Offer",
+          name: "Abbonamento",
+          price: "0.99",
+          priceCurrency: "EUR",
+          description:
+            "Analisi illimitate, storico 24 mesi, alert mensili. Bloccato 6 mesi poi 4,99/mese",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro + Chatbot",
+          price: "9.99",
+          priceCurrency: "EUR",
+          description:
+            "Tutto incluso + chatbot AI diritto del lavoro disponibile 24/7",
+        },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Quanto costa usare LavoroChiaro?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Il piano Free offre 1 analisi al mese con referto parziale, gratis. Pay-Per-Error costa 3,99 euro a singola analisi. L'abbonamento parte da 0,99 euro/mese (bloccato 6 mesi, poi 4,99/mese). Il piano Pro + Chatbot costa 9,99 euro/mese.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "I miei dati sono al sicuro?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Ogni documento viene crittografato con standard AES-256, trasmesso su connessione HTTPS e conservato su server europei conformi GDPR. Eliminazione automatica dopo 30 giorni.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Come funziona l'analisi della busta paga?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "L'AI estrae tutti i dati con OCR avanzato, poi confronta ogni voce con le tabelle CCNL, la normativa vigente e le aliquote fiscali aggiornate. Il referto arriva in circa 30 secondi.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Funziona con il mio contratto?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Supportiamo tutti i principali CCNL italiani: Commercio, Metalmeccanico, Pubblico Impiego, Sanita, Edilizia, Turismo e molti altri.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "L'analisi sostituisce un consulente del lavoro?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. LavoroChiaro e uno strumento informativo che ti permette di arrivare dal consulente gia informato, con un referto dettagliato delle anomalie trovate.",
+          },
+        },
       ],
     },
   ],
@@ -50,18 +129,104 @@ const steps = [
 ];
 
 const plans = [
-  { name: "Free", price: "0", period: "", desc: "Analisi base senza upload dati sensibili", features: ["Verifica cedolino base", "Rilevamento anomalie comuni", "Report semplice", "Nessun dato salvato"], highlight: false, cta: "Inizia gratis", href: "#analizza" },
-  { name: "Pay-Per-Error", price: "3,99", period: "", desc: "Paghi solo quando trovi anomalie", features: ["Analisi completa", "Rilevamento anomalie avanzate", "Report dettagliato", "Storico cedolini"], highlight: true, cta: "Scegli piano", href: "/registrati" },
-  { name: "Ultra-Low", price: "0,99", period: "/mese", desc: "Illimitato, meno di un euro al mese", features: ["Analisi illimitata", "Alert automatici", "Storico completo", "Supporto email"], highlight: false, cta: "Scegli piano", href: "/registrati" },
-  { name: "Pro + Chatbot", price: "9,99", period: "/mese", desc: "Chatbot specializzato in diritto del lavoro", features: ["Tutto di Ultra-Low", "Chatbot 24/7", "Consulenza personalizzata", "Supporto prioritario"], highlight: false, cta: "Scegli piano", href: "/registrati" },
+  {
+    name: "Free",
+    price: "0",
+    period: "",
+    desc: "1 analisi al mese con referto parziale",
+    features: [
+      "1 analisi / mese",
+      "Titoli anomalie visibili",
+      "Dettagli bloccati",
+      "Nessuna registrazione",
+    ],
+    highlight: false,
+    badge: null as string | null,
+    cta: "Inizia gratis",
+    href: "#analizza",
+  },
+  {
+    name: "Pay-Per-Error",
+    price: "3,99",
+    period: " una tantum",
+    desc: "Analisi singola completa, provalo una volta",
+    features: [
+      "Analisi completa singola",
+      "Referto dettagliato sbloccato",
+      "Composizione retribuzione",
+      "Raccomandazioni personalizzate",
+    ],
+    highlight: false,
+    badge: "PROVALO",
+    cta: "Sblocca analisi",
+    href: "/registrati",
+  },
+  {
+    name: "Abbonamento",
+    price: "0,99",
+    period: "/mese",
+    desc: "Bloccato 6 mesi, poi 4,99/mese. Disdici quando vuoi.",
+    features: [
+      "Analisi illimitate",
+      "Storico cedolini 24 mesi",
+      "Alert mensili automatici",
+      "Supporto email prioritario",
+    ],
+    highlight: true,
+    badge: "CONSIGLIATO",
+    cta: "Abbonati ora",
+    href: "/registrati",
+  },
+  {
+    name: "Pro + Chatbot",
+    price: "9,99",
+    period: "/mese",
+    desc: "Tutto incluso + assistente AI diritto del lavoro",
+    features: [
+      "Tutto dell\u2019Abbonamento",
+      "Chatbot AI 24/7",
+      "Consulenza personalizzata",
+      "Supporto prioritario",
+    ],
+    highlight: false,
+    badge: "PREMIUM",
+    cta: "Scegli Pro",
+    href: "/registrati",
+  },
 ];
 
 const faqs = [
-  { q: "Quanto costa usare LavoroChiaro?", a: "Il piano Free ti permette di fare analisi base gratis. I piani a pagamento partono da 0,99 euro al mese." },
-  { q: "I miei dati sono al sicuro?", a: "Ogni documento viene crittografato con standard AES-256, trasmesso su connessione HTTPS e conservato su server europei conformi GDPR." },
-  { q: "Come funziona l'analisi della busta paga?", a: "L'AI estrae tutti i dati con OCR avanzato, poi confronta ogni voce con le tabelle CCNL, la normativa vigente e le aliquote fiscali aggiornate." },
-  { q: "Funziona con il mio contratto?", a: "Supportiamo tutti i principali CCNL italiani: Commercio, Metalmeccanico, Pubblico Impiego, Sanita, Edilizia, Turismo e molti altri." },
-  { q: "L'analisi sostituisce un consulente del lavoro?", a: "No. LavoroChiaro e uno strumento informativo che ti permette di arrivare dal consulente gia informato." },
+  {
+    q: "Quanto costa usare LavoroChiaro?",
+    a: "Il piano Free offre 1 analisi al mese con referto parziale, gratis e senza registrazione. Pay-Per-Error costa 3,99\u00a0\u20ac a singola analisi. L\u2019abbonamento parte da 0,99\u00a0\u20ac/mese (bloccato 6 mesi, poi 4,99\u00a0\u20ac/mese). Il piano Pro + Chatbot costa 9,99\u00a0\u20ac/mese.",
+  },
+  {
+    q: "I miei dati sono al sicuro?",
+    a: "Ogni documento viene crittografato con standard AES-256, trasmesso su connessione HTTPS e conservato su server europei conformi GDPR. Eliminazione automatica dopo 30 giorni.",
+  },
+  {
+    q: "Come funziona l\u2019analisi della busta paga?",
+    a: "L\u2019AI estrae tutti i dati con OCR avanzato, poi confronta ogni voce con le tabelle CCNL, la normativa vigente e le aliquote fiscali aggiornate. Il referto arriva in circa 30 secondi.",
+  },
+  {
+    q: "Funziona con il mio contratto?",
+    a: "Supportiamo tutti i principali CCNL italiani: Commercio, Metalmeccanico, Pubblico Impiego, Sanit\u00e0, Edilizia, Turismo e molti altri.",
+  },
+  {
+    q: "L\u2019analisi sostituisce un consulente del lavoro?",
+    a: "No. LavoroChiaro \u00e8 uno strumento informativo che ti permette di arrivare dal consulente gi\u00e0 informato, con un referto dettagliato delle anomalie trovate.",
+  },
+  {
+    q: "Cosa significa referto parziale nel piano Free?",
+    a: "Nel piano Free vedi i titoli delle anomalie trovate (es. \u201CMaggiorazione straordinario notturno assente\u201D) ma i dettagli, gli importi e le raccomandazioni sono sfocati. Per sbloccarli puoi usare Pay-Per-Error o abbonarti.",
+  },
+];
+
+/* ── Mini Report Preview Data ── */
+const reportVoci = [
+  { codice: "ERR-001", cat: "STRAORDINARI", titolo: "Maggiorazione straordinario notturno assente", importo: "\u2212 \u20ac89,00", tipo: "errore" as const },
+  { codice: "AVV-001", cat: "IRPEF", titolo: "Detrazione figli a carico da aggiornare", importo: "~ \u20ac0", tipo: "avviso" as const },
+  { codice: "OK-001", cat: "INPS", titolo: "Aliquota INPS corretta", importo: "", tipo: "ok" as const },
 ];
 
 export default function Home() {
@@ -76,35 +241,125 @@ export default function Home() {
 
       <main>
         {/* ── HERO ── */}
-        <section className="relative flex flex-col items-center justify-center text-center px-6 pt-24 pb-20 md:pt-36 md:pb-28">
-          <p className="text-sm tracking-[0.25em] uppercase text-brand-gray mb-6">
-            [lavoroinchiaro.it]
-          </p>
+        <section className="relative px-6 pt-24 pb-16 md:pt-36 md:pb-24">
+          <div className="container mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] max-w-4xl text-balance">
-            <span className="text-brand-navy">La tua busta paga</span>
-            <br />
-            <span className="text-brand-amber">dice la verita?</span>
-          </h1>
+            {/* Left: copy */}
+            <div className="flex-1 text-center lg:text-left">
+              <p className="text-sm tracking-[0.25em] uppercase text-brand-gray mb-6">
+                [lavoroinchiaro.it]
+              </p>
 
-          <div className="w-24 h-[2px] bg-brand-amber mx-auto my-8" />
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-balance">
+                <span className="text-brand-navy">La tua busta paga</span>
+                <br />
+                <span className="text-brand-amber">dice la verit\u00e0?</span>
+              </h1>
 
-          <p className="text-lg md:text-xl text-foreground/70 max-w-xl leading-relaxed">
-            Il 67% dei lavoratori italiani ha almeno un errore in busta paga.
-            <br className="hidden md:block" />
-            Scoprilo in 30 secondi. Gratis.
-          </p>
+              <div className="w-24 h-[2px] bg-brand-amber my-8 mx-auto lg:mx-0" />
 
-          <Link
-            href="#analizza"
-            className="mt-10 inline-flex items-center justify-center bg-brand-navy text-primary-foreground font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-navy-light transition-colors"
-          >
-            Analizza la tua busta paga
-          </Link>
+              <p className="text-lg md:text-xl text-foreground/70 max-w-xl leading-relaxed mx-auto lg:mx-0">
+                Il 67% dei lavoratori italiani ha almeno un errore in busta paga.
+                <br className="hidden md:block" />
+                Scoprilo in 30 secondi. Gratis.
+              </p>
 
-          <p className="mt-4 text-xs text-muted-foreground">
-            Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
-          </p>
+              <Link
+                href="#analizza"
+                className="mt-10 inline-flex items-center justify-center bg-brand-navy text-primary-foreground font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-navy-light transition-colors"
+              >
+                Analizza la tua busta paga
+              </Link>
+
+              <p className="mt-4 text-xs text-muted-foreground">
+                Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
+              </p>
+            </div>
+
+            {/* Right: Mini Report Preview */}
+            <div className="flex-1 max-w-md w-full">
+              <div className="bg-card rounded-xl border shadow-lg overflow-hidden">
+                {/* Report header */}
+                <div className="p-5 border-b">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">Intestatario cedolino</p>
+                      <p className="text-lg font-bold text-foreground">Laura Ferretti</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-amber-200">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      Anomalie Rilevate
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    CCNL Metalmeccanici &middot; Livello 4&deg; &middot; Novembre 2024
+                  </p>
+                </div>
+
+                {/* Score bar */}
+                <div className="px-5 py-4 flex items-center gap-4 border-b bg-muted/30">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground font-medium">Score</span>
+                      <span className="text-sm font-bold text-brand-navy">61/100</span>
+                    </div>
+                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-green-500" style={{ width: "61%" }} />
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground">Recuperabile</p>
+                    <p className="text-lg font-bold text-brand-amber">&euro;234/mese</p>
+                  </div>
+                </div>
+
+                {/* Risultanze */}
+                <div className="p-5 space-y-3">
+                  {reportVoci.map((v) => {
+                    const border = v.tipo === "errore" ? "border-l-red-500" : v.tipo === "avviso" ? "border-l-amber-500" : "border-l-green-500";
+                    const badge = v.tipo === "errore" ? "bg-red-100 text-red-700" : v.tipo === "avviso" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700";
+                    const badgeLabel = v.tipo === "errore" ? "ERRORE" : v.tipo === "avviso" ? "VERIFICA" : "CORRETTO";
+                    return (
+                      <div key={v.codice} className={`border-l-4 ${border} rounded-r-lg bg-muted/20 p-3`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-muted-foreground font-mono">{v.codice} &middot; {v.cat}</p>
+                            <p className="text-sm font-semibold text-foreground leading-snug">{v.titolo}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            {v.importo && <p className="text-sm font-bold text-foreground">{v.importo}</p>}
+                            <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${badge}`}>{badgeLabel}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Blur overlay + CTA */}
+                <div className="relative">
+                  <div className="p-5 space-y-3 blur-[6px] select-none pointer-events-none" aria-hidden="true">
+                    <div className="border-l-4 border-l-red-500 rounded-r-lg bg-muted/20 p-3">
+                      <p className="text-[10px] text-muted-foreground font-mono">ERR-002 &middot; TFR</p>
+                      <p className="text-sm font-semibold text-foreground">Accantonamento TFR non aggiornato</p>
+                    </div>
+                    <div className="border-l-4 border-l-green-500 rounded-r-lg bg-muted/20 p-3">
+                      <p className="text-[10px] text-muted-foreground font-mono">OK-002 &middot; FERIE</p>
+                      <p className="text-sm font-semibold text-foreground">Residuo ferie calcolato correttamente</p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
+                    <Link
+                      href="#analizza"
+                      className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-sm px-8 py-3 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-md"
+                    >
+                      Sblocca dettagli
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* ── DIVIDER ── */}
@@ -147,24 +402,22 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── UPLOAD CTA ── */}
-        <section id="analizza" className="py-20 md:py-28">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-2xl md:text-4xl font-bold text-brand-navy mb-4">
-              Carica il tuo cedolino.
-            </h2>
-            <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-            <p className="text-muted-foreground max-w-md mx-auto mb-10 leading-relaxed">
-              PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
-            </p>
-
-            <Link
-              href="/registrati"
-              className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors"
-            >
-              Inizia ora
-            </Link>
-
+        {/* ── UPLOAD SECTION ── */}
+        <section id="analizza" className="py-20 md:py-28 scroll-mt-16">
+          <div className="container mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <h2 className="text-2xl md:text-4xl font-bold text-brand-navy mb-4">
+                Carica il tuo cedolino.
+              </h2>
+              <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
+              <p className="text-muted-foreground leading-relaxed">
+                PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
+              </p>
+              <p className="text-sm font-medium text-brand-navy mt-3">
+                1 analisi gratuita &mdash; senza registrazione
+              </p>
+            </div>
+            <UploadZone />
             <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
               <span>AES-256 encryption</span>
               <span className="hidden sm:inline">&middot;</span>
@@ -182,7 +435,10 @@ export default function Home() {
               La campagna
             </h2>
           </div>
-          <div className="flex gap-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+          <div
+            className="flex gap-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none" }}
+          >
             {editorialCards.map((card) => (
               <div
                 key={card.id}
@@ -206,24 +462,39 @@ export default function Home() {
         <section id="prezzi" className="py-16 md:py-24">
           <div className="container mx-auto px-6">
             <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
-              Prezzi
+              Prezzi trasparenti
             </h2>
-            <p className="text-center text-2xl md:text-3xl font-bold text-brand-navy mb-12">
-              Scegli il tuo piano
+            <p className="text-center text-2xl md:text-3xl font-bold text-brand-navy mb-12 text-balance">
+              Scegli come vuoi controllare la tua busta paga
             </p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {plans.map((plan) => (
                 <div
                   key={plan.name}
-                  className={`rounded-lg border p-6 flex flex-col ${
+                  className={`relative rounded-lg border p-6 flex flex-col transition-shadow hover:shadow-md ${
                     plan.highlight
-                      ? "border-brand-amber border-2 bg-card shadow-lg"
+                      ? "border-brand-amber border-2 bg-card shadow-lg ring-1 ring-brand-amber/20"
                       : "border-border bg-card"
                   }`}
                 >
-                  <h3 className="font-bold text-foreground text-lg">{plan.name}</h3>
-                  <div className="mt-2 mb-1">
+                  {/* Badge */}
+                  {plan.badge && (
+                    <span
+                      className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full ${
+                        plan.highlight
+                          ? "bg-brand-amber text-accent-foreground"
+                          : plan.badge === "PREMIUM"
+                          ? "bg-brand-navy text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {plan.badge}
+                    </span>
+                  )}
+
+                  <h3 className="font-bold text-foreground text-lg mt-1">{plan.name}</h3>
+                  <div className="mt-3 mb-1">
                     <span className="text-3xl font-bold text-brand-navy">
                       &euro;{plan.price}
                     </span>
@@ -231,12 +502,12 @@ export default function Home() {
                       <span className="text-sm text-muted-foreground">{plan.period}</span>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-6">{plan.desc}</p>
+                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{plan.desc}</p>
 
-                  <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground mb-3">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground mb-3 font-medium">
                     Cosa include
                   </p>
-                  <ul className="space-y-2 flex-1">
+                  <ul className="space-y-2.5 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-foreground">
                         <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
