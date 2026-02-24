@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { id, documentType = "busta-paga" } = await request.json();
+  const { id, documentType = "busta-paga", fileBase64, fileMime } = await request.json();
 
   if (!id) {
     return NextResponse.json(
@@ -57,9 +57,33 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Demo mode: simulate delay then return mock data
+  // Demo mode (no Supabase)
   if (DEMO_MODE) {
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    // Se c'e' il file E la chiave OpenAI -> analisi reale
+    if (fileBase64 && fileMime && process.env.OPENAI_API_KEY) {
+      try {
+        const { estraiDatiDocumento } = await import("@/lib/ai/ocr");
+        const { analizzaBustaPaga } = await import("@/lib/ai/analisi");
+
+        const fileBuffer = Buffer.from(fileBase64, "base64");
+
+        // Step 1: OCR
+        const ocrResult = await estraiDatiDocumento(fileBuffer, fileMime, documentType);
+        const datiEstratti = ocrResult.data;
+
+        // Step 2: Analisi
+        const analisiResult = await analizzaBustaPaga(datiEstratti);
+        const risultato = analisiResult.data;
+
+        return NextResponse.json({ risultato, accessLevel: "full" });
+      } catch (aiError) {
+        console.error("Demo AI analysis failed:", aiError);
+        // Fallback a mock data se l'AI fallisce
+      }
+    }
+
+    // Fallback: mock data (no OPENAI_API_KEY o errore AI)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const mockData = MOCK_DATA_MAP[(documentType as DocumentType)] || MOCK_DATA_MAP["busta-paga"];
     return NextResponse.json({ risultato: mockData, accessLevel: "full" });
   }
