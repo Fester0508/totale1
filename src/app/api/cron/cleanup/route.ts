@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     // 1. Find expired analysis records
     const { data: expiredRecords, error: fetchError } = await admin
       .from("analisi")
-      .select("id, file_url")
+      .select("id")
       .lt("expires_at", now);
 
     if (fetchError) {
@@ -36,30 +36,7 @@ export async function GET(req: Request) {
     }
 
     if (expiredRecords && expiredRecords.length > 0) {
-      // 2. Delete associated files from storage
-      const filePaths = expiredRecords
-        .map((r) => {
-          if (!r.file_url) return null;
-          // Extract storage path from URL
-          // URL format: .../storage/v1/object/public/documenti/path/to/file
-          const match = r.file_url.match(/\/documenti\/(.+)$/);
-          return match ? match[1] : null;
-        })
-        .filter(Boolean) as string[];
-
-      if (filePaths.length > 0) {
-        const { error: storageError } = await admin.storage
-          .from("documenti")
-          .remove(filePaths);
-
-        if (storageError) {
-          console.error("[GDPR Cleanup] Storage deletion error:", storageError.message);
-        } else {
-          deletedFiles = filePaths.length;
-        }
-      }
-
-      // 3. Delete analysis records
+      // 2. Delete analysis records (file_data is stored inline, deleted with the row)
       const expiredIds = expiredRecords.map((r) => r.id);
       const { error: deleteError } = await admin
         .from("analisi")

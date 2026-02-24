@@ -143,20 +143,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ risultato: analisi.risultato, accessLevel: completedAccessLevel });
   }
 
-  const { data: fileData, error: downloadError } = await supabase.storage
-    .from("documenti")
-    .download(analisi.file_url);
-
-  if (downloadError || !fileData) {
+  // Leggi file dal DB (salvato come base64)
+  if (!analisi.file_data) {
     await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
     return NextResponse.json(
-      { error: "Errore nel download del documento" },
+      { error: "File del documento non trovato" },
       { status: 500 }
     );
   }
 
-  const fileBuffer: Buffer<ArrayBuffer> = Buffer.from(await fileData.arrayBuffer());
-  const mimeType = analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg";
+  const fileBuffer: Buffer<ArrayBuffer> = Buffer.from(analisi.file_data, "base64");
+  const mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
 
   const { calcCosto } = await import("@/lib/ai/pricing");
 

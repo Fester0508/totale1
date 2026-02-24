@@ -39,8 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ id: analisiId });
     }
 
-    // --- Production mode: upload to Supabase ---
-    // Verifica autenticazione utente o free tier
+    // --- Production mode ---
     const { createClient: createAuthClient } = await import("@/lib/supabase/server");
     const supabaseAuth = await createAuthClient();
     const { data: { user } } = await supabaseAuth.auth.getUser();
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
       if (freeTierStatus.uses >= MAX_FREE_USES) {
         return NextResponse.json(
           {
-            error: "Hai già utilizzato la tua analisi gratuita. Registrati per continuare!",
+            error: "Hai gia' utilizzato la tua analisi gratuita. Registrati per continuare!",
             code: "FREE_LIMIT_REACHED",
           },
           { status: 403 }
@@ -65,54 +64,38 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { createAdminClient } = await import("@/lib/supabase/admin");
-    const { convertHeicToJpeg, optimizeImage, isHeic, isPdf, getFileExtension } =
+    const { convertHeicToJpeg, optimizeImage, isHeic, isPdf } =
       await import("@/lib/file-utils");
 
     let buffer: Buffer<ArrayBuffer> = Buffer.from(await file.arrayBuffer());
-    let finalExtension = getFileExtension(file.name);
     let finalMimeType = file.type;
 
-    // Converti HEIC → JPEG
+    // Converti HEIC -> JPEG
     if (isHeic(file.name, file.type)) {
       buffer = Buffer.from(await convertHeicToJpeg(buffer));
-      finalExtension = "jpg";
       finalMimeType = "image/jpeg";
     }
 
-    // Ottimizza tutte le immagini (incluse HEIC convertite)
+    // Ottimizza tutte le immagini
     if (!isPdf(file.type)) {
       buffer = Buffer.from(await optimizeImage(buffer));
-      finalExtension = "jpg";
       finalMimeType = "image/jpeg";
     }
 
+    // Salva file come base64 direttamente nel DB (no Storage dependency)
+    const fileBase64 = buffer.toString("base64");
+
+    const { createAdminClient } = await import("@/lib/supabase/admin");
     const supabase = createAdminClient();
-    const fileId = uuidv4();
-    const storagePath = `${sessionId}/${fileId}.${finalExtension}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("documenti")
-      .upload(storagePath, buffer, {
-        contentType: finalMimeType,
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.error("Upload error:", uploadError);
-      return NextResponse.json(
-        { error: "Errore durante il caricamento del file" },
-        { status: 500 }
-      );
-    }
 
     const analisiId = uuidv4();
     const { error: dbError } = await supabase.from("analisi").insert({
       id: analisiId,
       session_id: sessionId,
       user_id: userId,
-      file_url: storagePath,
-      file_type: isPdf(file.type) ? "pdf" : finalExtension,
+      file_data: fileBase64,
+      file_mime: finalMimeType,
+      file_type: isPdf(file.type) ? "pdf" : "jpg",
       stato: "processing",
     });
 

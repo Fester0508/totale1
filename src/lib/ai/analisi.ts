@@ -1,5 +1,4 @@
-import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { generateText, Output } from "ai";
 import { getAnalisiSystemPrompt } from "./prompts";
 import { RisultatoAnalisiSchema } from "../types";
 import { generaContestoRiferimento, identificaCCNLDaPaga } from "../dati-riferimento";
@@ -21,11 +20,11 @@ export async function analizzaBustaPaga(
   const contestoRiferimento = generaContestoRiferimento(ccnlNome, anno, candidatiCCNL);
   const systemPrompt = getAnalisiSystemPrompt(contestoRiferimento);
 
-  const { object, usage } = await generateObject({
-    model: openai("gpt-4o"),
-    schema: RisultatoAnalisiSchema,
-    schemaName: "RisultatoAnalisi",
-    schemaDescription: "Analisi dettagliata di una busta paga italiana con semaforo e anomalie",
+  const { output, usage } = await generateText({
+    model: "openai/gpt-4o",
+    output: Output.object({
+      schema: RisultatoAnalisiSchema,
+    }),
     messages: [
       {
         role: "system",
@@ -37,12 +36,15 @@ export async function analizzaBustaPaga(
       },
     ],
     maxOutputTokens: 8000,
-    maxRetries: 3,
     temperature: 0.1,
   });
 
+  if (!output) {
+    throw new Error("Analisi non ha prodotto risultati validi");
+  }
+
   return {
-    data: object,
+    data: output,
     tokensInput: usage.inputTokens ?? 0,
     tokensOutput: usage.outputTokens ?? 0,
     durata_ms: Date.now() - start,

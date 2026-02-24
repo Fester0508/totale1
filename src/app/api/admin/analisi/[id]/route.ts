@@ -21,15 +21,6 @@ export async function GET(
     );
   }
 
-  // Signed URL per il file (1 ora)
-  let signedUrl: string | null = null;
-  if (analisi.file_url) {
-    const { data: urlData } = await supabase.storage
-      .from("documenti")
-      .createSignedUrl(analisi.file_url, 3600);
-    signedUrl = urlData?.signedUrl ?? null;
-  }
-
   // AI usage per questa analisi
   const { data: aiUsage } = await supabase
     .from("ai_usage")
@@ -39,7 +30,6 @@ export async function GET(
 
   return NextResponse.json({
     analisi,
-    signed_url: signedUrl,
     ai_usage: aiUsage ?? [],
   });
 }
@@ -51,35 +41,7 @@ export async function DELETE(
   const { id } = await params;
   const supabase = createAdminClient();
 
-  // Recupera file_url prima di cancellare
-  const { data: analisi, error: fetchError } = await supabase
-    .from("analisi")
-    .select("file_url")
-    .eq("id", id)
-    .single();
-
-  if (fetchError || !analisi) {
-    return NextResponse.json(
-      { error: "Analisi non trovata" },
-      { status: 404 }
-    );
-  }
-
-  // Cancella file da storage
-  if (analisi.file_url) {
-    const { error: storageError } = await supabase.storage
-      .from("documenti")
-      .remove([analisi.file_url]);
-
-    if (storageError) {
-      return NextResponse.json(
-        { error: "Errore nella cancellazione del file" },
-        { status: 500 }
-      );
-    }
-  }
-
-  // Cancella riga da DB (ai_usage si gestisce con ON DELETE SET NULL)
+  // Cancella riga da DB (file_data inline, ai_usage ON DELETE SET NULL)
   const { error: deleteError } = await supabase
     .from("analisi")
     .delete()
