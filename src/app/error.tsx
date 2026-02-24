@@ -11,6 +11,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  console.log("[v0] Error boundary caught:", error?.message, error?.stack);
   return (
     <div className="min-h-screen bg-background">
       <Header />

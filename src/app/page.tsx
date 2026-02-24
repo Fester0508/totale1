@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
-import { SatispayButton } from "@/components/satispay-button";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -11,14 +10,8 @@ const jsonLd = {
       "@type": "Organization",
       name: "LavoroChiaro",
       url: "https://lavoroinchiaro.it",
-      description:
-        "Il primo servizio italiano di analisi buste paga con intelligenza artificiale.",
-      contactPoint: {
-        "@type": "ContactPoint",
-        email: "info@lavoroinchiaro.it",
-        contactType: "customer service",
-        availableLanguage: "Italian",
-      },
+      description: "Il primo servizio italiano di analisi buste paga con intelligenza artificiale.",
+      contactPoint: { "@type": "ContactPoint", email: "info@lavoroinchiaro.it", contactType: "customer service", availableLanguage: "Italian" },
     },
     {
       "@type": "WebApplication",
@@ -29,7 +22,7 @@ const jsonLd = {
       offers: [
         { "@type": "Offer", name: "Free", price: "0", priceCurrency: "EUR", description: "Analisi base senza upload dati sensibili" },
         { "@type": "Offer", name: "Pay-Per-Error", price: "3.99", priceCurrency: "EUR", description: "Paghi solo quando trovi anomalie" },
-        { "@type": "Offer", name: "Ultra-Low", price: "0.99", priceCurrency: "EUR", description: "Analisi illimitata, meno di 1 euro al mese" },
+        { "@type": "Offer", name: "Ultra-Low", price: "0.99", priceCurrency: "EUR", description: "Analisi illimitata" },
         { "@type": "Offer", name: "Pro + Chatbot", price: "9.99", priceCurrency: "EUR", description: "Chatbot specializzato in diritto del lavoro" },
       ],
     },
@@ -38,15 +31,15 @@ const jsonLd = {
 
 /* ── Data ── */
 const editorialCards = [
-  { id: "01", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/01%3A27-4hhvjGvYVtn2ZV2yIGpxjLQYtFtqdk.png", alt: "Anche Cesare si fido'." },
-  { id: "02", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/02%3A27-gNwJRfl1zEK5BdG62tmClIVz5AhVpq.png", alt: "Bruto tradi' in silenzio." },
+  { id: "01", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/01%3A27-4hhvjGvYVtn2ZV2yIGpxjLQYtFtqdk.png", alt: "Anche Cesare si fido." },
+  { id: "02", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/02%3A27-gNwJRfl1zEK5BdG62tmClIVz5AhVpq.png", alt: "Bruto tradi in silenzio." },
   { id: "03", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/03%3A27-lril61lPTPSMmIpaoXdNRgKWgk0eor.png", alt: "Il cavallo di Troia era un regalo." },
   { id: "04", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/04%3A27-UQJTFqEzKzZtnFc2Y6709neWpMe287.png", alt: "Giuda lo fece per soldi." },
-  { id: "05", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/05%3A27-1tApasQNO8drFjcipRz1o6qbNX1d8t.png", alt: "Il 15 marzo cambio' tutto." },
+  { id: "05", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/05%3A27-1tApasQNO8drFjcipRz1o6qbNX1d8t.png", alt: "Il 15 marzo cambio tutto." },
   { id: "06", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/06%3A27-bxw7DjzWQOxTqzPmB3qMosvxIZeUFz.png", alt: "Watergate era un documento." },
-  { id: "07", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/07%3A27-pkz4WJ6vEApF7VYc6t86wnhGJdktXr.png", alt: "Enrico VIII cambio' le regole." },
+  { id: "07", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/07%3A27-pkz4WJ6vEApF7VYc6t86wnhGJdktXr.png", alt: "Enrico VIII cambio le regole." },
   { id: "08", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/08%3A27-t8DSwOBfIHQjmUDsTxEihMUCfGvEKR.png", alt: "Suarez morse Chiellini." },
-  { id: "09", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/09%3A27-wDapLUXTPJl9FnPFQXJQ6QT735QKRc.png", alt: "Le telefonate c'erano." },
+  { id: "09", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/09%3A27-wDapLUXTPJl9FnPFQXJQ6QT735QKRc.png", alt: "Le telefonate cerano." },
   { id: "10", src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/10%3A27-bWbytmIT2IVy0d4jB2febj1wRIUfwf.png", alt: "7 Tour. Tutte bugie." },
 ];
 
@@ -57,42 +50,10 @@ const steps = [
 ];
 
 const plans = [
-  {
-    name: "Free",
-    price: "0",
-    period: "",
-    desc: "Analisi base senza upload dati sensibili",
-    features: ["Verifica cedolino base", "Rilevamento anomalie comuni", "Report semplice", "Nessun dato salvato"],
-    highlight: false,
-    productId: null as string | null,
-  },
-  {
-    name: "Pay-Per-Error",
-    price: "3,99",
-    period: "",
-    desc: "Paghi solo quando trovi anomalie",
-    features: ["Analisi completa", "Rilevamento anomalie avanzate", "Report dettagliato", "Storico cedolini"],
-    highlight: true,
-    productId: "pay-per-error",
-  },
-  {
-    name: "Ultra-Low",
-    price: "0,99",
-    period: "/mese",
-    desc: "Illimitato, meno di 1 euro al mese",
-    features: ["Analisi illimitata", "Alert automatici", "Storico completo", "Supporto email"],
-    highlight: false,
-    productId: "ultra-low",
-  },
-  {
-    name: "Pro + Chatbot",
-    price: "9,99",
-    period: "/mese",
-    desc: "Chatbot specializzato in diritto del lavoro",
-    features: ["Tutto di Ultra-Low", "Chatbot 24/7", "Consulenza personalizzata", "Priorita supporto"],
-    highlight: false,
-    productId: "pro-chatbot",
-  },
+  { name: "Free", price: "0", period: "", desc: "Analisi base senza upload dati sensibili", features: ["Verifica cedolino base", "Rilevamento anomalie comuni", "Report semplice", "Nessun dato salvato"], highlight: false, cta: "Inizia gratis", href: "#analizza" },
+  { name: "Pay-Per-Error", price: "3,99", period: "", desc: "Paghi solo quando trovi anomalie", features: ["Analisi completa", "Rilevamento anomalie avanzate", "Report dettagliato", "Storico cedolini"], highlight: true, cta: "Scegli piano", href: "/registrati" },
+  { name: "Ultra-Low", price: "0,99", period: "/mese", desc: "Illimitato, meno di un euro al mese", features: ["Analisi illimitata", "Alert automatici", "Storico completo", "Supporto email"], highlight: false, cta: "Scegli piano", href: "/registrati" },
+  { name: "Pro + Chatbot", price: "9,99", period: "/mese", desc: "Chatbot specializzato in diritto del lavoro", features: ["Tutto di Ultra-Low", "Chatbot 24/7", "Consulenza personalizzata", "Supporto prioritario"], highlight: false, cta: "Scegli piano", href: "/registrati" },
 ];
 
 const faqs = [
@@ -117,37 +78,37 @@ export default function Home() {
         {/* ── HERO ── */}
         <section className="relative flex flex-col items-center justify-center text-center px-6 pt-24 pb-20 md:pt-36 md:pb-28">
           <p className="text-sm tracking-[0.25em] uppercase text-brand-gray mb-6">
-            {'[lavoroinchiaro.it]'}
+            [lavoroinchiaro.it]
           </p>
 
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] max-w-4xl text-balance">
             <span className="text-brand-navy">La tua busta paga</span>
             <br />
-            <span className="text-brand-amber">{'dice la verita?'}</span>
+            <span className="text-brand-amber">dice la verita?</span>
           </h1>
 
           <div className="w-24 h-[2px] bg-brand-amber mx-auto my-8" />
 
           <p className="text-lg md:text-xl text-foreground/70 max-w-xl leading-relaxed">
-            {'Il 67% dei lavoratori italiani ha almeno un errore in busta paga.'}
+            Il 67% dei lavoratori italiani ha almeno un errore in busta paga.
             <br className="hidden md:block" />
-            {'Scoprilo in 30 secondi. Gratis.'}
+            Scoprilo in 30 secondi. Gratis.
           </p>
 
           <Link
             href="#analizza"
-            className="mt-10 inline-flex items-center justify-center bg-brand-navy text-primary-foreground font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-navy-light transition-colors active:scale-[0.97]"
+            className="mt-10 inline-flex items-center justify-center bg-brand-navy text-primary-foreground font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-navy-light transition-colors"
           >
             Analizza la tua busta paga
           </Link>
 
           <p className="mt-4 text-xs text-muted-foreground">
-            {'Nessuna registrazione richiesta \u00b7 Conforme GDPR \u00b7 30 secondi'}
+            Nessuna registrazione richiesta &middot; Conforme GDPR &middot; 30 secondi
           </p>
         </section>
 
         {/* ── DIVIDER ── */}
-        <div className="w-full max-w-4xl mx-auto h-[1px] bg-brand-amber/30" />
+        <div className="w-full max-w-4xl mx-auto h-px bg-brand-amber/30" />
 
         {/* ── STATS ── */}
         <section className="py-16 md:py-20">
@@ -156,7 +117,7 @@ export default function Home() {
               {[
                 { value: "67%", label: "dei cedolini ha errori" },
                 { value: "30s", label: "tempo medio di analisi" },
-                { value: "234", label: "euro medi recuperabili" },
+                { value: "\u20ac234", label: "euro medi recuperabili" },
                 { value: "50+", label: "CCNL supportati" },
               ].map((s) => (
                 <div key={s.label}>
@@ -194,21 +155,21 @@ export default function Home() {
             </h2>
             <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
             <p className="text-muted-foreground max-w-md mx-auto mb-10 leading-relaxed">
-              {"PDF, foto o scansione. L'analisi parte in automatico e il referto arriva in 30 secondi."}
+              PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
             </p>
 
             <Link
               href="/registrati"
-              className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors active:scale-[0.97]"
+              className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors"
             >
               Inizia ora
             </Link>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
               <span>AES-256 encryption</span>
-              <span className="hidden sm:inline">{'\u00b7'}</span>
+              <span className="hidden sm:inline">&middot;</span>
               <span>Server EU / GDPR</span>
-              <span className="hidden sm:inline">{'\u00b7'}</span>
+              <span className="hidden sm:inline">&middot;</span>
               <span>Eliminazione automatica 30gg</span>
             </div>
           </div>
@@ -221,7 +182,7 @@ export default function Home() {
               La campagna
             </h2>
           </div>
-          <div className="flex gap-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: "none" }}>
+          <div className="flex gap-6 px-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: "none" }}>
             {editorialCards.map((card) => (
               <div
                 key={card.id}
@@ -264,7 +225,7 @@ export default function Home() {
                   <h3 className="font-bold text-foreground text-lg">{plan.name}</h3>
                   <div className="mt-2 mb-1">
                     <span className="text-3xl font-bold text-brand-navy">
-                      {'\u20ac'}{plan.price}
+                      &euro;{plan.price}
                     </span>
                     {plan.period && (
                       <span className="text-sm text-muted-foreground">{plan.period}</span>
@@ -273,31 +234,29 @@ export default function Home() {
                   <p className="text-sm text-muted-foreground mb-6">{plan.desc}</p>
 
                   <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground mb-3">
-                    Features
+                    Cosa include
                   </p>
                   <ul className="space-y-2 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-foreground">
-                        <span className="text-green-600 mt-0.5 shrink-0">{'\u2713'}</span>
+                        <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
                         {f}
                       </li>
                     ))}
                   </ul>
 
-                  {plan.productId ? (
-                    <SatispayButton
-                      productId={plan.productId}
-                      label="Paga con Satispay"
-                      highlight={plan.highlight}
-                    />
-                  ) : (
-                    <Link
-                      href="#analizza"
-                      className="mt-6 block text-center py-3 rounded-sm font-semibold text-sm uppercase tracking-wider transition-colors bg-brand-navy text-primary-foreground hover:bg-brand-navy-light"
-                    >
-                      Inizia gratis
-                    </Link>
-                  )}
+                  <Link
+                    href={plan.href}
+                    className={`mt-6 block text-center py-3 rounded-sm font-semibold text-sm uppercase tracking-wider transition-colors ${
+                      plan.highlight
+                        ? "bg-brand-amber text-accent-foreground hover:bg-brand-amber-dark"
+                        : "bg-brand-navy text-primary-foreground hover:bg-brand-navy-light"
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
                 </div>
               ))}
             </div>
@@ -310,9 +269,9 @@ export default function Home() {
             <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
               Domande frequenti
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-0">
               {faqs.map((faq) => (
-                <details key={faq.q} className="group border-b border-border/50 pb-6">
+                <details key={faq.q} className="group border-b border-border/50 py-5">
                   <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-foreground hover:text-brand-navy transition-colors">
                     {faq.q}
                     <span className="text-brand-amber ml-4 text-xl group-open:rotate-45 transition-transform">+</span>
@@ -339,7 +298,7 @@ export default function Home() {
               </p>
               <Link
                 href="#analizza"
-                className="inline-flex items-center justify-center bg-background text-brand-navy font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-background/90 transition-colors active:scale-[0.97]"
+                className="inline-flex items-center justify-center bg-background text-brand-navy font-bold text-lg px-12 py-5 rounded-sm uppercase tracking-wider hover:bg-background/90 transition-colors"
               >
                 Analizza ora
               </Link>

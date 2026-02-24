@@ -516,7 +516,7 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
 
       {/* ── BOTTOM SUMMARY ── */}
       <motion.div variants={fadeUp} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-card rounded-xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+        <div className="bg-card rounded-xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
             Errori Confermati
           </p>
@@ -527,7 +527,7 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
               : "Nessun errore confermato"}
           </p>
         </div>
-        <div className="bg-white dark:bg-card rounded-xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+        <div className="bg-card rounded-xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
             Voci Regolari
           </p>
@@ -537,15 +537,15 @@ export function AnalysisResult({ risultato, id }: AnalysisResultProps) {
             contratto applicato
           </p>
         </div>
-        <div className="bg-green-800 dark:bg-green-900 rounded-xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-green-700 dark:hover:bg-green-800">
-          <p className="text-[11px] tracking-[0.15em] uppercase text-green-200 font-medium">
+        <div className="bg-brand-amber rounded-xl p-6 text-accent-foreground transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-brand-amber-dark">
+          <p className="text-[11px] tracking-[0.15em] uppercase text-accent-foreground/70 font-medium">
             Importo Recuperabile
           </p>
           <p className="text-4xl font-bold mt-2">
             &euro; {importoRecuperabile.toLocaleString("it-IT", { minimumFractionDigits: 2 })}
           </p>
-          <p className="text-sm text-green-200 mt-2">
-            Stima basata sulle anomalie rilevate — soggetta a verifica del consulente del lavoro
+          <p className="text-sm text-accent-foreground/80 mt-2">
+            Stima basata sulle anomalie rilevate &mdash; soggetta a verifica del consulente del lavoro
           </p>
         </div>
       </motion.div>
@@ -626,7 +626,7 @@ function MetricCard({
   };
 
   return (
-    <div className="bg-white dark:bg-card rounded-xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default">
+    <div className="bg-card rounded-xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default">
       <p className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground font-medium">
         {label}
       </p>
@@ -662,7 +662,7 @@ function RisultanzaItem({
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.06, duration: 0.4 }}
-        className={`bg-white dark:bg-card rounded-lg border border-l-4 ${cfg.border} ${cfg.hoverBg} transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-0.5`}
+        className={`bg-card rounded-lg border border-l-4 ${cfg.border} ${cfg.hoverBg} transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-0.5`}
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
         onClick={() => setExpanded((p) => !p)}

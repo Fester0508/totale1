@@ -39,7 +39,7 @@ export function RetribuzioneChart({ retribuzione }: RetribuzioneChartProps) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="bg-white dark:bg-card rounded-xl border p-5">
+    <div className="bg-card rounded-xl border p-5">
       <div className="flex flex-col items-center">
         <div className="w-44 h-44 relative">
           <ResponsiveContainer width="100%" height="100%">
