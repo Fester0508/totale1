@@ -10,6 +10,7 @@ import { TestimonialsSection } from "@/components/landing/testimonials-section";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { FAQSection } from "@/components/landing/faq-section";
 import { SocialProofBanner } from "@/components/landing/social-proof-banner";
+import { EditorialCarouselSection } from "@/components/landing/editorial-carousel-section";
 import { FinalCTASection } from "@/components/landing/final-cta-section";
 import { Footer } from "@/components/landing/footer";
 import { StickyCTA } from "@/components/landing/sticky-cta";
@@ -157,7 +158,7 @@ export default function Home() {
         {/* Upload Section */}
         <section
           id="analizza"
-          className="py-20 md:py-24 bg-gradient-to-b from-blue-50/50 to-white dark:from-background dark:to-background"
+          className="py-20 md:py-24 bg-card"
         >
           <div className="container mx-auto px-4">
             <div className="text-center max-w-2xl mx-auto mb-10">
@@ -175,6 +176,7 @@ export default function Home() {
         </section>
 
         <TestimonialsSection />
+        <EditorialCarouselSection />
         <PricingSection />
         <FAQSection />
         <SocialProofBanner />

@@ -38,7 +38,7 @@ export function StickyCTA() {
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden p-3 bg-gradient-to-t from-background via-background to-transparent">
       <button
         onClick={scrollToUpload}
-        className="w-full bg-brand-navy hover:bg-brand-navy-light text-white font-semibold py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-brand-navy/30 transition-all active:scale-[0.98]"
+        className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground font-semibold py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-brand-navy/30 transition-all active:scale-[0.98]"
       >
         Analizza gratis
         <ArrowRight className="h-4 w-4" />

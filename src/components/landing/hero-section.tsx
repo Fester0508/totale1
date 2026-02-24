@@ -12,14 +12,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative dark:bg-background"
-      style={{
-        backgroundImage: `
-          radial-gradient(ellipse 600px 600px at top right, rgba(217,119,6,0.05), transparent 70%),
-          radial-gradient(ellipse 600px 600px at bottom left, rgba(59,130,246,0.05), transparent 70%),
-          linear-gradient(to bottom, rgba(239,246,255,0.5), rgba(239,246,255,0.3), white)
-        `,
-      }}
+      className="relative bg-background"
     >
       <div className="container mx-auto px-4 pt-12 pb-16 md:pt-20 md:pb-28 relative z-10">
         <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
@@ -65,7 +58,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 onClick={scrollToUpload}
-                className="bg-brand-navy hover:bg-brand-navy-light text-white rounded-full px-8 py-6 text-base font-semibold gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-brand-navy hover:bg-brand-navy-light text-primary-foreground rounded-full px-8 py-6 text-base font-semibold gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Camera className="h-5 w-5" />
                 Controlla il tuo documento ora
@@ -94,7 +87,7 @@ export function HeroSection() {
                   {[...Array(5)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 border-2 border-white dark:border-background flex items-center justify-center"
+                      className="h-8 w-8 rounded-full bg-card border-2 border-background flex items-center justify-center"
                     >
                       <span className="text-xs font-medium text-brand-navy">
                         {["M", "L", "A", "G", "S"][i]}

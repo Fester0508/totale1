@@ -13,11 +13,9 @@ export function FinalCTASection() {
     <section className="py-20 md:py-24">
       <div className="container mx-auto px-4 max-w-3xl">
         <AnimatedSection>
-          <div className="bg-gradient-to-br from-brand-navy to-[#152a45] dark:from-brand-navy/30 dark:to-brand-navy/10 rounded-3xl p-10 md:p-16 text-center relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-amber/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-brand-navy rounded-2xl p-10 md:p-16 text-center relative overflow-hidden">
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-amber/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
               <div className="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse-soft">
@@ -39,7 +37,7 @@ export function FinalCTASection() {
               <Button
                 size="lg"
                 onClick={scrollToUpload}
-                className="bg-white text-brand-navy hover:bg-white/90 rounded-full px-8 py-6 text-base font-semibold gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-background text-brand-navy hover:bg-background/90 rounded-full px-8 py-6 text-base font-semibold gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Controlla il tuo documento
                 <ArrowRight className="h-4 w-4" />

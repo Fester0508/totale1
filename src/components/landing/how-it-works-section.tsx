@@ -10,7 +10,7 @@ const steps = [
     title: "Fai una foto",
     description:
       "Fotografa la busta paga, scansiona il documento o carica direttamente il file PDF. Accettiamo qualsiasi formato: PDF, JPG, PNG, persino HEIC da iPhone. L'AI legge anche foto mosse e documenti piegati.",
-    bgClass: "bg-blue-100/60 dark:bg-blue-950/30",
+    bgClass: "bg-background",
   },
   {
     number: 2,
@@ -18,7 +18,7 @@ const steps = [
     title: "Noi controlliamo tutto",
     description:
       "In 30 secondi l'intelligenza artificiale estrae ogni dato con OCR avanzato e lo confronta con le tabelle CCNL, le aliquote fiscali aggiornate e la normativa italiana vigente. Verifichiamo stipendio, trattenute, contributi, TFR, ferie e straordinari.",
-    bgClass: "bg-orange-100/50 dark:bg-orange-950/20",
+    bgClass: "bg-brand-amber/5",
   },
   {
     number: 3,
@@ -26,13 +26,13 @@ const steps = [
     title: "Ti spieghiamo tutto",
     description:
       "Ricevi un report dettagliato con il sistema a semafori: verde (tutto ok), giallo (da verificare), rosso (anomalia). Ogni voce ha una spiegazione chiara in italiano, senza tecnicismi. Se hai dubbi, chiedi al chatbot AI integrato.",
-    bgClass: "bg-gray-100/60 dark:bg-gray-800/30",
+    bgClass: "bg-muted/50",
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20 md:py-28 bg-white dark:bg-background">
+    <section className="py-20 md:py-28 bg-card">
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <div className="text-center mb-6">
@@ -67,7 +67,7 @@ export function HowItWorksSection() {
                   <div
                     className={`${step.bgClass} rounded-2xl p-8 text-center w-full transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1.5`}
                   >
-                    <div className="h-14 w-14 bg-white dark:bg-card rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-110">
+                    <div className="h-14 w-14 bg-card rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-110">
                       <step.icon className="h-7 w-7 text-brand-navy transition-colors duration-300 group-hover:text-brand-amber" />
                     </div>
                     <h3 className="font-bold text-lg text-brand-navy mb-3">

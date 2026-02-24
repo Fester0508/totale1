@@ -40,7 +40,7 @@ export function PricingSection() {
   return (
     <section
       id="prezzi"
-      className="py-20 md:py-28 bg-gradient-to-b from-slate-50 to-white dark:from-muted/10 dark:to-background"
+      className="py-20 md:py-28 bg-background"
     >
       <div className="container mx-auto px-4">
         <AnimatedSection>
@@ -67,7 +67,7 @@ export function PricingSection() {
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
           {/* Free Plan */}
           <AnimatedSection delay={0.2}>
-            <div className="group bg-white dark:bg-card rounded-2xl border border-border/60 p-8 h-full flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-border">
+            <div className="group bg-card rounded-2xl border border-border/60 p-8 h-full flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-border">
               <div className="mb-6">
                 <p className="text-sm font-semibold text-muted-foreground italic">
                   Free
@@ -112,10 +112,10 @@ export function PricingSection() {
 
           {/* Pro Plan */}
           <AnimatedSection delay={0.35}>
-            <div className="group relative bg-white dark:bg-card rounded-2xl border-2 border-brand-amber p-8 h-full flex flex-col shadow-lg shadow-brand-amber/10 transition-all duration-300 hover:shadow-xl hover:shadow-brand-amber/20 hover:-translate-y-1.5">
+            <div className="group relative bg-card rounded-2xl border-2 border-brand-amber p-8 h-full flex flex-col shadow-lg shadow-brand-amber/10 transition-all duration-300 hover:shadow-xl hover:shadow-brand-amber/20 hover:-translate-y-1.5">
               {/* Badge */}
               <div className="absolute -top-0 left-8">
-                <div className="inline-flex items-center gap-1.5 bg-white dark:bg-card border-2 border-brand-amber rounded-full px-4 py-1.5 -translate-y-1/2">
+                <div className="inline-flex items-center gap-1.5 bg-card border-2 border-brand-amber rounded-full px-4 py-1.5 -translate-y-1/2">
                   <Crown className="h-4 w-4 text-brand-amber" />
                   <span className="text-xs font-bold text-brand-amber uppercase tracking-wide">
                     Consigliato
@@ -153,7 +153,7 @@ export function PricingSection() {
               <Button
                 size="lg"
                 asChild
-                className="w-full mt-8 bg-brand-amber hover:bg-brand-amber-dark text-white rounded-xl py-6 font-semibold gap-2 shadow-lg hover:shadow-xl transition-all"
+                className="w-full mt-8 bg-brand-amber hover:bg-brand-amber-dark text-accent-foreground rounded-xl py-6 font-semibold gap-2 shadow-lg hover:shadow-xl transition-all"
               >
                 <a href="#analizza">
                   <ArrowRight className="h-4 w-4" />

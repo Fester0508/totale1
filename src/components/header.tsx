@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  FileSearch,
   Moon,
   Sun,
   Menu,
@@ -78,12 +77,13 @@ export function Header() {
   }
 
   return (
-    <header className="border-b bg-white/80 dark:bg-background/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-2">
-          <FileSearch className="h-7 w-7 text-brand-navy transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" />
-          <span className="text-xl font-bold text-brand-navy transition-colors duration-300">
-            Lavoro<span className="text-brand-amber group-hover:text-brand-amber-dark transition-colors duration-300">Chiaro</span>
+        <Link href="/" className="group flex items-center gap-1.5">
+          <span className="text-xl font-bold uppercase tracking-wider transition-colors duration-300">
+            <span className="text-brand-navy">LAVORO</span>
+            <span className="text-brand-gray mx-1 text-lg font-normal">IN</span>
+            <span className="text-brand-amber group-hover:text-brand-amber-dark transition-colors duration-300">CHIARO</span>
           </span>
         </Link>
 
@@ -139,7 +139,7 @@ export function Header() {
               variant="default"
               size="sm"
               asChild
-              className="hidden sm:inline-flex bg-brand-navy hover:bg-brand-navy-light text-white"
+              className="hidden sm:inline-flex bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
             >
               <Link href="/login">Accedi</Link>
             </Button>
@@ -162,7 +162,7 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t bg-white dark:bg-background px-4 py-4 space-y-1">
+        <div className="md:hidden border-t bg-background px-4 py-4 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -222,7 +222,7 @@ export function Header() {
                 variant="default"
                 size="sm"
                 asChild
-                className="w-full bg-brand-navy hover:bg-brand-navy-light text-white"
+                className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
               >
                 <Link href="/login" onClick={() => setMobileOpen(false)}>
                   Accedi

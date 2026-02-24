@@ -2,7 +2,7 @@ import { CheckCircle, AlertTriangle, Lightbulb } from "lucide-react";
 
 export function ReportPreview() {
   return (
-    <div className="bg-white dark:bg-card rounded-2xl shadow-xl border border-border/50 overflow-hidden animate-float">
+    <div className="bg-card rounded-2xl shadow-xl border border-border/50 overflow-hidden animate-float">
       {/* Header */}
       <div className="px-6 pt-5 pb-3">
         <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
@@ -60,7 +60,7 @@ export function ReportPreview() {
       </div>
 
       {/* Tip */}
-      <div className="m-4 mt-2 bg-amber-50 dark:bg-amber-950/30 rounded-xl p-3.5 flex gap-2.5">
+      <div className="m-4 mt-2 bg-brand-amber-light rounded-xl p-3.5 flex gap-2.5">
         <Lightbulb className="h-4 w-4 text-brand-amber shrink-0 mt-0.5" />
         <p className="text-xs text-foreground/80 leading-relaxed">
           <span className="font-semibold">Consiglio:</span> Hai diritto a 2

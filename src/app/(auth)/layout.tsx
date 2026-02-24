@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FileSearch } from "lucide-react";
 
 export default function AuthLayout({
   children,
@@ -7,11 +6,12 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 p-4">
-      <Link href="/" className="flex items-center gap-2 mb-8">
-        <FileSearch className="h-8 w-8 text-brand-navy" />
-        <span className="text-2xl font-bold text-brand-navy">
-          Lavoro<span className="text-brand-amber">Chiaro</span>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+      <Link href="/" className="flex items-center gap-1 mb-8">
+        <span className="text-2xl font-bold uppercase tracking-wider">
+          <span className="text-brand-navy">LAVORO</span>
+          <span className="text-brand-gray mx-1 text-xl font-normal">IN</span>
+          <span className="text-brand-amber">CHIARO</span>
         </span>
       </Link>
       {children}
