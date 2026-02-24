@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { RisultatoAnalisi, StatoAnalisi } from "@/lib/types";
+import type { AccessLevel } from "@/hooks/use-paywall";
 
 interface UseAnalysisReturn {
   stato: StatoAnalisi;
   risultato: RisultatoAnalisi | null;
   error: string | null;
+  accessLevel: AccessLevel;
   startAnalysis: () => void;
 }
 
@@ -17,6 +19,7 @@ export function useAnalysis(
   const [stato, setStato] = useState<StatoAnalisi>("processing");
   const [risultato, setRisultato] = useState<RisultatoAnalisi | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [accessLevel, setAccessLevel] = useState<AccessLevel>("full");
   const hasStarted = useRef(false);
   const isProcessing = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -53,6 +56,7 @@ export function useAnalysis(
       }
 
       setRisultato(data.risultato);
+      if (data.accessLevel) setAccessLevel(data.accessLevel);
       setStato("completed");
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
@@ -79,5 +83,5 @@ export function useAnalysis(
     };
   }, []);
 
-  return { stato, risultato, error, startAnalysis };
+  return { stato, risultato, error, accessLevel, startAnalysis };
 }

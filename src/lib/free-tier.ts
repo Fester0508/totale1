@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
+export const MAX_FREE_FULL = 1; // prima analisi = full access (completa e gratuita)
 export const MAX_FREE_USES = process.env.NODE_ENV === "development" ? Infinity : 1;
 export const FREE_TIER_COOKIE = "lc_free_tier";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 giorni

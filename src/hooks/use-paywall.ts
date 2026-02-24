@@ -7,11 +7,11 @@ export function usePaywall(accessLevel: AccessLevel) {
   const isPaid = accessLevel === "full";
   return {
     canSeeScore: isPaid,
-    canSeeImpact: isPaid,
-    canSeeDescription: isPaid,
-    canSeeNorma: isPaid,
-    canSeeDonut: isPaid,
-    canSeeRecommendations: isPaid,
+    canSeeImpact: true,        // Importi SEMPRE visibili (gancio conversione)
+    canSeeDescription: isPaid,  // Spiegazioni dettagliate: bloccate per free
+    canSeeNorma: isPaid,        // Riferimenti normativi: bloccati per free
+    canSeeDonut: isPaid,        // Donut chart: bloccato per free
+    canSeeRecommendations: isPaid, // Raccomandazioni: bloccate per free
     canSeePdf: isPaid,
     isPaid,
   };
