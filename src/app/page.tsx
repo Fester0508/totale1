@@ -387,7 +387,7 @@ export default function Home() {
                       href="#analizza"
                       className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-sm px-8 py-3 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-md"
                     >
-                      Sblocca dettagli
+                      Analizza la tua busta paga
                     </Link>
                   </div>
                 </div>

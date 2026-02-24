@@ -33,6 +33,9 @@ export function useAnalysis(
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    // Timeout 60 secondi
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+
     isProcessing.current = true;
 
     try {
@@ -49,6 +52,8 @@ export function useAnalysis(
         signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -59,11 +64,16 @@ export function useAnalysis(
       if (data.accessLevel) setAccessLevel(data.accessLevel);
       setStato("completed");
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      setError(
-        err instanceof Error ? err.message : "Errore durante l'analisi"
-      );
-      setStato("error");
+      clearTimeout(timeoutId);
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("L'analisi ha impiegato troppo tempo. Riprova.");
+        setStato("error");
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Errore durante l'analisi"
+        );
+        setStato("error");
+      }
     } finally {
       isProcessing.current = false;
     }
