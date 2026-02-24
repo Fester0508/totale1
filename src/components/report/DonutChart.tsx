@@ -2,7 +2,15 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-interface RetribuzioneChartProps {
+const COLORS = {
+  Netto: "#2E7D32",
+  IRPEF: "#C62828",
+  INPS: "#E65100",
+  Addizionali: "#1565C0",
+  Trattenute: "#C62828",
+} as Record<string, string>;
+
+interface DonutChartProps {
   retribuzione: {
     lordo: number | null;
     netto: number | null;
@@ -13,12 +21,12 @@ interface RetribuzioneChartProps {
   };
 }
 
-export function RetribuzioneChart({ retribuzione }: RetribuzioneChartProps) {
+export function DonutChart({ retribuzione }: DonutChartProps) {
   const netto = retribuzione.netto ?? 0;
-  const trattenute = retribuzione.trattenute_totali ?? 0;
   const irpef = retribuzione.irpef ?? 0;
   const inps = retribuzione.inps ?? 0;
   const addizionali = retribuzione.addizionali ?? 0;
+  const trattenute = retribuzione.trattenute_totali ?? 0;
 
   if (netto === 0 && trattenute === 0) return null;
 
@@ -26,14 +34,14 @@ export function RetribuzioneChart({ retribuzione }: RetribuzioneChartProps) {
 
   const data = hasDetail
     ? [
-        { name: "Netto", value: netto, color: "#22c55e" },
-        { name: "IRPEF", value: irpef, color: "#ef4444" },
-        { name: "INPS", value: inps, color: "#f59e0b" },
-        { name: "Addizionali", value: addizionali, color: "#3b82f6" },
+        { name: "Netto", value: netto },
+        { name: "IRPEF", value: irpef },
+        { name: "INPS", value: inps },
+        { name: "Addizionali", value: addizionali },
       ].filter((d) => d.value > 0)
     : [
-        { name: "Netto", value: netto, color: "#22c55e" },
-        { name: "Trattenute", value: trattenute, color: "#ef4444" },
+        { name: "Netto", value: netto },
+        { name: "Trattenute", value: trattenute },
       ].filter((d) => d.value > 0);
 
   const total = data.reduce((sum, d) => sum + d.value, 0);
@@ -56,24 +64,25 @@ export function RetribuzioneChart({ retribuzione }: RetribuzioneChartProps) {
                 endAngle={-270}
               >
                 {data.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} />
+                  <Cell key={i} fill={COLORS[entry.name] ?? "#94a3b8"} />
                 ))}
               </Pie>
               <Tooltip
                 formatter={(value) =>
-                  `€${Number(value).toLocaleString("it-IT", { minimumFractionDigits: 2 })}`
+                  `\u20ac${Number(value).toLocaleString("it-IT", { minimumFractionDigits: 2 })}`
                 }
               />
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-xl font-bold text-foreground">
-              &euro;{netto.toLocaleString("it-IT", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              &euro;{netto.toLocaleString("it-IT", { minimumFractionDigits: 0 })}
             </span>
             <span className="text-xs text-muted-foreground">netto</span>
           </div>
         </div>
 
+        {/* Legend table */}
         <div className="w-full mt-4 space-y-2.5">
           {data.map((entry) => {
             const perc = total > 0 ? Math.round((entry.value / total) * 100) : 0;
@@ -82,7 +91,7 @@ export function RetribuzioneChart({ retribuzione }: RetribuzioneChartProps) {
                 <div className="flex items-center gap-2">
                   <span
                     className="h-3 w-3 rounded-sm shrink-0"
-                    style={{ backgroundColor: entry.color }}
+                    style={{ backgroundColor: COLORS[entry.name] ?? "#94a3b8" }}
                   />
                   <span className="text-muted-foreground">{entry.name}</span>
                 </div>

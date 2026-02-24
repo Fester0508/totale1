@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { AlertTriangle, ArrowRight, CircleDollarSign } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Anomalia } from "@/lib/types";

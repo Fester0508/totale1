@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { Upload, FileText, X, Loader2 } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Upload, FileText, X, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GDPRConsent } from "./gdpr-consent";
 import { FreeLimitDialog } from "./free-limit-dialog";
@@ -12,15 +12,87 @@ interface UploadZoneProps {
   documentType?: string;
 }
 
+/* ── Progress steps ── */
+const PROGRESS_STEPS = [
+  { key: "upload", label: "Caricamento" },
+  { key: "ocr", label: "OCR" },
+  { key: "ai", label: "Analisi AI" },
+  { key: "done", label: "Referto pronto" },
+] as const;
+
+type StepKey = (typeof PROGRESS_STEPS)[number]["key"];
+
+function ProgressBar({ activeStep }: { activeStep: StepKey }) {
+  const activeIdx = PROGRESS_STEPS.findIndex((s) => s.key === activeStep);
+
+  return (
+    <div className="w-full max-w-md mx-auto">
+      <div className="flex items-center justify-between mb-3">
+        {PROGRESS_STEPS.map((step, idx) => {
+          const isActive = idx === activeIdx;
+          const isDone = idx < activeIdx;
+          return (
+            <div key={step.key} className="flex flex-col items-center gap-1.5 flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                  isDone
+                    ? "bg-green-600 text-white"
+                    : isActive
+                    ? "bg-brand-amber text-accent-foreground animate-pulse"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {isDone ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  idx + 1
+                )}
+              </div>
+              <span
+                className={`text-[10px] tracking-wide uppercase font-medium ${
+                  isActive ? "text-brand-navy" : "text-muted-foreground"
+                }`}
+              >
+                {step.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      {/* Progress line */}
+      <div className="h-1 bg-muted rounded-full overflow-hidden">
+        <div
+          className="h-full bg-brand-amber rounded-full transition-all duration-700 ease-out"
+          style={{ width: `${((activeIdx + 0.5) / PROGRESS_STEPS.length) * 100}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showConsent, setShowConsent] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [progressStep, setProgressStep] = useState<StepKey>("upload");
   const [showLimitReached, setShowLimitReached] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  /* Simulate progress steps during upload */
+  useEffect(() => {
+    if (!isUploading) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    timers.push(setTimeout(() => setProgressStep("ocr"), 2000));
+    timers.push(setTimeout(() => setProgressStep("ai"), 5000));
+    timers.push(setTimeout(() => setProgressStep("done"), 9000));
+    return () => timers.forEach(clearTimeout);
+  }, [isUploading]);
 
   const handleFile = useCallback((file: File) => {
     setError(null);
@@ -33,7 +105,6 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
       "image/heif",
     ];
 
-    // Check type
     const isAllowed =
       allowedTypes.includes(file.type) ||
       file.name.toLowerCase().endsWith(".heic") ||
@@ -44,7 +115,6 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
       return;
     }
 
-    // Check size (10MB)
     if (file.size > 10 * 1024 * 1024) {
       setError("Il file supera i 10MB.");
       return;
@@ -74,9 +144,8 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
     setIsDragging(false);
   }, []);
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handleClick = () => fileInputRef.current?.click();
+  const handleCameraClick = () => cameraInputRef.current?.click();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -88,6 +157,7 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
 
     setShowConsent(false);
     setIsUploading(true);
+    setProgressStep("upload");
     setError(null);
 
     try {
@@ -119,8 +189,10 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
         throw new Error(data.error || "Errore durante il caricamento");
       }
 
-      // Redirect to analysis page
-      router.push(`/analisi/${data.id}?type=${documentType}`);
+      setProgressStep("done");
+      setTimeout(() => {
+        router.push(`/analisi/${data.id}?type=${documentType}`);
+      }, 1200);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Errore durante il caricamento"
@@ -137,30 +209,29 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
   const removeFile = () => {
     setSelectedFile(null);
     setError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   return (
     <>
-      <div id="analizza" className="w-full max-w-xl mx-auto scroll-mt-24">
+      <div className="w-full max-w-xl mx-auto">
         {isUploading ? (
-          <div className="border-2 border-dashed border-blue-300 rounded-2xl p-12 text-center bg-blue-50/50">
-            <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700">
-              Caricamento in corso...
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Stiamo caricando il tuo documento
+          <div className="border-2 border-dashed border-brand-amber/40 rounded-2xl p-10 md:p-12 text-center bg-brand-amber-light/20">
+            <ProgressBar activeStep={progressStep} />
+            <p className="text-sm text-muted-foreground mt-6">
+              {progressStep === "upload" && "Caricamento del documento..."}
+              {progressStep === "ocr" && "Estrazione testo con OCR avanzato..."}
+              {progressStep === "ai" && "Analisi AI in corso, confronto con CCNL..."}
+              {progressStep === "done" && "Referto pronto! Reindirizzamento..."}
             </p>
           </div>
         ) : selectedFile && !showConsent ? (
-          <div className="border-2 border-blue-300 rounded-2xl p-8 text-center bg-blue-50/50">
+          <div className="border-2 border-brand-navy/30 rounded-2xl p-8 text-center bg-card">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <FileText className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-brand-navy" />
               <div className="text-left">
-                <p className="font-medium text-gray-900 truncate max-w-[250px]">
+                <p className="font-medium text-foreground truncate max-w-[250px]">
                   {selectedFile.name}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -169,9 +240,10 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
               </div>
               <button
                 onClick={removeFile}
-                className="ml-2 p-1 hover:bg-gray-200 rounded-full transition-colors"
+                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors"
+                aria-label="Rimuovi file"
               >
-                <X className="h-5 w-5 text-gray-500" />
+                <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </div>
             <Button
@@ -183,36 +255,51 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
             </Button>
           </div>
         ) : (
-          <div
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onClick={handleClick}
-            className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-200 ${
-              isDragging
-                ? "border-blue-500 bg-blue-50 scale-[1.02]"
-                : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/30"
-            }`}
-          >
-            <Upload
-              className={`h-12 w-12 mx-auto mb-4 ${
-                isDragging ? "text-blue-500" : "text-gray-400"
+          <div className="space-y-3">
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onClick={handleClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleClick(); }}
+              aria-label="Carica la tua busta paga"
+              className={`border-2 border-dashed rounded-2xl p-10 md:p-12 text-center cursor-pointer transition-all duration-200 ${
+                isDragging
+                  ? "border-brand-amber bg-brand-amber-light/30 scale-[1.02]"
+                  : "border-border hover:border-brand-amber/50 hover:bg-card"
               }`}
-            />
-            <p className="text-lg font-medium text-gray-700 mb-1">
-              Carica la tua busta paga
-            </p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Trascina qui il file oppure clicca per selezionarlo
-            </p>
-            <p className="text-xs text-muted-foreground/70">
-              PDF, JPG, PNG o HEIC &mdash; max 10MB
-            </p>
+            >
+              <Upload
+                className={`h-12 w-12 mx-auto mb-4 ${
+                  isDragging ? "text-brand-amber" : "text-muted-foreground"
+                }`}
+              />
+              <p className="text-lg font-medium text-foreground mb-1">
+                Carica la tua busta paga
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Trascina qui il file oppure clicca per selezionarlo
+              </p>
+              <p className="text-xs text-muted-foreground/70">
+                PDF, JPG, PNG o HEIC &mdash; max 10MB
+              </p>
+            </div>
+
+            {/* Mobile camera button */}
+            <button
+              onClick={handleCameraClick}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm font-medium text-foreground md:hidden"
+            >
+              <Camera className="h-4 w-4" />
+              Scatta foto del cedolino
+            </button>
           </div>
         )}
 
         {error && (
-          <p className="text-sm text-red-600 text-center mt-3">{error}</p>
+          <p className="text-sm text-red-600 text-center mt-3" role="alert">{error}</p>
         )}
 
         <input
@@ -221,6 +308,17 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
           accept=".pdf,.jpg,.jpeg,.png,.heic,.heif"
           onChange={handleInputChange}
           className="hidden"
+          aria-hidden="true"
+        />
+        {/* Camera input for mobile */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleInputChange}
+          className="hidden"
+          aria-hidden="true"
         />
       </div>
 
