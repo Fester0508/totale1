@@ -24,7 +24,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  serverExternalPackages: ["sharp", "heic-convert", "pg"],
+  serverExternalPackages: ["sharp", "heic-convert"],
   experimental: {
     serverActions: {
       bodySizeLimit: "15mb",
