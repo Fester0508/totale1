@@ -9,6 +9,9 @@ export async function estraiDatiDocumento(
   mimeType: string = "image/jpeg",
   documentType?: string
 ): Promise<AICallResult<DatiEstrattiOCR>> {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("ERR-OPENAI-MISSING");
+  }
   const start = Date.now();
   const base64Data = fileBuffer.toString("base64");
   const isPdf = mimeType === "application/pdf";

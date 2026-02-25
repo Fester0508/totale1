@@ -32,13 +32,13 @@ const HEADLINES = [
 ];
 
 export function RotatingHeadline() {
-  const [shuffled, setShuffled] = useState(HEADLINES);
+  // Always start with first headline (deterministic for SSR)
+  const [shuffled, setShuffled] = useState<typeof HEADLINES | null>(null);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
-  // Shuffle only on client after mount to avoid hydration mismatch
+  // Shuffle only on client after hydration completes
   useEffect(() => {
     const arr = [...HEADLINES];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -46,24 +46,26 @@ export function RotatingHeadline() {
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     setShuffled(arr);
-    setMounted(true);
   }, []);
+
+  const list = shuffled ?? HEADLINES;
 
   const next = useCallback(() => {
     setVisible(false);
     setTimeout(() => {
-      setIdx((i) => (i + 1) % shuffled.length);
+      setIdx((i) => (i + 1) % list.length);
       setVisible(true);
     }, 500);
-  }, [shuffled.length]);
+  }, [list.length]);
 
   useEffect(() => {
-    if (paused || !mounted) return;
+    if (paused || !shuffled) return;
     const t = setInterval(next, 4000);
     return () => clearInterval(t);
-  }, [paused, next, mounted]);
+  }, [paused, next, shuffled]);
 
-  const h = shuffled[idx];
+  // During SSR and initial hydration, always show HEADLINES[0] (deterministic)
+  const h = list[idx];
 
   return (
     <div
