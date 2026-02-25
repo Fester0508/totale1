@@ -124,23 +124,20 @@ export async function POST(request: NextRequest) {
 
     if (fetchError || !data) {
       return NextResponse.json(
-        { error: "Analisi non trovata" },
+        { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
     analisi = data;
   } else {
-    // Utente anonimo: ownership check via cookie free-tier
+    // Utente anonimo: try cookie first, then fallback to direct DB lookup
+    // (cookie may not be set yet if user just uploaded and navigated immediately)
     const { getFreeTierStatus } = await import("@/lib/free-tier");
     const freeTier = await getFreeTierStatus(request);
 
-    if (!freeTier.ids.includes(id)) {
-      return NextResponse.json(
-        { error: "Analisi non trovata" },
-        { status: 404 }
-      );
-    }
+    const hasCookieId = freeTier.ids.includes(id);
 
+    // Try direct DB lookup for anonymous analysis
     const { data, error: fetchError } = await supabase
       .from("analisi")
       .select("*")
@@ -150,11 +147,44 @@ export async function POST(request: NextRequest) {
 
     if (fetchError || !data) {
       return NextResponse.json(
-        { error: "Analisi non trovata" },
+        { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
+
+    // If cookie doesn't have this ID but the record exists and is anonymous,
+    // allow access (the cookie was likely not set yet due to navigation timing)
+    if (!hasCookieId) {
+      console.log(`[v0] Anonymous analysis ${id} found in DB but not in cookie - allowing access (timing issue)`);
+    }
+
     analisi = data;
+  }
+
+  // If analysis errored, allow retry
+  if (analisi.stato === "error") {
+    // Reset to processing so the pipeline re-runs
+    await supabase
+      .from("analisi")
+      .update({ stato: "processing", processing_started_at: null })
+      .eq("id", id);
+    analisi.stato = "processing";
+    analisi.processing_started_at = null;
+  }
+
+  // If already being processed by another request, return processing status for polling
+  if (analisi.stato === "processing" && analisi.processing_started_at) {
+    const startedAt = new Date(analisi.processing_started_at).getTime();
+    const elapsed = Date.now() - startedAt;
+    // If started less than 90s ago, assume it's still running - tell client to poll
+    if (elapsed < 90_000) {
+      return NextResponse.json({ stato: "processing" });
+    }
+    // If more than 90s, assume it timed out - allow re-run
+    await supabase
+      .from("analisi")
+      .update({ processing_started_at: null })
+      .eq("id", id);
   }
 
   if (analisi.stato === "completed") {

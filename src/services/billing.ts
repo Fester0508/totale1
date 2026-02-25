@@ -12,7 +12,7 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
   const { data } = await supabase
     .from("user_profiles")
     .select("tier")
-    .eq("id", userId)
+    .eq("user_id", userId)
     .single();
 
   if (!data?.tier) return UserPlan.FREE_FIRST;
