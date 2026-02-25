@@ -3,12 +3,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { RisultatoAnalisi, StatoAnalisi } from "@/lib/types";
 import type { AccessLevel } from "@/hooks/use-paywall";
+import type { AccessConfig } from "@/domain/user-plan";
 
 interface UseAnalysisReturn {
   stato: StatoAnalisi;
   risultato: RisultatoAnalisi | null;
   error: string | null;
   accessLevel: AccessLevel;
+  accessConfig: AccessConfig | null;
   startAnalysis: () => void;
 }
 
@@ -20,6 +22,7 @@ export function useAnalysis(
   const [risultato, setRisultato] = useState<RisultatoAnalisi | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [accessLevel, setAccessLevel] = useState<AccessLevel>("full");
+  const [accessConfig, setAccessConfig] = useState<AccessConfig | null>(null);
   const hasStarted = useRef(false);
   const isProcessing = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -73,6 +76,7 @@ export function useAnalysis(
 
       setRisultato(data.risultato);
       if (data.accessLevel) setAccessLevel(data.accessLevel);
+      if (data.accessConfig) setAccessConfig(data.accessConfig);
       setStato("completed");
 
       // Pulisci sessionStorage
@@ -110,5 +114,5 @@ export function useAnalysis(
     };
   }, []);
 
-  return { stato, risultato, error, accessLevel, startAnalysis };
+  return { stato, risultato, error, accessLevel, accessConfig, startAnalysis };
 }

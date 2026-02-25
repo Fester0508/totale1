@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/header";
 
-type PaymentStatus = "loading" | "accepted" | "pending" | "canceled" | "error";
+type PaymentStatus = "loading" | "success" | "canceled" | "error";
 
 export default function PaymentCompletedPage() {
   return (
@@ -16,7 +16,9 @@ export default function PaymentCompletedPage() {
           <main className="min-h-screen bg-background flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-card rounded-xl border p-8 text-center">
               <div className="w-16 h-16 border-4 border-brand-amber border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-              <h1 className="text-xl font-bold text-brand-navy mb-2">Caricamento...</h1>
+              <h1 className="text-xl font-bold text-brand-navy mb-2">
+                Caricamento...
+              </h1>
             </div>
           </main>
         </>
@@ -29,63 +31,38 @@ export default function PaymentCompletedPage() {
 
 function PaymentContent() {
   const searchParams = useSearchParams();
-  const paymentId = searchParams.get("payment_id");
-  const [status, setStatus] = useState<PaymentStatus>("loading");
+  const sessionId = searchParams.get("session_id");
+  const status = searchParams.get("status");
+  const [pageStatus, setPageStatus] = useState<PaymentStatus>("loading");
 
   useEffect(() => {
-    if (!paymentId) {
-      setStatus("error");
-      return;
+    if (status === "success" || sessionId) {
+      setPageStatus("success");
+    } else if (status === "canceled") {
+      setPageStatus("canceled");
+    } else {
+      setPageStatus("error");
     }
-
-    async function checkStatus() {
-      try {
-        const res = await fetch(
-          `/api/payments/callback?payment_id=${paymentId}`
-        );
-        const data = await res.json();
-
-        if (data.status === "ACCEPTED") {
-          setStatus("accepted");
-        } else if (data.status === "CANCELED") {
-          setStatus("canceled");
-        } else {
-          setStatus("pending");
-        }
-      } catch {
-        setStatus("error");
-      }
-    }
-
-    checkStatus();
-    // Poll every 3 seconds if pending
-    const interval = setInterval(() => {
-      if (status === "pending" || status === "loading") {
-        checkStatus();
-      }
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [paymentId, status]);
+  }, [sessionId, status]);
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-card rounded-xl border p-8 text-center">
-          {status === "loading" && (
+          {pageStatus === "loading" && (
             <>
               <div className="w-16 h-16 border-4 border-brand-amber border-t-transparent rounded-full animate-spin mx-auto mb-6" />
               <h1 className="text-xl font-bold text-brand-navy mb-2">
                 Verifica pagamento...
               </h1>
               <p className="text-muted-foreground">
-                Stiamo verificando il tuo pagamento Satispay.
+                Stiamo verificando il tuo pagamento.
               </p>
             </>
           )}
 
-          {status === "accepted" && (
+          {pageStatus === "success" && (
             <>
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
                 <svg
@@ -106,7 +83,7 @@ function PaymentContent() {
                 Pagamento completato
               </h1>
               <p className="text-muted-foreground mb-6">
-                Grazie! Il tuo piano e' stato attivato con successo.
+                Grazie! Il tuo piano è stato attivato con successo.
               </p>
               <Link
                 href="/#analizza"
@@ -117,20 +94,7 @@ function PaymentContent() {
             </>
           )}
 
-          {status === "pending" && (
-            <>
-              <div className="w-16 h-16 border-4 border-brand-amber border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-              <h1 className="text-xl font-bold text-brand-navy mb-2">
-                In attesa di conferma
-              </h1>
-              <p className="text-muted-foreground mb-4">
-                Completa il pagamento nell{"'"}app Satispay. La pagina si
-                aggiornera' automaticamente.
-              </p>
-            </>
-          )}
-
-          {status === "canceled" && (
+          {pageStatus === "canceled" && (
             <>
               <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
                 <svg
@@ -151,7 +115,7 @@ function PaymentContent() {
                 Pagamento annullato
               </h1>
               <p className="text-muted-foreground mb-6">
-                Il pagamento e' stato annullato. Puoi riprovare quando vuoi.
+                Il pagamento è stato annullato. Puoi riprovare quando vuoi.
               </p>
               <Link
                 href="/#prezzi"
@@ -162,7 +126,7 @@ function PaymentContent() {
             </>
           )}
 
-          {status === "error" && (
+          {pageStatus === "error" && (
             <>
               <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
                 <svg
@@ -183,7 +147,7 @@ function PaymentContent() {
                 Errore
               </h1>
               <p className="text-muted-foreground mb-6">
-                Si e' verificato un errore. Contattaci a info@lavoroinchiaro.it
+                Si è verificato un errore. Contattaci a info@lavoroinchiaro.it
               </p>
               <Link
                 href="/"

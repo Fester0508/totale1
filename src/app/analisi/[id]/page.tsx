@@ -30,7 +30,7 @@ export default function AnalisiPage({
 function AnalisiContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
   const documentType = searchParams.get("type") || "busta-paga";
-  const { stato, risultato, error, accessLevel, startAnalysis } = useAnalysis(
+  const { stato, risultato, error, accessLevel, accessConfig, startAnalysis } = useAnalysis(
     id,
     documentType
   );
@@ -40,7 +40,7 @@ function AnalisiContent({ id }: { id: string }) {
       {stato === "processing" && <AnalysisLoading />}
 
       {stato === "completed" && risultato && (
-        <AnalysisResult risultato={risultato} id={id} accessLevel={accessLevel} />
+        <AnalysisResult risultato={risultato} id={id} accessLevel={accessLevel} accessConfig={accessConfig ?? undefined} />
       )}
 
       {stato === "error" && (

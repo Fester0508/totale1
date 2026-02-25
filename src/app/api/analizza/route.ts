@@ -9,7 +9,9 @@ export const maxDuration = 60;
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
   if (!id) {
-    return NextResponse.json({ accessLevel: "preview" });
+    const { getAccessConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan } = await import("@/domain/user-plan");
+    return NextResponse.json({ accessLevel: "preview", accessConfig: getAccessConfig(UserPlan.FREE_FIRST) });
   }
 
   // Check authenticated user tier
@@ -21,16 +23,16 @@ export async function GET(request: NextRequest) {
 
       if (user) {
         const { createAdminClient } = await import("@/lib/supabase/admin");
-        const supabase = createAdminClient();
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("tier")
-          .eq("user_id", user.id)
-          .single();
+        const { getUserPlan } = await import("@/services/billing");
+        const { getAccessConfig } = await import("@/rules/paywall-rules");
 
-        if (profile?.tier && profile.tier !== "free") {
-          return NextResponse.json({ accessLevel: "full" });
-        }
+        const plan = await getUserPlan(user.id);
+        const config = getAccessConfig(plan);
+
+        return NextResponse.json({
+          accessLevel: config.isPaid ? "full" : "preview",
+          accessConfig: config,
+        });
       }
     } catch {
       // fallthrough to free-tier check
@@ -40,11 +42,20 @@ export async function GET(request: NextRequest) {
   // Anonymous / free user: check cookie
   const { getFreeTierStatus } = await import("@/lib/free-tier");
   const { MAX_FREE_FULL } = await import("@/lib/free-tier");
+  const { getAccessConfig } = await import("@/rules/paywall-rules");
+  const { UserPlan } = await import("@/domain/user-plan");
+
   const freeTier = await getFreeTierStatus(request);
 
-  // First analysis (uses <= MAX_FREE_FULL) = full access
+  // First analysis (uses <= MAX_FREE_FULL) = full access (SIMPLE_SUBSCRIPTION equivalent)
   const isFirstAnalysis = freeTier.uses <= MAX_FREE_FULL;
-  return NextResponse.json({ accessLevel: isFirstAnalysis ? "full" : "preview" });
+  const plan = isFirstAnalysis ? UserPlan.SIMPLE_SUBSCRIPTION : UserPlan.FREE_FIRST;
+  const config = getAccessConfig(plan);
+
+  return NextResponse.json({
+    accessLevel: isFirstAnalysis ? "full" : "preview",
+    accessConfig: config,
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -147,24 +158,25 @@ export async function POST(request: NextRequest) {
   }
 
   if (analisi.stato === "completed") {
-    // Determine access level
-    let completedAccessLevel = "preview";
+    const { getUserPlan } = await import("@/services/billing");
+    const { getAccessConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan } = await import("@/domain/user-plan");
+
+    let plan = UserPlan.FREE_FIRST;
     if (user) {
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("tier")
-        .eq("user_id", user.id)
-        .single();
-      if (profile?.tier && profile.tier !== "free") {
-        completedAccessLevel = "full";
-      }
-    }
-    if (completedAccessLevel === "preview") {
+      plan = await getUserPlan(user.id);
+    } else {
       const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
       const freeTier = await getFreeTierStatus(request);
-      if (freeTier.uses <= MAX_FREE_FULL) completedAccessLevel = "full";
+      if (freeTier.uses <= MAX_FREE_FULL) plan = UserPlan.SIMPLE_SUBSCRIPTION;
     }
-    return NextResponse.json({ risultato: analisi.risultato, accessLevel: completedAccessLevel });
+
+    const config = getAccessConfig(plan);
+    return NextResponse.json({
+      risultato: analisi.risultato,
+      accessLevel: config.isPaid ? "full" : "preview",
+      accessConfig: config,
+    });
   }
 
   // Read file from Supabase Storage (or fall back to legacy base64)
@@ -262,24 +274,25 @@ export async function POST(request: NextRequest) {
       .eq("id", id);
 
     // Determine access level for this user
-    let pipelineAccessLevel = "preview";
+    const { getUserPlan: getPlan } = await import("@/services/billing");
+    const { getAccessConfig: getConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan: UP } = await import("@/domain/user-plan");
+
+    let pipelinePlan = UP.FREE_FIRST;
     if (user) {
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("tier")
-        .eq("user_id", user.id)
-        .single();
-      if (profile?.tier && profile.tier !== "free") {
-        pipelineAccessLevel = "full";
-      }
-    }
-    if (pipelineAccessLevel === "preview") {
+      pipelinePlan = await getPlan(user.id);
+    } else {
       const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
       const freeTier = await getFreeTierStatus(request);
-      if (freeTier.uses <= MAX_FREE_FULL) pipelineAccessLevel = "full";
+      if (freeTier.uses <= MAX_FREE_FULL) pipelinePlan = UP.SIMPLE_SUBSCRIPTION;
     }
 
-    return NextResponse.json({ risultato, accessLevel: pipelineAccessLevel });
+    const pipelineConfig = getConfig(pipelinePlan);
+    return NextResponse.json({
+      risultato,
+      accessLevel: pipelineConfig.isPaid ? "full" : "preview",
+      accessConfig: pipelineConfig,
+    });
   } catch (error) {
     console.error("Analizza pipeline error:", {
       message: error instanceof Error ? error.message : String(error),
