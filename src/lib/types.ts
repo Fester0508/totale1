@@ -19,6 +19,9 @@ export const DatiEstrattiOCRSchema = z.object({
     qualifica: z.string().nullable(),
     tipo_contratto: z.string().nullable(),
     ore_settimanali: z.number().nullable(),
+    software_gestionale: z.string().nullable(),
+    anzianita_anni: z.number().nullable(),
+    percentuale_part_time: z.number().nullable(),
   }),
   competenze: z.array(VoceOCRSchema),
   trattenute: z.array(VoceOCRSchema),
@@ -110,6 +113,7 @@ export const RisultatoAnalisiSchema = z.object({
       tipo_contratto: z.string().nullable(),
       ore_settimanali: z.number().nullable(),
       paga_oraria: z.number().nullable(),
+      software_gestionale: z.string().nullable(),
     })
     .nullable(),
   retribuzione: z

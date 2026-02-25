@@ -21,6 +21,23 @@ export async function analizzaBustaPaga(
   const contestoRiferimento = generaContestoRiferimento(ccnlNome, anno, candidatiCCNL);
   const systemPrompt = getAnalisiSystemPrompt(contestoRiferimento);
 
+  // Costruisci il messaggio utente con contesto aggiuntivo per le fasi
+  const softwareInfo = datiEstratti.dati_anagrafici?.software_gestionale
+    ? `\nSoftware gestionale rilevato in FASE 1: ${datiEstratti.dati_anagrafici.software_gestionale}`
+    : "";
+  const anzianitaInfo = datiEstratti.dati_anagrafici?.anzianita_anni != null
+    ? `\nAnzianità rilevata: ${datiEstratti.dati_anagrafici.anzianita_anni} anni`
+    : "";
+  const partTimeInfo = datiEstratti.dati_anagrafici?.percentuale_part_time != null
+    ? `\nPart-time: ${datiEstratti.dati_anagrafici.percentuale_part_time}%`
+    : "";
+
+  const userMessage = `Analizza questa busta paga seguendo le FASI 2-6 del protocollo.${softwareInfo}${anzianitaInfo}${partTimeInfo}
+
+Ecco i dati estratti dal documento (FASE 1 completata):
+
+${JSON.stringify(datiEstratti, null, 2)}`;
+
   const { output, usage } = await generateText({
     model: openai("gpt-4o"),
     output: Output.object({
@@ -33,7 +50,7 @@ export async function analizzaBustaPaga(
       },
       {
         role: "user",
-        content: `Analizza questa busta paga. Ecco i dati estratti dal documento:\n\n${JSON.stringify(datiEstratti, null, 2)}`,
+        content: userMessage,
       },
     ],
     maxOutputTokens: 8000,

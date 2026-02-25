@@ -1,22 +1,37 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileSearch, Brain, CheckCircle, Loader2 } from "lucide-react";
+import { FileSearch, Brain, Loader2, UserCheck, Calculator, Euro, ClipboardCheck } from "lucide-react";
 
 const steps = [
   {
     icon: FileSearch,
-    label: "Sto leggendo il documento...",
+    label: "Lettura documento e riconoscimento formato...",
+    duration: 2500,
+  },
+  {
+    icon: UserCheck,
+    label: "Identificazione contratto e inquadramento...",
     duration: 3000,
   },
   {
-    icon: Brain,
-    label: "Analizzo le voci della busta paga...",
-    duration: 5000,
+    icon: Calculator,
+    label: "Verifica paga base e scatti di anzianità...",
+    duration: 3500,
   },
   {
-    icon: CheckCircle,
-    label: "Verifico con la normativa vigente...",
+    icon: Brain,
+    label: "Controllo ore, straordinari e part-time...",
+    duration: 4000,
+  },
+  {
+    icon: Euro,
+    label: "Verifica trattenute: INPS, IRPEF, TFR...",
+    duration: 4000,
+  },
+  {
+    icon: ClipboardCheck,
+    label: "Assemblaggio referto finale...",
     duration: 0, // stays here until complete
   },
 ];
