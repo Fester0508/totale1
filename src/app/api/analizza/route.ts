@@ -9,7 +9,9 @@ export const maxDuration = 60;
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
   if (!id) {
-    return NextResponse.json({ accessLevel: "preview" });
+    const { getAccessConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan } = await import("@/domain/user-plan");
+    return NextResponse.json({ accessLevel: "preview", accessConfig: getAccessConfig(UserPlan.FREE_FIRST) });
   }
 
   // Check authenticated user tier
@@ -21,16 +23,16 @@ export async function GET(request: NextRequest) {
 
       if (user) {
         const { createAdminClient } = await import("@/lib/supabase/admin");
-        const supabase = createAdminClient();
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("tier")
-          .eq("user_id", user.id)
-          .single();
+        const { getUserPlan } = await import("@/services/billing");
+        const { getAccessConfig } = await import("@/rules/paywall-rules");
 
-        if (profile?.tier && profile.tier !== "free") {
-          return NextResponse.json({ accessLevel: "full" });
-        }
+        const plan = await getUserPlan(user.id);
+        const config = getAccessConfig(plan);
+
+        return NextResponse.json({
+          accessLevel: config.isPaid ? "full" : "preview",
+          accessConfig: config,
+        });
       }
     } catch {
       // fallthrough to free-tier check
@@ -40,11 +42,20 @@ export async function GET(request: NextRequest) {
   // Anonymous / free user: check cookie
   const { getFreeTierStatus } = await import("@/lib/free-tier");
   const { MAX_FREE_FULL } = await import("@/lib/free-tier");
+  const { getAccessConfig } = await import("@/rules/paywall-rules");
+  const { UserPlan } = await import("@/domain/user-plan");
+
   const freeTier = await getFreeTierStatus(request);
 
-  // First analysis (uses <= MAX_FREE_FULL) = full access
+  // First analysis (uses <= MAX_FREE_FULL) = full access (SIMPLE_SUBSCRIPTION equivalent)
   const isFirstAnalysis = freeTier.uses <= MAX_FREE_FULL;
-  return NextResponse.json({ accessLevel: isFirstAnalysis ? "full" : "preview" });
+  const plan = isFirstAnalysis ? UserPlan.SIMPLE_SUBSCRIPTION : UserPlan.FREE_FIRST;
+  const config = getAccessConfig(plan);
+
+  return NextResponse.json({
+    accessLevel: isFirstAnalysis ? "full" : "preview",
+    accessConfig: config,
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -113,23 +124,20 @@ export async function POST(request: NextRequest) {
 
     if (fetchError || !data) {
       return NextResponse.json(
-        { error: "Analisi non trovata" },
+        { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
     analisi = data;
   } else {
-    // Utente anonimo: ownership check via cookie free-tier
+    // Utente anonimo: try cookie first, then fallback to direct DB lookup
+    // (cookie may not be set yet if user just uploaded and navigated immediately)
     const { getFreeTierStatus } = await import("@/lib/free-tier");
     const freeTier = await getFreeTierStatus(request);
 
-    if (!freeTier.ids.includes(id)) {
-      return NextResponse.json(
-        { error: "Analisi non trovata" },
-        { status: 404 }
-      );
-    }
+    const hasCookieId = freeTier.ids.includes(id);
 
+    // Try direct DB lookup for anonymous analysis
     const { data, error: fetchError } = await supabase
       .from("analisi")
       .select("*")
@@ -139,45 +147,99 @@ export async function POST(request: NextRequest) {
 
     if (fetchError || !data) {
       return NextResponse.json(
-        { error: "Analisi non trovata" },
+        { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
+
+    // If cookie doesn't have this ID but the record exists and is anonymous,
+    // allow access (the cookie was likely not set yet due to navigation timing)
+    if (!hasCookieId) {
+      console.log(`[v0] Anonymous analysis ${id} found in DB but not in cookie - allowing access (timing issue)`);
+    }
+
     analisi = data;
   }
 
-  if (analisi.stato === "completed") {
-    // Determine access level
-    let completedAccessLevel = "preview";
-    if (user) {
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("tier")
-        .eq("user_id", user.id)
-        .single();
-      if (profile?.tier && profile.tier !== "free") {
-        completedAccessLevel = "full";
-      }
-    }
-    if (completedAccessLevel === "preview") {
-      const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
-      const freeTier = await getFreeTierStatus(request);
-      if (freeTier.uses <= MAX_FREE_FULL) completedAccessLevel = "full";
-    }
-    return NextResponse.json({ risultato: analisi.risultato, accessLevel: completedAccessLevel });
+  // If analysis errored, allow retry
+  if (analisi.stato === "error") {
+    // Reset to processing so the pipeline re-runs
+    await supabase
+      .from("analisi")
+      .update({ stato: "processing", processing_started_at: null })
+      .eq("id", id);
+    analisi.stato = "processing";
+    analisi.processing_started_at = null;
   }
 
-  // Leggi file dal DB (salvato come base64)
-  if (!analisi.file_data) {
+  // If already being processed by another request, return processing status for polling
+  if (analisi.stato === "processing" && analisi.processing_started_at) {
+    const startedAt = new Date(analisi.processing_started_at).getTime();
+    const elapsed = Date.now() - startedAt;
+    // If started less than 90s ago, assume it's still running - tell client to poll
+    if (elapsed < 90_000) {
+      return NextResponse.json({ stato: "processing" });
+    }
+    // If more than 90s, assume it timed out - allow re-run
+    await supabase
+      .from("analisi")
+      .update({ processing_started_at: null })
+      .eq("id", id);
+  }
+
+  if (analisi.stato === "completed") {
+    const { getUserPlan } = await import("@/services/billing");
+    const { getAccessConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan } = await import("@/domain/user-plan");
+
+    let plan = UserPlan.FREE_FIRST;
+    if (user) {
+      plan = await getUserPlan(user.id);
+    } else {
+      const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
+      const freeTier = await getFreeTierStatus(request);
+      if (freeTier.uses <= MAX_FREE_FULL) plan = UserPlan.SIMPLE_SUBSCRIPTION;
+    }
+
+    const config = getAccessConfig(plan);
+    return NextResponse.json({
+      risultato: analisi.risultato,
+      accessLevel: config.isPaid ? "full" : "preview",
+      accessConfig: config,
+    });
+  }
+
+  // Read file from Supabase Storage (or fall back to legacy base64)
+  let fileBuffer: Buffer<ArrayBuffer>;
+  let mimeType: string;
+
+  if (analisi.storage_path) {
+    const { data: fileData, error: dlError } = await supabase.storage
+      .from("payslips")
+      .download(analisi.storage_path);
+
+    if (dlError || !fileData) {
+      console.error("Storage download error:", dlError);
+      await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+      return NextResponse.json(
+        { error: "File del documento non trovato nello storage" },
+        { status: 500 }
+      );
+    }
+
+    fileBuffer = Buffer.from(await fileData.arrayBuffer());
+    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
+  } else if (analisi.file_data) {
+    // Legacy: base64 stored in DB
+    fileBuffer = Buffer.from(analisi.file_data, "base64");
+    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
+  } else {
     await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
     return NextResponse.json(
       { error: "File del documento non trovato" },
       { status: 500 }
     );
   }
-
-  const fileBuffer: Buffer<ArrayBuffer> = Buffer.from(analisi.file_data, "base64");
-  const mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
 
   const { calcCosto } = await import("@/lib/ai/pricing");
 
@@ -242,24 +304,25 @@ export async function POST(request: NextRequest) {
       .eq("id", id);
 
     // Determine access level for this user
-    let pipelineAccessLevel = "preview";
+    const { getUserPlan: getPlan } = await import("@/services/billing");
+    const { getAccessConfig: getConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan: UP } = await import("@/domain/user-plan");
+
+    let pipelinePlan = UP.FREE_FIRST;
     if (user) {
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("tier")
-        .eq("user_id", user.id)
-        .single();
-      if (profile?.tier && profile.tier !== "free") {
-        pipelineAccessLevel = "full";
-      }
-    }
-    if (pipelineAccessLevel === "preview") {
+      pipelinePlan = await getPlan(user.id);
+    } else {
       const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
       const freeTier = await getFreeTierStatus(request);
-      if (freeTier.uses <= MAX_FREE_FULL) pipelineAccessLevel = "full";
+      if (freeTier.uses <= MAX_FREE_FULL) pipelinePlan = UP.SIMPLE_SUBSCRIPTION;
     }
 
-    return NextResponse.json({ risultato, accessLevel: pipelineAccessLevel });
+    const pipelineConfig = getConfig(pipelinePlan);
+    return NextResponse.json({
+      risultato,
+      accessLevel: pipelineConfig.isPaid ? "full" : "preview",
+      accessConfig: pipelineConfig,
+    });
   } catch (error) {
     console.error("Analizza pipeline error:", {
       message: error instanceof Error ? error.message : String(error),

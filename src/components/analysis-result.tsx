@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { RisultatoAnalisi, VoceAnalisi } from "@/lib/types";
 import { usePaywall, type AccessLevel } from "@/hooks/use-paywall";
+import type { AccessConfig } from "@/domain/user-plan";
 import { ReportHeader, generateRefNumber } from "./report/ReportHeader";
 import { KpiStrip } from "./report/KpiStrip";
 import { AnalysisResultsList } from "./report/AnalysisResultsList";
@@ -15,14 +16,16 @@ interface AnalysisResultProps {
   risultato: RisultatoAnalisi;
   id?: string;
   accessLevel?: AccessLevel;
+  accessConfig?: AccessConfig;
 }
 
 export function AnalysisResult({
   risultato,
   id,
   accessLevel = "preview",
+  accessConfig,
 }: AnalysisResultProps) {
-  const pw = usePaywall(accessLevel);
+  const pw = usePaywall(accessConfig ?? accessLevel);
 
   /* ── Computed values ── */
   const vociAll = risultato.voci ?? [];

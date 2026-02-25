@@ -32,18 +32,22 @@ const HEADLINES = [
 ];
 
 export function RotatingHeadline() {
-  const [shuffled] = useState(() => {
+  const [shuffled, setShuffled] = useState(HEADLINES);
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  // Shuffle only on client after mount to avoid hydration mismatch
+  useEffect(() => {
     const arr = [...HEADLINES];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return arr;
-  });
-
-  const [idx, setIdx] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [visible, setVisible] = useState(true);
+    setShuffled(arr);
+    setMounted(true);
+  }, []);
 
   const next = useCallback(() => {
     setVisible(false);
@@ -54,10 +58,10 @@ export function RotatingHeadline() {
   }, [shuffled.length]);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || !mounted) return;
     const t = setInterval(next, 4000);
     return () => clearInterval(t);
-  }, [paused, next]);
+  }, [paused, next, mounted]);
 
   const h = shuffled[idx];
 
