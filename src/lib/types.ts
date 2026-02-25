@@ -150,6 +150,7 @@ export interface Analisi {
   user_id: string | null;
   file_url: string;
   file_type: string;
+  storage_path: string | null;
   stato: StatoAnalisi;
   dati_estratti: Record<string, unknown> | null;
   risultato: RisultatoAnalisi | null;
@@ -186,6 +187,11 @@ export interface AICallResult<T> {
 
 export interface UserProfile {
   id: string;
+  tier: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  subscription_status: string | null;
+  subscription_min_end_at: string | null;
   privacy_accepted_at: string;
   terms_accepted_at: string;
   marketing_consent: boolean;
