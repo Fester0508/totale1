@@ -82,21 +82,37 @@ export async function POST(request: NextRequest) {
       finalMimeType = "image/jpeg";
     }
 
-    // Salva file come base64 direttamente nel DB (no Storage dependency)
-    const fileBase64 = buffer.toString("base64");
-
+    // Upload file to Supabase Storage bucket 'payslips'
     const { createAdminClient } = await import("@/lib/supabase/admin");
     const supabase = createAdminClient();
 
     const analisiId = uuidv4();
+    const ext = isPdf(file.type) ? "pdf" : "jpg";
+    const storagePath = `${userId ?? "anon"}/${analisiId}.${ext}`;
+
+    const { error: storageError } = await supabase.storage
+      .from("payslips")
+      .upload(storagePath, buffer, {
+        contentType: finalMimeType,
+        upsert: false,
+      });
+
+    if (storageError) {
+      console.error("Storage upload error:", storageError);
+      return NextResponse.json(
+        { error: "Errore durante il caricamento del file" },
+        { status: 500 }
+      );
+    }
+
     const { error: dbError } = await supabase.from("analisi").insert({
       id: analisiId,
       session_id: sessionId,
       user_id: userId,
-      file_url: `inline://${analisiId}`,
-      file_data: fileBase64,
+      file_url: `storage://payslips/${storagePath}`,
+      storage_path: storagePath,
       file_mime: finalMimeType,
-      file_type: isPdf(file.type) ? "pdf" : "jpg",
+      file_type: ext,
       stato: "processing",
     });
 

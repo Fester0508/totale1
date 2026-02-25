@@ -167,17 +167,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ risultato: analisi.risultato, accessLevel: completedAccessLevel });
   }
 
-  // Leggi file dal DB (salvato come base64)
-  if (!analisi.file_data) {
+  // Read file from Supabase Storage (or fall back to legacy base64)
+  let fileBuffer: Buffer<ArrayBuffer>;
+  let mimeType: string;
+
+  if (analisi.storage_path) {
+    const { data: fileData, error: dlError } = await supabase.storage
+      .from("payslips")
+      .download(analisi.storage_path);
+
+    if (dlError || !fileData) {
+      console.error("Storage download error:", dlError);
+      await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+      return NextResponse.json(
+        { error: "File del documento non trovato nello storage" },
+        { status: 500 }
+      );
+    }
+
+    fileBuffer = Buffer.from(await fileData.arrayBuffer());
+    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
+  } else if (analisi.file_data) {
+    // Legacy: base64 stored in DB
+    fileBuffer = Buffer.from(analisi.file_data, "base64");
+    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
+  } else {
     await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
     return NextResponse.json(
       { error: "File del documento non trovato" },
       { status: 500 }
     );
   }
-
-  const fileBuffer: Buffer<ArrayBuffer> = Buffer.from(analisi.file_data, "base64");
-  const mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
 
   const { calcCosto } = await import("@/lib/ai/pricing");
 

@@ -1,14 +1,14 @@
 import { UserPlan } from "@/domain/user-plan";
 import { getAccessConfig } from "@/rules/paywall-rules";
 import type { AccessConfig } from "@/domain/user-plan";
-import { createClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Queries user_profiles to resolve the current plan for a user.
  * Falls back to FREE_FIRST if not found.
  */
 export async function getUserPlan(userId: string): Promise<UserPlan> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const { data } = await supabase
     .from("user_profiles")
     .select("tier")
@@ -37,7 +37,7 @@ export async function canAnalyze(userId: string | null): Promise<boolean> {
   if (plan !== UserPlan.FREE_FIRST) return true;
 
   // FREE_FIRST: check count
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const { count } = await supabase
     .from("analisi")
     .select("id", { count: "exact", head: true })
