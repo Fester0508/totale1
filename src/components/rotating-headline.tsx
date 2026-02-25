@@ -32,38 +32,42 @@ const HEADLINES = [
 ];
 
 export function RotatingHeadline() {
-  const [shuffled, setShuffled] = useState(HEADLINES);
+  // Deterministic first headline for SSR - always HEADLINES[0]
+  const [headline, setHeadline] = useState(HEADLINES[0]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const [order, setOrder] = useState<typeof HEADLINES>(HEADLINES);
 
-  // Shuffle only on client after mount to avoid hydration mismatch
+  // Shuffle on mount (client only) - doesn't change what's displayed yet
   useEffect(() => {
     const arr = [...HEADLINES];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    setShuffled(arr);
-    setMounted(true);
+    setOrder(arr);
   }, []);
 
   const next = useCallback(() => {
     setVisible(false);
     setTimeout(() => {
-      setIdx((i) => (i + 1) % shuffled.length);
+      setIdx((prev) => {
+        const nextIdx = (prev + 1) % order.length;
+        setHeadline(order[nextIdx]);
+        return nextIdx;
+      });
       setVisible(true);
     }, 500);
-  }, [shuffled.length]);
+  }, [order]);
 
   useEffect(() => {
-    if (paused || !mounted) return;
+    if (paused) return;
     const t = setInterval(next, 4000);
     return () => clearInterval(t);
-  }, [paused, next, mounted]);
+  }, [paused, next]);
 
-  const h = shuffled[idx];
+  const h = headline;
 
   return (
     <div
@@ -100,7 +104,7 @@ export function RotatingHeadline() {
             key={i}
             onClick={() => {
               setVisible(false);
-              setTimeout(() => { setIdx(i); setVisible(true); }, 500);
+              setTimeout(() => { setIdx(i); setHeadline(order[i]); setVisible(true); }, 500);
             }}
             className={`
               h-1.5 rounded-full transition-all duration-300
@@ -110,7 +114,7 @@ export function RotatingHeadline() {
           />
         ))}
         <span className="text-[10px] text-white/25 ml-2 font-mono tabular-nums">
-          {String(idx + 1).padStart(2, "0")}/{shuffled.length}
+          {String(idx + 1).padStart(2, "0")}/{order.length}
         </span>
       </div>
     </div>

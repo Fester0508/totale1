@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fallback: mock data (no OPENAI_API_KEY o errore AI)
+    // Fallback: mock data (no OPENAI_API_KEY or AI error)
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const mockData = MOCK_DATA_MAP[(documentType as DocumentType)] || MOCK_DATA_MAP["busta-paga"];
     return NextResponse.json({ risultato: mockData, accessLevel: "full" });
@@ -154,9 +154,7 @@ export async function POST(request: NextRequest) {
 
     // If cookie doesn't have this ID but the record exists and is anonymous,
     // allow access (the cookie was likely not set yet due to navigation timing)
-    if (!hasCookieId) {
-      console.log(`[v0] Anonymous analysis ${id} found in DB but not in cookie - allowing access (timing issue)`);
-    }
+    void hasCookieId;
 
     analisi = data;
   }
@@ -238,6 +236,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "File del documento non trovato" },
       { status: 500 }
+    );
+  }
+
+  // Check OpenAI key before starting pipeline
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("[CRITICAL] OPENAI_API_KEY is not configured");
+    await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+    return NextResponse.json(
+      { error: "Servizio temporaneamente non disponibile", code: "ERR-OPENAI-MISSING" },
+      { status: 503 }
     );
   }
 
@@ -340,12 +348,19 @@ export async function POST(request: NextRequest) {
       console.error("Errore aggiornamento stato error:", dbError);
     }
 
+    // Map known error codes to user-friendly messages
+    const errMsg = error instanceof Error ? error.message : String(error);
+    if (errMsg === "ERR-OPENAI-MISSING") {
+      return NextResponse.json(
+        { error: "Servizio temporaneamente non disponibile", code: "ERR-OPENAI-MISSING" },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Errore durante l'analisi del documento",
+        error: "Errore durante l'analisi del documento",
+        code: "ERR-PIPELINE",
       },
       { status: 500 }
     );

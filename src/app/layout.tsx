@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CookieBanner } from "@/components/cookie-banner";
 import "./globals.css";
 
@@ -75,6 +77,8 @@ export default function RootLayout({
           {children}
           <CookieBanner />
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

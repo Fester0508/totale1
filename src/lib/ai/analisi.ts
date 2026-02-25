@@ -8,6 +8,9 @@ import type { RisultatoAnalisi, DatiEstrattiOCR, AICallResult } from "../types";
 export async function analizzaBustaPaga(
   datiEstratti: DatiEstrattiOCR
 ): Promise<AICallResult<RisultatoAnalisi>> {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("ERR-OPENAI-MISSING");
+  }
   const start = Date.now();
 
   // Genera il contesto di riferimento con i dati CCNL reali
