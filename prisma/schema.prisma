@@ -44,10 +44,10 @@ model UserProfile {
 
 model Analisi {
   id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sessionId           String    @map("session_id") @db.Uuid
+  sessionId           String?   @map("session_id") @db.Uuid
   userId              String?   @map("user_id") @db.Uuid
-  fileUrl             String    @map("file_url")
-  fileType            String    @map("file_type")
+  fileUrl             String?   @map("file_url")
+  fileType            String?   @map("file_type")
   fileMime            String?   @map("file_mime")
   fileData            String?   @map("file_data")
   storagePath         String?   @map("storage_path")
@@ -55,7 +55,7 @@ model Analisi {
   datiEstratti        Json?     @map("dati_estratti")
   risultato           Json?
   semaforo            String?
-  numeroAnomalie      Int       @default(0) @map("numero_anomalie")
+  numeroAnomalie      Int?      @default(0) @map("numero_anomalie")
   accessLevel         String    @default("preview") @map("access_level")
   processingStartedAt DateTime? @map("processing_started_at") @db.Timestamptz
   createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
