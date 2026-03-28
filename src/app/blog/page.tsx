@@ -37,7 +37,7 @@ export default function BlogIndex() {
             <p className="text-sm font-semibold text-blue-200 tracking-wide uppercase mb-3">
               Blog
             </p>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 font-heading">
               Guide e articoli su lavoro e diritti
             </h1>
             <p className="text-lg text-white/70 max-w-2xl mx-auto">

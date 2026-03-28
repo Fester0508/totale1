@@ -64,7 +64,7 @@ export function Header() {
     <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="group flex items-center gap-1.5">
-          <span className="text-xl font-bold uppercase tracking-wider transition-colors duration-300">
+          <span className="text-xl font-bold uppercase tracking-wider transition-colors duration-300 font-heading">
             <span className="text-brand-navy">LAVORO</span>
             <span className="text-brand-gray mx-1 text-lg font-normal">IN</span>
             <span className="text-brand-amber group-hover:text-brand-amber-dark transition-colors duration-300">CHIARO</span>

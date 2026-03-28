@@ -66,7 +66,7 @@ export default function ServiziPage() {
               <Sparkles className="h-4 w-4" />
               Tutti i servizi sono alimentati da intelligenza artificiale
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 font-heading">
               I nostri servizi
             </h1>
             <p className="text-white/80 text-lg max-w-xl mx-auto leading-relaxed">
@@ -90,7 +90,7 @@ export default function ServiziPage() {
                   <FileSearch className="h-8 w-8" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Analisi Busta Paga</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-2 font-heading">Analisi Busta Paga</h2>
                   <p className="text-muted-foreground leading-relaxed max-w-2xl">
                     Il nostro servizio di punta: carica il tuo cedolino e ricevi un report dettagliato con score, errori, anomalie e soldi da recuperare. L&apos;AI confronta ogni voce con le tabelle CCNL e la normativa vigente.
                   </p>
@@ -112,7 +112,7 @@ export default function ServiziPage() {
                 <Brain className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-foreground">Assistenti AI</h2>
+                <h2 className="text-xl font-bold text-foreground font-heading">Assistenti AI</h2>
                 <p className="text-sm text-muted-foreground">Scegli un servizio e inizia subito la conversazione</p>
               </div>
             </div>
