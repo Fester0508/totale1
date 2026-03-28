@@ -2,7 +2,20 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
 import { UploadZone } from "@/components/upload-zone";
-import { RotatingHeadline } from "@/components/rotating-headline";
+import {
+  FileSearch,
+  FileText,
+  Calculator,
+  Heart,
+  Shield,
+  Home as HomeIcon,
+  Users,
+  MessageCircle,
+  Upload,
+  Brain,
+  CheckCircle,
+  ArrowRight,
+} from "lucide-react";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -110,10 +123,122 @@ const jsonLd = {
 };
 
 /* ── Data ── */
+const services = [
+  {
+    title: "Analisi Busta Paga",
+    desc: "Il nostro servizio principale: carica il tuo cedolino e ricevi un report dettagliato con errori, anomalie e soldi da recuperare.",
+    icon: FileSearch,
+    color: "blue",
+    href: "#analizza",
+    flagship: true,
+  },
+  {
+    title: "Redazione Lettere",
+    desc: "Genera richieste formali al tuo datore di lavoro con l'aiuto dell'intelligenza artificiale.",
+    icon: FileText,
+    color: "emerald",
+    href: "/servizi/redazione-lettere",
+    flagship: false,
+  },
+  {
+    title: "Calcolo NASPI",
+    desc: "Simula la tua indennit\u00e0 di disoccupazione e scopri quanto ti spetta.",
+    icon: Calculator,
+    color: "amber",
+    href: "/servizi/calcolo-naspi",
+    flagship: false,
+  },
+  {
+    title: "Consulenza Maternit\u00e0",
+    desc: "Congedo, indennit\u00e0 e diritti per la maternit\u00e0: tutto ci\u00f2 che devi sapere.",
+    icon: Heart,
+    color: "pink",
+    href: "/servizi/maternita",
+    flagship: false,
+  },
+  {
+    title: "Controllo Multe",
+    desc: "Verifica la regolarit\u00e0 delle tue multe e scopri se puoi contestarle.",
+    icon: Shield,
+    color: "red",
+    href: "/servizi/controllo-multe",
+    flagship: false,
+  },
+  {
+    title: "Contratti Colf",
+    desc: "Assistenza completa per contratti di lavoro domestico e collaboratori.",
+    icon: HomeIcon,
+    color: "purple",
+    href: "/servizi/contratti-colf",
+    flagship: false,
+  },
+  {
+    title: "Rete Professionisti",
+    desc: "Collegati con commercialisti e consulenti del lavoro nella tua zona.",
+    icon: Users,
+    color: "teal",
+    href: "/servizi/professionisti",
+    flagship: false,
+  },
+  {
+    title: "Assistente AI",
+    desc: "Hai una domanda sul lavoro? Il nostro assistente AI \u00e8 pronto ad aiutarti 24/7.",
+    icon: MessageCircle,
+    color: "indigo",
+    href: "/servizi/assistenza",
+    flagship: false,
+  },
+];
+
+const colorMap: Record<string, { bg: string; text: string; border: string; ring: string }> = {
+  blue: { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-600 dark:text-blue-400", border: "border-blue-200 dark:border-blue-800", ring: "ring-blue-500/20" },
+  emerald: { bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200 dark:border-emerald-800", ring: "ring-emerald-500/20" },
+  amber: { bg: "bg-amber-50 dark:bg-amber-950/30", text: "text-amber-600 dark:text-amber-400", border: "border-amber-200 dark:border-amber-800", ring: "ring-amber-500/20" },
+  pink: { bg: "bg-pink-50 dark:bg-pink-950/30", text: "text-pink-600 dark:text-pink-400", border: "border-pink-200 dark:border-pink-800", ring: "ring-pink-500/20" },
+  red: { bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-600 dark:text-red-400", border: "border-red-200 dark:border-red-800", ring: "ring-red-500/20" },
+  purple: { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-600 dark:text-purple-400", border: "border-purple-200 dark:border-purple-800", ring: "ring-purple-500/20" },
+  teal: { bg: "bg-teal-50 dark:bg-teal-950/30", text: "text-teal-600 dark:text-teal-400", border: "border-teal-200 dark:border-teal-800", ring: "ring-teal-500/20" },
+  indigo: { bg: "bg-indigo-50 dark:bg-indigo-950/30", text: "text-indigo-600 dark:text-indigo-400", border: "border-indigo-200 dark:border-indigo-800", ring: "ring-indigo-500/20" },
+};
+
 const steps = [
-  { num: "01", title: "Carica", desc: "Scatta una foto o carica il PDF della tua busta paga." },
-  { num: "02", title: "Analisi AI", desc: "La nostra AI legge ogni voce e la confronta con il tuo CCNL." },
-  { num: "03", title: "Referto", desc: "Ricevi un report chiaro con errori, anomalie e soldi da recuperare." },
+  { num: "01", title: "Carica", desc: "Scatta una foto o carica il PDF della tua busta paga.", icon: Upload },
+  { num: "02", title: "Analisi AI", desc: "La nostra AI legge ogni voce e la confronta con il tuo CCNL.", icon: Brain },
+  { num: "03", title: "Referto", desc: "Ricevi un report chiaro con semaforo: verde, giallo o rosso.", icon: CheckCircle },
+];
+
+const stats = [
+  { value: "10.000+", label: "buste paga analizzate" },
+  { value: "97%", label: "anomalie rilevate" },
+  { value: "100+", label: "CCNL supportati" },
+  { value: "30s", label: "tempo medio di analisi" },
+];
+
+const faqs = [
+  {
+    q: "Quanto costa usare LavoroChiaro?",
+    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi servono i piani a pagamento. Pay-Per-Error costa 3,99\u00a0\u20ac a singola analisi. L\u2019abbonamento parte da 0,99\u00a0\u20ac/mese. Il piano Pro + Chatbot costa 9,99\u00a0\u20ac/mese.",
+  },
+  {
+    q: "I miei dati sono al sicuro?",
+    a: "Ogni documento viene crittografato con standard AES-256, trasmesso su connessione HTTPS e conservato su server europei conformi GDPR. Eliminazione automatica dopo 30 giorni.",
+  },
+  {
+    q: "Come funziona l\u2019analisi della busta paga?",
+    a: "L\u2019AI estrae tutti i dati con OCR avanzato, poi confronta ogni voce con le tabelle CCNL, la normativa vigente e le aliquote fiscali aggiornate. Il referto arriva in circa 30 secondi.",
+  },
+  {
+    q: "Funziona con il mio contratto?",
+    a: "Supportiamo tutti i principali CCNL italiani: Commercio, Metalmeccanico, Pubblico Impiego, Sanit\u00e0, Edilizia, Turismo e molti altri.",
+  },
+  {
+    q: "L\u2019analisi sostituisce un consulente del lavoro?",
+    a: "No. LavoroChiaro \u00e8 uno strumento informativo che ti permette di arrivare dal consulente gi\u00e0 informato, con un referto dettagliato delle anomalie trovate.",
+  },
+  {
+    q: "Cosa succede dopo la prima analisi gratuita?",
+    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi in poi vedi i titoli e gli importi delle anomalie, ma le spiegazioni dettagliate e le raccomandazioni sono bloccate. Per sbloccarle puoi usare Pay-Per-Error (3,99\u00a0\u20ac) o abbonarti.",
+  },
 ];
 
 const plans = [
@@ -183,40 +308,6 @@ const plans = [
   },
 ];
 
-const faqs = [
-  {
-    q: "Quanto costa usare LavoroChiaro?",
-    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi servono i piani a pagamento. Pay-Per-Error costa 3,99\u00a0\u20ac a singola analisi. L\u2019abbonamento parte da 0,99\u00a0\u20ac/mese. Il piano Pro + Chatbot costa 9,99\u00a0\u20ac/mese.",
-  },
-  {
-    q: "I miei dati sono al sicuro?",
-    a: "Ogni documento viene crittografato con standard AES-256, trasmesso su connessione HTTPS e conservato su server europei conformi GDPR. Eliminazione automatica dopo 30 giorni.",
-  },
-  {
-    q: "Come funziona l\u2019analisi della busta paga?",
-    a: "L\u2019AI estrae tutti i dati con OCR avanzato, poi confronta ogni voce con le tabelle CCNL, la normativa vigente e le aliquote fiscali aggiornate. Il referto arriva in circa 30 secondi.",
-  },
-  {
-    q: "Funziona con il mio contratto?",
-    a: "Supportiamo tutti i principali CCNL italiani: Commercio, Metalmeccanico, Pubblico Impiego, Sanit\u00e0, Edilizia, Turismo e molti altri.",
-  },
-  {
-    q: "L\u2019analisi sostituisce un consulente del lavoro?",
-    a: "No. LavoroChiaro \u00e8 uno strumento informativo che ti permette di arrivare dal consulente gi\u00e0 informato, con un referto dettagliato delle anomalie trovate.",
-  },
-  {
-    q: "Cosa succede dopo la prima analisi gratuita?",
-    a: "La prima analisi \u00e8 completa e gratuita: vedi score, importi, anomalie e raccomandazioni. Dalla seconda analisi in poi vedi i titoli e gli importi delle anomalie, ma le spiegazioni dettagliate e le raccomandazioni sono bloccate. Per sbloccarle puoi usare Pay-Per-Error (3,99\u00a0\u20ac) o abbonarti.",
-  },
-];
-
-/* ── Mini Report Preview Data ── */
-const reportVoci = [
-  { codice: "ERR-001", cat: "STRAORDINARI", titolo: "Maggiorazione straordinario notturno assente", importo: "\u2212 \u20ac89,00", tipo: "errore" as const },
-  { codice: "AVV-001", cat: "IRPEF", titolo: "Detrazione figli a carico da aggiornare", importo: "~ \u20ac0", tipo: "avviso" as const },
-  { codice: "OK-001", cat: "INPS", titolo: "Aliquota INPS corretta", importo: "", tipo: "ok" as const },
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
@@ -229,192 +320,204 @@ export default function Home() {
 
       <main>
         {/* ── HERO ── */}
-        <section className="relative px-6 pt-24 pb-16 md:pt-32 md:pb-24 bg-brand-navy">
-          <div className="container mx-auto flex flex-col items-center text-center gap-8 md:gap-10">
+        <section className="relative overflow-hidden px-6 pt-24 pb-20 md:pt-36 md:pb-32">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.2),transparent_50%)]" />
 
-            {/* 1. CTA BUTTON */}
-            <Link
-              href="#analizza"
-              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Controlla la busta paga
-            </Link>
+          <div className="relative container mx-auto flex flex-col items-center text-center gap-8">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 text-sm px-4 py-2 rounded-full border border-white/20">
+              <Brain className="h-4 w-4" />
+              Alimentato da intelligenza artificiale
+            </div>
 
-            {/* 2. TITOLO GIGANTE */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05]">
-              <span className="text-primary-foreground">La tua busta paga</span>
-              <br />
-              <span className="text-brand-amber">ti mente?</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-white max-w-4xl">
+              Il tuo consulente del lavoro{" "}
+              <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
+                digitale
+              </span>
             </h1>
 
-            {/* 3. LINEA */}
-            <div className="w-20 h-[2px] bg-brand-amber" />
-
-            {/* 4. FRASI ROTANTI */}
-            <RotatingHeadline />
-
-            {/* 5. TRUST BADGES */}
-            <p className="text-xs text-primary-foreground/40">
-                Prima analisi completa e gratuita &middot; Conforme GDPR &middot; 30 secondi
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
+              Analisi buste paga con AI, calcolo NASPI, assistenza maternit&agrave;, redazione lettere e molto altro. Tutto in un&apos;unica piattaforma.
             </p>
 
+            <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
+              <Link
+                href="#analizza"
+                className="inline-flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold text-base px-8 py-4 rounded-xl transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Analizza la tua busta paga
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link
+                href="/servizi"
+                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold text-base px-8 py-4 rounded-xl transition-all border border-white/20"
+              >
+                Scopri i servizi
+              </Link>
+            </div>
+
+            <p className="text-xs text-white/50 mt-2">
+              Prima analisi completa e gratuita &middot; Conforme GDPR &middot; 30 secondi
+            </p>
           </div>
         </section>
 
-        {/* ── DIVIDER ── */}
-        <div className="w-full max-w-4xl mx-auto h-px bg-brand-amber/30" />
-
-        {/* ── STATS ── */}
-        <section className="py-16 md:py-20 bg-background">
+        {/* ── SERVICES GRID ── */}
+        <section id="servizi" className="py-20 md:py-28 bg-background">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
-              {[
-                { value: "67%", label: "dei cedolini ha errori" },
-                { value: "30s", label: "tempo medio di analisi" },
-                { value: "\u20ac234", label: "euro medi recuperabili" },
-                { value: "50+", label: "CCNL supportati" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <p className="text-4xl md:text-5xl font-bold text-brand-navy">{s.value}</p>
-                  <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
-                </div>
-              ))}
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Piattaforma completa
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                I nostri servizi
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Otto servizi alimentati da intelligenza artificiale per proteggere i tuoi diritti e il tuo portafoglio.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {services.map((service) => {
+                const Icon = service.icon;
+                const colors = colorMap[service.color];
+
+                if (service.flagship) {
+                  return (
+                    <Link
+                      key={service.title}
+                      href={service.href}
+                      className="sm:col-span-2 lg:col-span-2 group"
+                    >
+                      <div className={`relative h-full rounded-2xl border-2 ${colors.border} ${colors.bg} p-8 transition-all hover:shadow-xl hover:-translate-y-1 ring-1 ${colors.ring}`}>
+                        <div className="absolute top-4 right-4">
+                          <span className="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                            Servizio principale
+                          </span>
+                        </div>
+                        <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${colors.bg} ${colors.text} mb-5`}>
+                          <Icon className="h-7 w-7" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
+                        <p className="text-muted-foreground leading-relaxed mb-4">{service.desc}</p>
+                        <span className={`inline-flex items-center gap-1 text-sm font-semibold ${colors.text} group-hover:gap-2 transition-all`}>
+                          Scopri di pi&ugrave;
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={service.title}
+                    href={service.href}
+                    className="group"
+                  >
+                    <div className={`h-full rounded-2xl border ${colors.border} bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1`}>
+                      <div className={`inline-flex items-center justify-center w-11 h-11 rounded-lg ${colors.bg} ${colors.text} mb-4`}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="text-base font-bold text-foreground mb-2">{service.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">{service.desc}</p>
+                      <span className={`inline-flex items-center gap-1 text-sm font-semibold ${colors.text} group-hover:gap-2 transition-all`}>
+                        Scopri di pi&ugrave;
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* ── COME FUNZIONA ── */}
-        <section id="come-funziona" className="py-16 md:py-24 bg-card">
+        <section id="come-funziona" className="py-20 md:py-28 bg-card">
           <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
-              Come funziona
-            </h2>
-            <div className="grid md:grid-cols-3 gap-10 max-w-4xl mx-auto">
-              {steps.map((step) => (
-                <div key={step.num} className="text-center md:text-left">
-                  <p className="text-5xl font-bold text-brand-amber mb-3">{step.num}</p>
-                  <h3 className="text-xl font-bold text-brand-navy mb-2">{step.title}</h3>
-                  <p className="text-sm text-foreground/60 leading-relaxed">{step.desc}</p>
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Semplice e veloce
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                Come funziona
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+              {steps.map((step) => {
+                const StepIcon = step.icon;
+                return (
+                  <div key={step.num} className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white mb-6 shadow-lg shadow-blue-500/25">
+                      <StepIcon className="h-7 w-7" />
+                    </div>
+                    <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-2">
+                      Passo {step.num}
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-3">{step.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Connector lines on desktop */}
+            <div className="hidden md:flex items-center justify-center gap-4 mt-12">
+              <div className="h-[2px] w-16 bg-gradient-to-r from-transparent to-blue-300 dark:to-blue-700 rounded-full" />
+              <div className="h-[2px] w-32 bg-blue-300 dark:bg-blue-700 rounded-full" />
+              <div className="h-2 w-2 rounded-full bg-blue-500" />
+              <div className="h-[2px] w-32 bg-blue-300 dark:bg-blue-700 rounded-full" />
+              <div className="h-[2px] w-16 bg-gradient-to-l from-transparent to-blue-300 dark:to-blue-700 rounded-full" />
+            </div>
+          </div>
+        </section>
+
+        {/* ── TRUST / SOCIAL PROOF ── */}
+        <section className="py-20 md:py-24 bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_70%)]" />
+          <div className="relative container mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-white">
+                Numeri che parlano
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-4xl mx-auto text-center">
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <p className="text-4xl md:text-5xl font-bold text-white">{s.value}</p>
+                  <p className="text-sm text-white/70 mt-2">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── REPORT PREVIEW ── */}
-        <section className="py-16 md:py-20 bg-background">
-          <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
-              Ecco cosa ottieni
-            </h2>
-            <p className="text-center text-xl md:text-2xl font-bold text-brand-navy mb-10 text-balance">
-              Un referto chiaro, in 30 secondi
-            </p>
-
-            <div className="max-w-md mx-auto">
-              <div className="bg-card rounded-xl border shadow-xl overflow-hidden">
-                {/* Report header */}
-                <div className="p-5 border-b">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">Intestatario cedolino</p>
-                      <p className="text-lg font-bold text-foreground">Laura Ferretti</p>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-amber-200">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      Anomalie Rilevate
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    CCNL Metalmeccanici &middot; Livello 4&deg; &middot; Novembre 2024
-                  </p>
-                </div>
-
-                {/* Score bar */}
-                <div className="px-5 py-4 flex items-center gap-4 border-b bg-muted/30">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground font-medium">Score</span>
-                      <span className="text-sm font-bold text-brand-navy">61/100</span>
-                    </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-green-500" style={{ width: "61%" }} />
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground">Recuperabile</p>
-                    <p className="text-lg font-bold text-brand-amber">&euro;234/mese</p>
-                  </div>
-                </div>
-
-                {/* Risultanze */}
-                <div className="p-5 space-y-3">
-                  {reportVoci.map((v) => {
-                    const border = v.tipo === "errore" ? "border-l-red-500" : v.tipo === "avviso" ? "border-l-amber-500" : "border-l-green-500";
-                    const badge = v.tipo === "errore" ? "bg-red-100 text-red-700" : v.tipo === "avviso" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700";
-                    const badgeLabel = v.tipo === "errore" ? "ERRORE" : v.tipo === "avviso" ? "VERIFICA" : "CORRETTO";
-                    return (
-                      <div key={v.codice} className={`border-l-4 ${border} rounded-r-lg bg-muted/20 p-3`}>
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-[10px] text-muted-foreground font-mono">{v.codice} &middot; {v.cat}</p>
-                            <p className="text-sm font-semibold text-foreground leading-snug">{v.titolo}</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            {v.importo && <p className="text-sm font-bold text-foreground">{v.importo}</p>}
-                            <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${badge}`}>{badgeLabel}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Blur overlay + CTA */}
-                <div className="relative">
-                  <div className="p-5 space-y-3 blur-[6px] select-none pointer-events-none" aria-hidden="true">
-                    <div className="border-l-4 border-l-red-500 rounded-r-lg bg-muted/20 p-3">
-                      <p className="text-[10px] text-muted-foreground font-mono">ERR-002 &middot; TFR</p>
-                      <p className="text-sm font-semibold text-foreground">Accantonamento TFR non aggiornato</p>
-                    </div>
-                    <div className="border-l-4 border-l-green-500 rounded-r-lg bg-muted/20 p-3">
-                      <p className="text-[10px] text-muted-foreground font-mono">OK-002 &middot; FERIE</p>
-                      <p className="text-sm font-semibold text-foreground">Residuo ferie calcolato correttamente</p>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
-                    <Link
-                      href="#analizza"
-                      className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-sm px-8 py-3 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-md"
-                    >
-                      Analizza la tua busta paga
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ── UPLOAD SECTION ── */}
-        <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-brand-navy">
+        <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-background">
           <div className="container mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4">
-                Carica il tuo cedolino.
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Inizia subito
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Prova gratis la tua prima analisi
               </h2>
-              <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-              <p className="text-primary-foreground/70 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-lg">
                 PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
               </p>
-              <p className="text-sm font-bold text-brand-amber mt-3">
+              <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-3">
                 Prima analisi completa e gratuita &mdash; senza registrazione
               </p>
             </div>
             <div className="max-w-2xl mx-auto">
               <UploadZone />
             </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-primary-foreground/40">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
               <span>AES-256 encryption</span>
               <span className="hidden sm:inline">&middot;</span>
               <span>Server EU / GDPR</span>
@@ -425,33 +528,34 @@ export default function Home() {
         </section>
 
         {/* ── PRICING ── */}
-        <section id="prezzi" className="py-16 md:py-24">
+        <section id="prezzi" className="py-20 md:py-28 bg-card">
           <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
-              Prezzi trasparenti
-            </h2>
-            <p className="text-center text-2xl md:text-3xl font-bold text-brand-navy mb-12 text-balance">
-              Scegli come vuoi controllare la tua busta paga
-            </p>
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Prezzi trasparenti
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Scegli come vuoi controllare la tua busta paga
+              </h2>
+            </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {plans.map((plan) => (
                 <div
                   key={plan.name}
-                  className={`relative rounded-lg border p-6 flex flex-col transition-all hover:shadow-lg hover:-translate-y-1 ${
+                  className={`relative rounded-2xl border p-6 flex flex-col transition-all hover:shadow-lg hover:-translate-y-1 ${
                     plan.highlight
-                      ? "border-brand-amber border-2 bg-card shadow-xl ring-2 ring-brand-amber/30 scale-[1.03]"
+                      ? "border-blue-500 border-2 bg-card shadow-xl ring-2 ring-blue-500/20 scale-[1.03]"
                       : "border-border bg-card shadow-sm"
                   }`}
                 >
-                  {/* Badge */}
                   {plan.badge && (
                     <span
                       className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full ${
                         plan.highlight
-                          ? "bg-brand-amber text-accent-foreground"
+                          ? "bg-blue-600 text-white"
                           : plan.badge === "PREMIUM"
-                          ? "bg-brand-navy text-primary-foreground"
+                          ? "bg-indigo-600 text-white"
                           : "bg-muted text-muted-foreground"
                       }`}
                     >
@@ -461,7 +565,7 @@ export default function Home() {
 
                   <h3 className="font-bold text-foreground text-lg mt-1">{plan.name}</h3>
                   <div className="mt-3 mb-1">
-                    <span className="text-3xl font-bold text-brand-navy">
+                    <span className="text-3xl font-bold text-foreground">
                       &euro;{plan.price}
                     </span>
                     {plan.period && (
@@ -470,15 +574,10 @@ export default function Home() {
                   </div>
                   <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{plan.desc}</p>
 
-                  <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground mb-3 font-medium">
-                    Cosa include
-                  </p>
                   <ul className="space-y-2.5 flex-1">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-foreground">
-                        <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
                         {f}
                       </li>
                     ))}
@@ -486,10 +585,10 @@ export default function Home() {
 
                   <Link
                     href={plan.href}
-                    className={`mt-6 block text-center py-3 rounded-sm font-semibold text-sm uppercase tracking-wider transition-colors ${
+                    className={`mt-6 block text-center py-3 rounded-xl font-semibold text-sm transition-all ${
                       plan.highlight
-                        ? "bg-brand-amber text-accent-foreground hover:bg-brand-amber-dark"
-                        : "bg-brand-navy text-primary-foreground hover:bg-brand-navy-light"
+                        ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-600/25"
+                        : "bg-foreground/5 text-foreground hover:bg-foreground/10"
                     }`}
                   >
                     {plan.cta}
@@ -501,17 +600,22 @@ export default function Home() {
         </section>
 
         {/* ── FAQ ── */}
-        <section id="faq" className="py-16 md:py-24 bg-card">
+        <section id="faq" className="py-20 md:py-28 bg-background">
           <div className="container mx-auto px-6 max-w-2xl">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
-              Domande frequenti
-            </h2>
+            <div className="text-center mb-12">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Hai domande?
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                Domande frequenti
+              </h2>
+            </div>
             <div className="space-y-0">
               {faqs.map((faq) => (
                 <details key={faq.q} className="group border-b border-border/50 py-5">
-                  <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-foreground hover:text-brand-navy transition-colors">
+                  <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     {faq.q}
-                    <span className="text-brand-amber ml-4 text-xl group-open:rotate-45 transition-transform">+</span>
+                    <span className="text-blue-600 dark:text-blue-400 ml-4 text-xl group-open:rotate-45 transition-transform">+</span>
                   </summary>
                   <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                     {faq.a}
@@ -523,20 +627,21 @@ export default function Home() {
         </section>
 
         {/* ── FINAL CTA ── */}
-        <section className="py-20 md:py-28 bg-brand-navy">
-          <div className="container mx-auto px-6 text-center max-w-3xl">
-            <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4 text-balance">
-              Controlla prima di fidarti.
+        <section className="py-20 md:py-28 bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.08),transparent_60%)]" />
+          <div className="relative container mx-auto px-6 text-center max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 text-balance">
+              Prova gratis la tua prima analisi
             </h2>
-            <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-            <p className="text-primary-foreground/60 max-w-md mx-auto mb-10 leading-relaxed text-lg">
+            <p className="text-white/70 max-w-md mx-auto mb-10 leading-relaxed text-lg">
               La tua busta paga potrebbe nascondere errori che ti costano centinaia di euro ogni anno.
             </p>
             <Link
               href="#analizza"
-              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30"
+              className="inline-flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold text-lg px-12 py-5 rounded-xl transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]"
             >
               Analizza ora
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </section>
