@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AuthProvider } from "@/components/providers";
 import { CookieBanner } from "@/components/cookie-banner";
 import "./globals.css";
@@ -94,8 +92,6 @@ export default function RootLayout({
             <CookieBanner />
           </ThemeProvider>
         </AuthProvider>
-        <Analytics />
-        <SpeedInsights />
         <script
           dangerouslySetInnerHTML={{
             __html: `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js')})}`,
