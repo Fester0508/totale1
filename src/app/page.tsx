@@ -83,11 +83,11 @@ export default function Home() {
           <div className="relative w-full px-6 py-24 md:py-32">
             <div className="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
               {/* FREE badge */}
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-sm sm:text-base px-6 py-3 rounded-full shadow-lg shadow-emerald-500/30 border-2 border-emerald-300/40">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-sm sm:text-base px-6 py-3 rounded-full shadow-lg shadow-emerald-500/30 border-2 border-emerald-300/40 font-accent font-black tracking-wide">
                 SEMPRE GRATUITO
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-white">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-white font-heading">
                 Controlla la tua busta paga.{" "}
                 <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
                   Gratis, per sempre.
@@ -101,7 +101,7 @@ export default function Home() {
 
               <Link
                 href="#analizza"
-                className="inline-flex items-center justify-center bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold text-lg px-12 py-5 rounded-2xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold text-lg px-12 py-5 rounded-2xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Analizza ora — È gratis
                 <ArrowRight className="ml-3 h-5 w-5" />
@@ -123,7 +123,7 @@ export default function Home() {
               <Users className="w-16 h-16 md:w-20 md:h-20 text-blue-600 dark:text-blue-400" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
                 Hai trovato errori? Parla con un nostro consulente.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 max-w-2xl">
@@ -131,12 +131,12 @@ export default function Home() {
                 incontro con un consulente del lavoro della nostra rete per
                 capire come recuperare il dovuto.
               </p>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-8">
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-8 font-accent">
                 A partire da €9,90
               </p>
               <Link
                 href="/servizi/professionisti"
-                className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Prenota una consulenza
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -154,7 +154,7 @@ export default function Home() {
               <Calculator className="w-16 h-16 md:w-20 md:h-20 text-indigo-600 dark:text-indigo-400" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
                 Dichiarazione 730? Ci pensano i nostri fiscalisti.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 max-w-2xl">
@@ -163,7 +163,7 @@ export default function Home() {
               </p>
               <Link
                 href="/servizi/professionisti"
-                className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Trova il tuo fiscalista
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -184,7 +184,7 @@ export default function Home() {
               <TrendingUp className="w-16 h-16 md:w-20 md:h-20 text-white" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 font-heading">
                 Retribuzione sbagliata? Puoi recuperare fino a 5 anni di
                 differenze.
               </h2>
@@ -196,13 +196,13 @@ export default function Home() {
               <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl px-8 py-4 mb-8">
                 <p className="text-3xl md:text-4xl font-bold text-white">
                   In media i lavoratori recuperano{" "}
-                  <span className="text-yellow-200">€2.400</span>
+                  <span className="text-yellow-200 font-accent">€2.400</span>
                 </p>
               </div>
               <div className="block">
                 <Link
                   href="/servizi/redazione-lettere"
-                  className="inline-flex items-center justify-center bg-white text-amber-700 font-bold text-base px-8 py-4 rounded-xl transition-all hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center bg-white text-amber-700 font-bold text-base px-8 py-4 rounded-xl transition-all hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] font-accent"
                 >
                   Verifica ora
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -221,7 +221,7 @@ export default function Home() {
               <Calculator className="w-16 h-16 md:w-20 md:h-20 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
                 Licenziato? Calcola subito la tua NASPI.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 max-w-2xl">
@@ -231,7 +231,7 @@ export default function Home() {
               </p>
               <Link
                 href="/servizi/calcolo-naspi"
-                className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Calcola la tua NASPI
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -251,7 +251,7 @@ export default function Home() {
               <Heart className="w-16 h-16 md:w-20 md:h-20 text-pink-600 dark:text-pink-400" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
                 In maternità? Conosci i tuoi diritti.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 max-w-2xl">
@@ -260,7 +260,7 @@ export default function Home() {
               </p>
               <Link
                 href="/servizi/maternita"
-                className="inline-flex items-center justify-center bg-pink-600 hover:bg-pink-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-pink-600 hover:bg-pink-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Scopri i tuoi diritti
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -278,7 +278,7 @@ export default function Home() {
               <Shield className="w-16 h-16 md:w-20 md:h-20 text-red-600 dark:text-red-400" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
                 Multa ingiusta? Verifica la regolarità.
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-4 max-w-2xl">
@@ -287,7 +287,7 @@ export default function Home() {
               </p>
               <Link
                 href="/servizi/controllo-multe"
-                className="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Controlla la tua multa
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -308,7 +308,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold text-xs tracking-wider uppercase px-4 py-2 rounded-full mb-6">
                 PRESTO DISPONIBILE
               </div>
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground/70 leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground/70 leading-tight mb-6 font-heading">
                 Contratti Colf e Badanti
               </h2>
               <p className="text-lg text-muted-foreground/70 leading-relaxed mb-8 max-w-2xl">
@@ -339,7 +339,7 @@ export default function Home() {
 
           <div className="relative max-w-5xl mx-auto px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 font-heading">
                 Ti sei trovato bene?{" "}
                 <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
                   Associati.
@@ -350,7 +350,7 @@ export default function Home() {
                 revoca alle trattenute in busta che potresti avere. Proteggi il
                 tuo stipendio ogni mese.
               </p>
-              <p className="text-4xl md:text-5xl font-bold text-white mt-8 mb-10">
+              <p className="text-4xl md:text-5xl font-bold text-white mt-8 mb-10 font-accent">
                 Solo{" "}
                 <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
                   €0,99
@@ -381,7 +381,7 @@ export default function Home() {
             <div className="text-center">
               <Link
                 href="/registrati"
-                className="inline-flex items-center justify-center bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-900 font-bold text-lg px-12 py-5 rounded-2xl transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-900 font-bold text-lg px-12 py-5 rounded-2xl transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:scale-[1.02] active:scale-[0.98] font-accent"
               >
                 Associati ora — €0,99/mese
                 <ArrowRight className="ml-3 h-5 w-5" />

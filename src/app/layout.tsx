@@ -1,8 +1,30 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/components/providers";
 import { CookieBanner } from "@/components/cookie-banner";
 import "./globals.css";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+  variable: "--font-accent",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -78,7 +100,7 @@ export default function RootLayout({
         )}
       </head>
       <body
-        className="font-mono antialiased"
+        className={`${plusJakarta.variable} ${inter.variable} ${outfit.variable} font-body antialiased`}
       >
         <a
           href="#analizza"
