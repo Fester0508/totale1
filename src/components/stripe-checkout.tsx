@@ -19,7 +19,10 @@ interface StripeCheckoutProps {
 
 export function StripeCheckout({ productId }: StripeCheckoutProps) {
   const fetchClientSecret = useCallback(
-    () => startCheckoutSession(productId),
+    async () => {
+      const secret = await startCheckoutSession(productId);
+      return secret ?? "";
+    },
     [productId]
   );
 
@@ -27,7 +30,7 @@ export function StripeCheckout({ productId }: StripeCheckoutProps) {
     <div id="checkout">
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
-        options={{ clientSecret: fetchClientSecret }}
+        options={{ fetchClientSecret }}
       >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>

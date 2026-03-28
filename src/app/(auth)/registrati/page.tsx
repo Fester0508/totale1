@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +15,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,7 +25,6 @@ export default function RegisterPage() {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,50 +48,42 @@ export default function RegisterPage() {
     setLoading(true);
 
     const now = new Date().toISOString();
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          privacy_accepted_at: now,
-          terms_accepted_at: now,
-          marketing_consent: marketingConsent,
-        },
-      },
+
+    // Register user via API
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        privacyAcceptedAt: now,
+        termsAcceptedAt: now,
+        marketingConsent,
+      }),
     });
 
-    if (error) {
-      setError(error.message);
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "Errore durante la registrazione");
       setLoading(false);
       return;
     }
 
-    setSuccess(true);
-    setLoading(false);
-  }
+    // Auto-login after registration
+    const loginResult = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-  if (success) {
-    return (
-      <Card className="w-full max-w-sm">
-        <CardContent className="pt-6 text-center space-y-4">
-          <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />
-          <h2 className="text-lg font-semibold">Controlla la tua email</h2>
-          <p className="text-sm text-muted-foreground">
-            Ti abbiamo inviato un&apos;email di conferma a{" "}
-            <span className="font-medium text-foreground">{email}</span>.
-            Clicca sul link per attivare il tuo account.
-          </p>
-          <Link
-            href="/login"
-            className="text-sm text-brand-navy hover:underline font-medium inline-block mt-2"
-          >
-            Torna al login
-          </Link>
-        </CardContent>
-      </Card>
-    );
+    if (loginResult?.error) {
+      setError("Account creato. Effettua il login.");
+      setLoading(false);
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (

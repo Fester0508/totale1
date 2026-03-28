@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
-  const supabase = createAdminClient();
   const { searchParams } = new URL(request.url);
 
   const page = parseInt(searchParams.get("page") || "1");
@@ -13,34 +13,60 @@ export async function GET(request: NextRequest) {
   const dateFrom = searchParams.get("date_from");
   const dateTo = searchParams.get("date_to");
   const sort = searchParams.get("sort") || "created_at";
-  const order = searchParams.get("order") === "asc" ? true : false;
+  const order = searchParams.get("order") === "asc" ? "asc" : "desc";
 
-  const from = (page - 1) * perPage;
-  const to = from + perPage - 1;
+  const skip = (page - 1) * perPage;
 
-  let query = supabase
-    .from("analisi")
-    .select("id, stato, semaforo, file_type, numero_anomalie, created_at, file_url", {
-      count: "exact",
-    });
-
-  if (stato) query = query.eq("stato", stato);
-  if (semaforo) query = query.eq("semaforo", semaforo);
-  if (fileType) query = query.eq("file_type", fileType);
-  if (dateFrom) query = query.gte("created_at", dateFrom);
-  if (dateTo) query = query.lte("created_at", dateTo);
-
-  query = query.order(sort, { ascending: order }).range(from, to);
-
-  const { data, count, error } = await query;
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  const where: Prisma.AnalisiWhereInput = {};
+  if (stato) where.stato = stato;
+  if (semaforo) where.semaforo = semaforo;
+  if (fileType) where.fileType = fileType;
+  if (dateFrom || dateTo) {
+    where.createdAt = {};
+    if (dateFrom) where.createdAt.gte = new Date(dateFrom);
+    if (dateTo) where.createdAt.lte = new Date(dateTo);
   }
 
+  // Map sort field from snake_case to camelCase
+  const sortFieldMap: Record<string, string> = {
+    created_at: "createdAt",
+    stato: "stato",
+    semaforo: "semaforo",
+    file_type: "fileType",
+    numero_anomalie: "numeroAnomalie",
+  };
+  const sortField = sortFieldMap[sort] || "createdAt";
+
+  const [data, total] = await Promise.all([
+    prisma.analisi.findMany({
+      where,
+      select: {
+        id: true,
+        stato: true,
+        semaforo: true,
+        fileType: true,
+        numeroAnomalie: true,
+        createdAt: true,
+        fileUrl: true,
+      },
+      orderBy: { [sortField]: order },
+      skip,
+      take: perPage,
+    }),
+    prisma.analisi.count({ where }),
+  ]);
+
   return NextResponse.json({
-    data: data ?? [],
-    total: count ?? 0,
+    data: data.map((d) => ({
+      id: d.id,
+      stato: d.stato,
+      semaforo: d.semaforo,
+      file_type: d.fileType,
+      numero_anomalie: d.numeroAnomalie,
+      created_at: d.createdAt,
+      file_url: d.fileUrl,
+    })),
+    total,
     page,
     per_page: perPage,
   });

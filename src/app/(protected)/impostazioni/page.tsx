@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
 import {
   Card,
   CardContent,
@@ -14,28 +14,26 @@ import { ExportButton } from "./export-button";
 import { DeleteAccountDialog } from "@/components/user/delete-account-dialog";
 
 export default async function ImpostazioniPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getUser();
   if (!user) redirect("/login");
 
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("user_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { profile: true },
+  });
 
-  const registrationDate = new Date(user.created_at).toLocaleDateString(
+  if (!dbUser) redirect("/login");
+
+  const profile = dbUser.profile;
+
+  const registrationDate = new Date(dbUser.createdAt).toLocaleDateString(
     "it-IT",
     { day: "numeric", month: "long", year: "numeric" }
   );
 
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "—";
-    return new Date(dateStr).toLocaleDateString("it-IT", {
+  const formatDate = (date: Date | null) => {
+    if (!date) return "\u2014";
+    return new Date(date).toLocaleDateString("it-IT", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -64,7 +62,7 @@ export default async function ImpostazioniPage() {
         <CardContent className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Email</span>
-            <span className="text-sm font-medium">{user.email}</span>
+            <span className="text-sm font-medium">{dbUser.email}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">
@@ -94,7 +92,7 @@ export default async function ImpostazioniPage() {
               Privacy Policy
             </span>
             <span className="text-sm text-green-600 font-medium">
-              Accettata il {formatDate(profile?.privacy_accepted_at ?? null)}
+              Accettata il {formatDate(profile?.privacyAcceptedAt ?? null)}
             </span>
           </div>
           <div className="flex justify-between items-center">
@@ -102,12 +100,12 @@ export default async function ImpostazioniPage() {
               Termini di Servizio
             </span>
             <span className="text-sm text-green-600 font-medium">
-              Accettati il {formatDate(profile?.terms_accepted_at ?? null)}
+              Accettati il {formatDate(profile?.termsAcceptedAt ?? null)}
             </span>
           </div>
           <div className="border-t pt-4">
             <MarketingToggle
-              initialValue={profile?.marketing_consent ?? false}
+              initialValue={profile?.marketingConsent ?? false}
             />
           </div>
         </CardContent>

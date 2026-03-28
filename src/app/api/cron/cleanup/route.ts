@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import * as fs from "fs/promises";
+import * as path from "path";
 
 /**
  * GDPR Cleanup Cron Job
  *
  * Runs daily. Deletes:
  * 1. Expired analysis records (expires_at < now)
- * 2. Uploaded files from Supabase Storage for those records
- * 3. Anonymous sessions older than 30 days
+ * 2. Uploaded files from local storage for those records
+ * 3. Orphaned AI usage logs older than 90 days
  *
  * Protected by CRON_SECRET header to prevent unauthorized access.
  */
@@ -18,45 +20,44 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const admin = createAdminClient();
-  const now = new Date().toISOString();
+  const now = new Date();
   let deletedAnalisi = 0;
   let deletedFiles = 0;
 
   try {
     // 1. Find expired analysis records
-    const { data: expiredRecords, error: fetchError } = await admin
-      .from("analisi")
-      .select("id")
-      .lt("expires_at", now);
+    const expiredRecords = await prisma.analisi.findMany({
+      where: { expiresAt: { lt: now } },
+      select: { id: true, storagePath: true },
+    });
 
-    if (fetchError) {
-      console.error("[GDPR Cleanup] Error fetching expired records:", fetchError.message);
-      return NextResponse.json({ error: fetchError.message }, { status: 500 });
-    }
-
-    if (expiredRecords && expiredRecords.length > 0) {
-      // 2. Delete analysis records (file_data is stored inline, deleted with the row)
-      const expiredIds = expiredRecords.map((r) => r.id);
-      const { error: deleteError } = await admin
-        .from("analisi")
-        .delete()
-        .in("id", expiredIds);
-
-      if (deleteError) {
-        console.error("[GDPR Cleanup] Delete error:", deleteError.message);
-        return NextResponse.json({ error: deleteError.message }, { status: 500 });
+    if (expiredRecords.length > 0) {
+      // 2. Delete local files for expired records
+      const uploadDir = process.env.UPLOAD_DIR || "/tmp/uploads";
+      for (const record of expiredRecords) {
+        if (record.storagePath) {
+          try {
+            await fs.unlink(path.join(uploadDir, record.storagePath));
+            deletedFiles++;
+          } catch {
+            // File may already be deleted
+          }
+        }
       }
 
+      // 3. Delete analysis records
+      const expiredIds = expiredRecords.map((r) => r.id);
+      await prisma.analisi.deleteMany({
+        where: { id: { in: expiredIds } },
+      });
       deletedAnalisi = expiredIds.length;
     }
 
     // 4. Clean up orphaned AI usage logs older than 90 days
-    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
-    await admin
-      .from("ai_usage")
-      .delete()
-      .lt("created_at", ninetyDaysAgo);
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+    await prisma.aiUsage.deleteMany({
+      where: { createdAt: { lt: ninetyDaysAgo } },
+    });
 
     return NextResponse.json({
       success: true,
@@ -64,7 +65,7 @@ export async function GET(req: Request) {
         analisi: deletedAnalisi,
         files: deletedFiles,
       },
-      timestamp: now,
+      timestamp: now.toISOString(),
     });
   } catch (err) {
     console.error("[GDPR Cleanup] Unexpected error:", err);

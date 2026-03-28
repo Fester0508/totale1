@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
 import type Stripe from "stripe";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -24,8 +24,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createAdminClient();
-
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -43,11 +41,9 @@ export async function POST(request: NextRequest) {
         if (!customerId || !plan) break;
 
         // Find user by stripe_customer_id
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
+        const profile = await prisma.userProfile.findFirst({
+          where: { stripeCustomerId: customerId },
+        });
 
         if (!profile) {
           console.error("No user found for customer:", customerId);
@@ -57,27 +53,29 @@ export async function POST(request: NextRequest) {
         // Update user plan
         const updateData: Record<string, unknown> = {
           tier: plan,
-          updated_at: new Date().toISOString(),
+          updatedAt: new Date(),
         };
 
         if (subscriptionId) {
-          updateData.stripe_subscription_id = subscriptionId;
-          updateData.subscription_status = "active";
+          updateData.stripeSubscriptionId = subscriptionId;
+          updateData.subscriptionStatus = "active";
         }
 
-        await supabase
-          .from("user_profiles")
-          .update(updateData)
-          .eq("id", profile.id);
+        await prisma.userProfile.update({
+          where: { id: profile.id },
+          data: updateData,
+        });
 
         // Record payment
-        await supabase.from("payments").insert({
-          user_id: profile.id,
-          amount_cents: session.amount_total || 0,
-          currency: session.currency || "eur",
-          status: "completed",
-          stripe_session_id: session.id,
-          product_id: session.metadata?.productId,
+        await prisma.payment.create({
+          data: {
+            userId: profile.id,
+            amountCents: session.amount_total || 0,
+            currency: session.currency || "eur",
+            status: "completed",
+            stripeSessionId: session.id,
+            productId: session.metadata?.productId || "checkout",
+          },
         });
 
         break;
@@ -92,37 +90,37 @@ export async function POST(request: NextRequest) {
 
         if (!customerId) break;
 
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
+        const profile = await prisma.userProfile.findFirst({
+          where: { stripeCustomerId: customerId },
+        });
 
         if (!profile) break;
 
-        await supabase
-          .from("user_profiles")
-          .update({
-            subscription_status: subscription.status,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", profile.id);
+        await prisma.userProfile.update({
+          where: { id: profile.id },
+          data: {
+            subscriptionStatus: subscription.status,
+            updatedAt: new Date(),
+          },
+        });
 
         // Update subscriptions table
-        await supabase
-          .from("subscriptions")
-          .upsert({
-            user_id: profile.id,
-            stripe_subscription_id: subscription.id,
+        await prisma.subscription.upsert({
+          where: { stripeSubscriptionId: subscription.id },
+          update: {
             status: subscription.status,
-            current_period_start: new Date(
-              subscription.current_period_start * 1000
-            ).toISOString(),
-            current_period_end: new Date(
-              subscription.current_period_end * 1000
-            ).toISOString(),
-            updated_at: new Date().toISOString(),
-          }, { onConflict: "stripe_subscription_id" });
+            currentPeriodStart: new Date(subscription.current_period_start * 1000),
+            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            updatedAt: new Date(),
+          },
+          create: {
+            userId: profile.id,
+            stripeSubscriptionId: subscription.id,
+            status: subscription.status,
+            currentPeriodStart: new Date(subscription.current_period_start * 1000),
+            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          },
+        });
 
         break;
       }
@@ -136,44 +134,34 @@ export async function POST(request: NextRequest) {
 
         if (!customerId) break;
 
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
+        const profile = await prisma.userProfile.findFirst({
+          where: { stripeCustomerId: customerId },
+        });
 
         if (!profile) break;
 
         // Check if they have a min_end_at that hasn't passed
         const now = new Date();
-        const { data: currentProfile } = await supabase
-          .from("user_profiles")
-          .select("subscription_min_end_at")
-          .eq("id", profile.id)
-          .single();
-
-        const minEnd = currentProfile?.subscription_min_end_at
-          ? new Date(currentProfile.subscription_min_end_at)
-          : null;
+        const minEnd = profile.subscriptionMinEndAt;
 
         // Downgrade to FREE_FIRST
-        await supabase
-          .from("user_profiles")
-          .update({
+        await prisma.userProfile.update({
+          where: { id: profile.id },
+          data: {
             tier: minEnd && minEnd > now ? undefined : "FREE_FIRST",
-            subscription_status: "canceled",
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", profile.id);
+            subscriptionStatus: "canceled",
+            updatedAt: new Date(),
+          },
+        });
 
-        await supabase
-          .from("subscriptions")
-          .update({
+        await prisma.subscription.updateMany({
+          where: { stripeSubscriptionId: subscription.id },
+          data: {
             status: "canceled",
-            canceled_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq("stripe_subscription_id", subscription.id);
+            canceledAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
 
         break;
       }
@@ -187,21 +175,21 @@ export async function POST(request: NextRequest) {
 
         if (!customerId) break;
 
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
+        const profile = await prisma.userProfile.findFirst({
+          where: { stripeCustomerId: customerId },
+        });
 
         if (!profile) break;
 
-        await supabase.from("payments").insert({
-          user_id: profile.id,
-          amount_cents: invoice.amount_paid || 0,
-          currency: invoice.currency || "eur",
-          status: "completed",
-          stripe_session_id: invoice.id,
-          product_id: "invoice-renewal",
+        await prisma.payment.create({
+          data: {
+            userId: profile.id,
+            amountCents: invoice.amount_paid || 0,
+            currency: invoice.currency || "eur",
+            status: "completed",
+            stripeSessionId: invoice.id,
+            productId: "invoice-renewal",
+          },
         });
 
         break;
@@ -216,21 +204,19 @@ export async function POST(request: NextRequest) {
 
         if (!customerId) break;
 
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
+        const profile = await prisma.userProfile.findFirst({
+          where: { stripeCustomerId: customerId },
+        });
 
         if (!profile) break;
 
-        await supabase
-          .from("user_profiles")
-          .update({
-            subscription_status: "past_due",
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", profile.id);
+        await prisma.userProfile.update({
+          where: { id: profile.id },
+          data: {
+            subscriptionStatus: "past_due",
+            updatedAt: new Date(),
+          },
+        });
 
         break;
       }

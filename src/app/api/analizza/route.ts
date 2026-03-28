@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MOCK_DATA_MAP, type DocumentType } from "@/lib/mock-data";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
+import * as fs from "fs/promises";
+import * as path from "path";
 
-const DEMO_MODE = !process.env.NEXT_PUBLIC_SUPABASE_URL;
+const DEMO_MODE = !process.env.DATABASE_URL;
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "/tmp/uploads";
 
 export const maxDuration = 60;
 
@@ -15,28 +20,19 @@ export async function GET(request: NextRequest) {
   }
 
   // Check authenticated user tier
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    try {
-      const { createClient: createAuthClient } = await import("@/lib/supabase/server");
-      const supabaseAuth = await createAuthClient();
-      const { data: { user } } = await supabaseAuth.auth.getUser();
+  const user = await getUser();
 
-      if (user) {
-        const { createAdminClient } = await import("@/lib/supabase/admin");
-        const { getUserPlan } = await import("@/services/billing");
-        const { getAccessConfig } = await import("@/rules/paywall-rules");
+  if (user) {
+    const { getUserPlan } = await import("@/services/billing");
+    const { getAccessConfig } = await import("@/rules/paywall-rules");
 
-        const plan = await getUserPlan(user.id);
-        const config = getAccessConfig(plan);
+    const plan = await getUserPlan(user.id);
+    const config = getAccessConfig(plan);
 
-        return NextResponse.json({
-          accessLevel: config.isPaid ? "full" : "preview",
-          accessConfig: config,
-        });
-      }
-    } catch {
-      // fallthrough to free-tier check
-    }
+    return NextResponse.json({
+      accessLevel: config.isPaid ? "full" : "preview",
+      accessConfig: config,
+    });
   }
 
   // Anonymous / free user: check cookie
@@ -68,7 +64,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Demo mode (no Supabase)
+  // Demo mode (no DB)
   if (DEMO_MODE) {
     // Se c'e' il file E la chiave OpenAI -> analisi reale
     if (fileBase64 && fileMime && process.env.OPENAI_API_KEY) {
@@ -100,106 +96,83 @@ export async function POST(request: NextRequest) {
   }
 
   // --- Production mode: full AI pipeline ---
-  // Verifica autenticazione utente o free tier
-  const { createClient: createAuthClient } = await import("@/lib/supabase/server");
-  const supabaseAuth = await createAuthClient();
-  const { data: { user } } = await supabaseAuth.auth.getUser();
+  const user = await getUser();
 
-  const { createAdminClient } = await import("@/lib/supabase/admin");
   const { estraiDatiDocumento } = await import("@/lib/ai/ocr");
   const { analizzaBustaPaga } = await import("@/lib/ai/analisi");
-
-  const supabase = createAdminClient();
 
   let analisi;
 
   if (user) {
     // Utente autenticato: ownership check con user_id
-    const { data, error: fetchError } = await supabase
-      .from("analisi")
-      .select("*")
-      .eq("id", id)
-      .eq("user_id", user.id)
-      .single();
+    analisi = await prisma.analisi.findFirst({
+      where: { id, userId: user.id },
+    });
 
-    if (fetchError || !data) {
+    if (!analisi) {
       return NextResponse.json(
         { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
-    analisi = data;
   } else {
     // Utente anonimo: try cookie first, then fallback to direct DB lookup
-    // (cookie may not be set yet if user just uploaded and navigated immediately)
     const { getFreeTierStatus } = await import("@/lib/free-tier");
     const freeTier = await getFreeTierStatus(request);
-
-    const hasCookieId = freeTier.ids.includes(id);
+    void freeTier;
 
     // Try direct DB lookup for anonymous analysis
-    const { data, error: fetchError } = await supabase
-      .from("analisi")
-      .select("*")
-      .eq("id", id)
-      .is("user_id", null)
-      .single();
+    analisi = await prisma.analisi.findFirst({
+      where: { id, userId: null },
+    });
 
-    if (fetchError || !data) {
+    if (!analisi) {
       return NextResponse.json(
         { error: "Analisi non trovata", code: "ERR-ANALYSIS-NOTFOUND" },
         { status: 404 }
       );
     }
-
-    // If cookie doesn't have this ID but the record exists and is anonymous,
-    // allow access (the cookie was likely not set yet due to navigation timing)
-    void hasCookieId;
-
-    analisi = data;
   }
 
   // If analysis errored, allow retry
   if (analisi.stato === "error") {
-    // Reset to processing so the pipeline re-runs
-    await supabase
-      .from("analisi")
-      .update({ stato: "processing", processing_started_at: null })
-      .eq("id", id);
-    analisi.stato = "processing";
-    analisi.processing_started_at = null;
+    await prisma.analisi.update({
+      where: { id },
+      data: { stato: "processing", processingStartedAt: null },
+    });
+    analisi = { ...analisi, stato: "processing", processingStartedAt: null };
   }
 
   // If already being processed by another request, return processing status for polling
-  if (analisi.stato === "processing" && analisi.processing_started_at) {
-    const startedAt = new Date(analisi.processing_started_at).getTime();
+  if (analisi.stato === "processing" && analisi.processingStartedAt) {
+    const startedAt = new Date(analisi.processingStartedAt).getTime();
     const elapsed = Date.now() - startedAt;
     // If started less than 90s ago, assume it's still running - tell client to poll
     if (elapsed < 90_000) {
       return NextResponse.json({ stato: "processing" });
     }
     // If more than 90s, assume it timed out - allow re-run
-    await supabase
-      .from("analisi")
-      .update({ processing_started_at: null })
-      .eq("id", id);
+    await prisma.analisi.update({
+      where: { id },
+      data: { processingStartedAt: null },
+    });
   }
 
   if (analisi.stato === "completed") {
-    const { getUserPlan } = await import("@/services/billing");
-    const { getAccessConfig } = await import("@/rules/paywall-rules");
-    const { UserPlan } = await import("@/domain/user-plan");
+    const { getUserPlan: getPlan } = await import("@/services/billing");
+    const { getAccessConfig: getConfig } = await import("@/rules/paywall-rules");
+    const { UserPlan: UP } = await import("@/domain/user-plan");
 
-    let plan = UserPlan.FREE_FIRST;
+    let plan = UP.FREE_FIRST;
     if (user) {
-      plan = await getUserPlan(user.id);
+      plan = await getPlan(user.id);
     } else {
       const { getFreeTierStatus, MAX_FREE_FULL } = await import("@/lib/free-tier");
       const freeTier = await getFreeTierStatus(request);
-      if (freeTier.uses <= MAX_FREE_FULL) plan = UserPlan.SIMPLE_SUBSCRIPTION;
+      if (freeTier.uses <= MAX_FREE_FULL) plan = UP.SIMPLE_SUBSCRIPTION;
     }
 
-    const config = getAccessConfig(plan);
+    const config = getConfig(plan);
     return NextResponse.json({
       risultato: analisi.risultato,
       accessLevel: config.isPaid ? "full" : "preview",
@@ -207,32 +180,30 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // Read file from Supabase Storage (or fall back to legacy base64)
+  // Read file from local storage (or fall back to legacy base64)
   let fileBuffer: Buffer<ArrayBuffer>;
   let mimeType: string;
 
-  if (analisi.storage_path) {
-    const { data: fileData, error: dlError } = await supabase.storage
-      .from("payslips")
-      .download(analisi.storage_path);
-
-    if (dlError || !fileData) {
-      console.error("Storage download error:", dlError);
-      await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+  if (analisi.storagePath) {
+    try {
+      const fullPath = path.join(UPLOAD_DIR, analisi.storagePath);
+      const fileData = await fs.readFile(fullPath);
+      fileBuffer = Buffer.from(fileData);
+    } catch {
+      console.error("Local storage read error for path:", analisi.storagePath);
+      await prisma.analisi.update({ where: { id }, data: { stato: "error" } });
       return NextResponse.json(
         { error: "File del documento non trovato nello storage" },
         { status: 500 }
       );
     }
-
-    fileBuffer = Buffer.from(await fileData.arrayBuffer());
-    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
-  } else if (analisi.file_data) {
+    mimeType = analisi.fileMime || (analisi.fileType === "pdf" ? "application/pdf" : "image/jpeg");
+  } else if (analisi.fileData) {
     // Legacy: base64 stored in DB
-    fileBuffer = Buffer.from(analisi.file_data, "base64");
-    mimeType = analisi.file_mime || (analisi.file_type === "pdf" ? "application/pdf" : "image/jpeg");
+    fileBuffer = Buffer.from(analisi.fileData, "base64");
+    mimeType = analisi.fileMime || (analisi.fileType === "pdf" ? "application/pdf" : "image/jpeg");
   } else {
-    await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+    await prisma.analisi.update({ where: { id }, data: { stato: "error" } });
     return NextResponse.json(
       { error: "File del documento non trovato" },
       { status: 500 }
@@ -242,7 +213,7 @@ export async function POST(request: NextRequest) {
   // Check OpenAI key before starting pipeline
   if (!process.env.OPENAI_API_KEY) {
     console.error("[CRITICAL] OPENAI_API_KEY is not configured");
-    await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+    await prisma.analisi.update({ where: { id }, data: { stato: "error" } });
     return NextResponse.json(
       { error: "Servizio temporaneamente non disponibile", code: "ERR-OPENAI-MISSING" },
       { status: 503 }
@@ -252,35 +223,37 @@ export async function POST(request: NextRequest) {
   const { calcCosto } = await import("@/lib/ai/pricing");
 
   // Segna inizio elaborazione
-  await supabase
-    .from("analisi")
-    .update({ processing_started_at: new Date().toISOString() })
-    .eq("id", id);
+  await prisma.analisi.update({
+    where: { id },
+    data: { processingStartedAt: new Date() },
+  });
 
   try {
-    // Step 1: OCR (file già ottimizzato all'upload)
+    // Step 1: OCR (file gia' ottimizzato all'upload)
     const ocrResult = await estraiDatiDocumento(fileBuffer, mimeType, documentType);
     const datiEstratti = ocrResult.data;
 
     // Log OCR usage
     try {
-      await supabase.from("ai_usage").insert({
-        analisi_id: id,
-        modello: "gpt-4o",
-        fase: "ocr",
-        tokens_input: ocrResult.tokensInput,
-        tokens_output: ocrResult.tokensOutput,
-        costo_usd: calcCosto("gpt-4o", ocrResult.tokensInput, ocrResult.tokensOutput),
-        durata_ms: ocrResult.durata_ms,
+      await prisma.aiUsage.create({
+        data: {
+          analisiId: id,
+          modello: "gpt-4o",
+          fase: "ocr",
+          tokensInput: ocrResult.tokensInput,
+          tokensOutput: ocrResult.tokensOutput,
+          costoUsd: calcCosto("gpt-4o", ocrResult.tokensInput, ocrResult.tokensOutput),
+          durataMs: ocrResult.durata_ms,
+        },
       });
     } catch (e) {
       console.error("Errore logging OCR usage:", e);
     }
 
-    await supabase
-      .from("analisi")
-      .update({ dati_estratti: datiEstratti })
-      .eq("id", id);
+    await prisma.analisi.update({
+      where: { id },
+      data: { datiEstratti },
+    });
 
     // Step 2: Analisi
     const analisiResult = await analizzaBustaPaga(datiEstratti);
@@ -288,28 +261,30 @@ export async function POST(request: NextRequest) {
 
     // Log analisi usage
     try {
-      await supabase.from("ai_usage").insert({
-        analisi_id: id,
-        modello: "gpt-4o",
-        fase: "analisi",
-        tokens_input: analisiResult.tokensInput,
-        tokens_output: analisiResult.tokensOutput,
-        costo_usd: calcCosto("gpt-4o", analisiResult.tokensInput, analisiResult.tokensOutput),
-        durata_ms: analisiResult.durata_ms,
+      await prisma.aiUsage.create({
+        data: {
+          analisiId: id,
+          modello: "gpt-4o",
+          fase: "analisi",
+          tokensInput: analisiResult.tokensInput,
+          tokensOutput: analisiResult.tokensOutput,
+          costoUsd: calcCosto("gpt-4o", analisiResult.tokensInput, analisiResult.tokensOutput),
+          durataMs: analisiResult.durata_ms,
+        },
       });
     } catch (e) {
       console.error("Errore logging analisi usage:", e);
     }
 
-    await supabase
-      .from("analisi")
-      .update({
+    await prisma.analisi.update({
+      where: { id },
+      data: {
         risultato,
         stato: "completed",
         semaforo: risultato.semaforo_globale,
-        numero_anomalie: risultato.anomalie?.length || 0,
-      })
-      .eq("id", id);
+        numeroAnomalie: risultato.anomalie?.length || 0,
+      },
+    });
 
     // Determine access level for this user
     const { getUserPlan: getPlan } = await import("@/services/billing");
@@ -342,7 +317,7 @@ export async function POST(request: NextRequest) {
     // Aggiorna stato DB a "error" per evitare record zombie
     try {
       if (!DEMO_MODE) {
-        await supabase.from("analisi").update({ stato: "error" }).eq("id", id);
+        await prisma.analisi.update({ where: { id }, data: { stato: "error" } });
       }
     } catch (dbError) {
       console.error("Errore aggiornamento stato error:", dbError);

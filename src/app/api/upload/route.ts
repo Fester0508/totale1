@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateFile } from "@/lib/file-utils";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import * as fs from "fs/promises";
+import * as path from "path";
 
-const DEMO_MODE = !process.env.NEXT_PUBLIC_SUPABASE_URL;
+const DEMO_MODE = !process.env.DATABASE_URL;
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "/tmp/uploads";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,16 +38,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Demo mode: skip Supabase, return a fake ID
+    // Demo mode: skip DB, return a fake ID
     if (DEMO_MODE) {
       const analisiId = uuidv4();
       return NextResponse.json({ id: analisiId, mimeType: file.type });
     }
 
     // --- Production mode ---
-    const { createClient: createAuthClient } = await import("@/lib/supabase/server");
-    const supabaseAuth = await createAuthClient();
-    const { data: { user } } = await supabaseAuth.auth.getUser();
+    const user = await getUser();
 
     let userId: string | null = null;
     let freeTierStatus: { uses: number; ids: string[] } | null = null;
@@ -82,47 +85,28 @@ export async function POST(request: NextRequest) {
       finalMimeType = "image/jpeg";
     }
 
-    // Upload file to Supabase Storage bucket 'payslips'
-    const { createAdminClient } = await import("@/lib/supabase/admin");
-    const supabase = createAdminClient();
-
+    // Save file to local filesystem
     const analisiId = uuidv4();
     const ext = isPdf(file.type) ? "pdf" : "jpg";
     const storagePath = `${userId ?? "anon"}/${analisiId}.${ext}`;
+    const fullPath = path.join(UPLOAD_DIR, storagePath);
 
-    const { error: storageError } = await supabase.storage
-      .from("payslips")
-      .upload(storagePath, buffer, {
-        contentType: finalMimeType,
-        upsert: false,
-      });
+    // Ensure directory exists
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+    await fs.writeFile(fullPath, buffer);
 
-    if (storageError) {
-      console.error("Storage upload error:", storageError);
-      return NextResponse.json(
-        { error: "Errore durante il caricamento del file" },
-        { status: 500 }
-      );
-    }
-
-    const { error: dbError } = await supabase.from("analisi").insert({
-      id: analisiId,
-      session_id: sessionId,
-      user_id: userId,
-      file_url: `storage://payslips/${storagePath}`,
-      storage_path: storagePath,
-      file_mime: finalMimeType,
-      file_type: ext,
-      stato: "processing",
+    await prisma.analisi.create({
+      data: {
+        id: analisiId,
+        sessionId: sessionId,
+        userId: userId,
+        fileUrl: `local://${storagePath}`,
+        storagePath: storagePath,
+        fileMime: finalMimeType,
+        fileType: ext,
+        stato: "processing",
+      },
     });
-
-    if (dbError) {
-      console.error("DB error:", dbError);
-      return NextResponse.json(
-        { error: "Errore durante la creazione dell'analisi" },
-        { status: 500 }
-      );
-    }
 
     const response = NextResponse.json({ id: analisiId });
 

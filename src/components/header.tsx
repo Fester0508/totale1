@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   Moon,
   Sun,
@@ -21,7 +22,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { User } from "@supabase/supabase-js";
 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -47,39 +47,12 @@ const navLinks = [
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { data: session } = useSession();
+  const user = session?.user ?? null;
   const router = useRouter();
 
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return;
-
-    import("@/lib/supabase/client")
-      .then(({ createClient }) => {
-        const supabase = createClient();
-        supabase.auth.getUser().then(({ data }) => setUser(data.user));
-
-        const {
-          data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-          setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
-      })
-      .catch(() => {
-        // Supabase non configurato, ignora
-      });
-  }, []);
-
   async function handleLogout() {
-    try {
-      const { createClient } = await import("@/lib/supabase/client");
-      const supabase = createClient();
-      await supabase.auth.signOut();
-    } catch {
-      // Supabase non configurato
-    }
-    setUser(null);
+    await signOut({ redirect: false });
     router.push("/");
     router.refresh();
   }
