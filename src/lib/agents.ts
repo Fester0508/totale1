@@ -6,6 +6,7 @@ import {
   Users,
   Shield,
   Home,
+  LogOut,
 } from "lucide-react";
 
 export const AGENTS_BASE_URL =
@@ -55,6 +56,13 @@ export const agents: AgentConfig[] = [
     description: "Collegati con commercialisti e consulenti del lavoro",
     icon: Users,
     endpoint: "/agents/professionisti/chat",
+  },
+  {
+    id: "dimissioni",
+    name: "Dimissioni Online",
+    description: "Assistenza per dimissioni telematiche",
+    icon: LogOut,
+    endpoint: "/agents/dimissioni/chat",
   },
   {
     id: "controllo-multe",

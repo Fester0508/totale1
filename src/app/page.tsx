@@ -11,6 +11,8 @@ import {
   CheckCircle,
   Mail,
   TrendingUp,
+  LogOut,
+  Check,
 } from "lucide-react";
 
 /* ── JSON-LD ── */
@@ -213,7 +215,64 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════════
-            BLOCK 5 — Calcolo NASPI
+            BLOCK 5 — Dimissioni Online
+        ═══════════════════════════════════════════════ */}
+        <section className="w-full bg-white dark:bg-background py-24 md:py-32">
+          <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+            <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-slate-100 dark:bg-slate-950/30">
+              <LogOut className="w-16 h-16 md:w-20 md:h-20 text-slate-600 dark:text-slate-400" />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 font-heading">
+                Dimissioni Online? Ci pensiamo noi.
+              </h2>
+
+              <div className="border-l-4 border-blue-400 bg-blue-50 dark:bg-blue-950/20 rounded-r-xl px-6 py-4 mb-6 max-w-2xl">
+                <p className="text-base text-foreground/90 leading-relaxed font-accent">
+                  Lo sapevi che le dimissioni oggi si danno esclusivamente
+                  online? È un passaggio importante: non sbagliare la data e
+                  dai il corretto preavviso contrattuale.
+                </p>
+              </div>
+
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6 max-w-2xl">
+                Fatti assistere da un nostro consulente del lavoro. Carica
+                carta d&apos;identità, codice fiscale e ultima busta paga — al
+                resto pensiamo noi.
+              </p>
+
+              <div className="flex flex-col gap-2 mb-8 max-w-md mx-auto md:mx-0">
+                {[
+                  "Carta d'identità",
+                  "Codice fiscale",
+                  "Ultima busta paga",
+                ].map((doc) => (
+                  <div
+                    key={doc}
+                    className="flex items-center gap-3"
+                  >
+                    <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-foreground font-medium">{doc}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                href="/servizi/dimissioni"
+                className="inline-flex items-center justify-center bg-slate-700 hover:bg-slate-800 text-white font-bold text-base px-8 py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] font-accent"
+              >
+                Inizia la pratica
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <p className="text-sm text-muted-foreground mt-3">
+                Un consulente ti seguirà in ogni passaggio
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════
+            BLOCK 6 — Calcolo NASPI
         ═══════════════════════════════════════════════ */}
         <section className="w-full bg-white dark:bg-background py-24 md:py-32">
           <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row-reverse items-center gap-12 md:gap-20">
@@ -425,6 +484,7 @@ export default function Home() {
                       href: "/servizi/professionisti",
                       label: "Rete Professionisti",
                     },
+                    { href: "/servizi/dimissioni", label: "Dimissioni Online" },
                     { href: "/servizi/calcolo-naspi", label: "Calcolo NASPI" },
                     { href: "/servizi/maternita", label: "Maternità" },
                     {
