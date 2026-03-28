@@ -43,26 +43,42 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/730"
+                  href="/servizi/redazione-lettere"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Verifica 730
+                  Redazione Lettere
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/cartella-esattoriale"
+                  href="/servizi/calcolo-naspi"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Cartella Esattoriale
+                  Calcolo NASPI
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/multa"
+                  href="/servizi/maternita"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Verifica Multa
+                  Consulenza Maternit&agrave;
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/servizi/controllo-multe"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Controllo Multe
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/servizi"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Tutti i servizi &rarr;
                 </Link>
               </li>
             </ul>
@@ -129,8 +145,8 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} LavoroChiaro &mdash; Analisi AI
-              dei tuoi documenti di lavoro e fiscali
+              &copy; {new Date().getFullYear()} LavoroInChiaro.it &mdash; Tutti
+              i diritti riservati
             </p>
             <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
               <Link
