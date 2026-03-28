@@ -1,25 +1,23 @@
 import { UserPlan } from "@/domain/user-plan";
 import { getAccessConfig } from "@/rules/paywall-rules";
 import type { AccessConfig } from "@/domain/user-plan";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
 
 /**
  * Queries user_profiles to resolve the current plan for a user.
  * Falls back to FREE_FIRST if not found.
  */
 export async function getUserPlan(userId: string): Promise<UserPlan> {
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("user_profiles")
-    .select("tier")
-    .eq("user_id", userId)
-    .single();
+  const profile = await prisma.userProfile.findUnique({
+    where: { id: userId },
+    select: { tier: true },
+  });
 
-  if (!data?.tier) return UserPlan.FREE_FIRST;
+  if (!profile?.tier) return UserPlan.FREE_FIRST;
 
   // Validate that it's a known plan
-  if (Object.values(UserPlan).includes(data.tier as UserPlan)) {
-    return data.tier as UserPlan;
+  if (Object.values(UserPlan).includes(profile.tier as UserPlan)) {
+    return profile.tier as UserPlan;
   }
 
   return UserPlan.FREE_FIRST;
@@ -37,14 +35,11 @@ export async function canAnalyze(userId: string | null): Promise<boolean> {
   if (plan !== UserPlan.FREE_FIRST) return true;
 
   // FREE_FIRST: check count
-  const supabase = createAdminClient();
-  const { count } = await supabase
-    .from("analisi")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .eq("stato", "completed");
+  const count = await prisma.analisi.count({
+    where: { userId, stato: "completed" },
+  });
 
-  return (count ?? 0) < 1;
+  return count < 1;
 }
 
 /**

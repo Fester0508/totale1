@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  emailVerified Boolean  @default(false) @map("email_verified")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  profile  UserProfile?
+  analisi  Analisi[]
+  payments Payment[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                     String    @id @db.Uuid
+  privacyAcceptedAt      DateTime  @map("privacy_accepted_at") @db.Timestamptz
+  termsAcceptedAt        DateTime  @map("terms_accepted_at") @db.Timestamptz
+  marketingConsent       Boolean   @default(false) @map("marketing_consent")
+  marketingConsentAt     DateTime? @map("marketing_consent_at") @db.Timestamptz
+  tier                   String    @default("free")
+  stripeCustomerId       String?   @map("stripe_customer_id")
+  stripeSubscriptionId   String?   @map("stripe_subscription_id")
+  subscriptionStatus     String?   @map("subscription_status")
+  subscriptionMinEndAt   DateTime? @map("subscription_min_end_at") @db.Timestamptz
+  satispayPaymentId      String?   @map("satispay_payment_id")
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model Analisi {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId           String    @map("session_id") @db.Uuid
+  userId              String?   @map("user_id") @db.Uuid
+  fileUrl             String    @map("file_url")
+  fileType            String    @map("file_type")
+  fileMime            String?   @map("file_mime")
+  fileData            String?   @map("file_data")
+  storagePath         String?   @map("storage_path")
+  stato               String    @default("processing")
+  datiEstratti        Json?     @map("dati_estratti")
+  risultato           Json?
+  semaforo            String?
+  numeroAnomalie      Int       @default(0) @map("numero_anomalie")
+  accessLevel         String    @default("preview") @map("access_level")
+  processingStartedAt DateTime? @map("processing_started_at") @db.Timestamptz
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  expiresAt           DateTime  @default(dbgenerated("NOW() + INTERVAL '30 days'")) @map("expires_at") @db.Timestamptz
+
+  user    User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aiUsage AiUsage[]
+  payments Payment[]
+
+  @@index([sessionId], map: "idx_analisi_session_id")
+  @@index([expiresAt], map: "idx_analisi_expires_at")
+  @@index([userId], map: "idx_analisi_user_id")
+  @@map("analisi")
+}
+
+model AiUsage {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  analisiId    String?  @map("analisi_id") @db.Uuid
+  modello      String
+  fase         String
+  tokensInput  Int      @default(0) @map("tokens_input")
+  tokensOutput Int      @default(0) @map("tokens_output")
+  costoUsd     Decimal  @default(0) @map("costo_usd") @db.Decimal(10, 6)
+  durataMs     Int?     @map("durata_ms")
+  errore       String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  analisi Analisi? @relation(fields: [analisiId], references: [id], onDelete: SetNull)
+
+  @@index([analisiId], map: "idx_ai_usage_analisi_id")
+  @@index([createdAt], map: "idx_ai_usage_created_at")
+  @@map("ai_usage")
+}
+
+model GdprDeletionLog {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userEmailHash  String    @map("user_email_hash")
+  deletionType   String    @map("deletion_type")
+  itemsDeleted   Json      @default("{}") @map("items_deleted")
+  requestedBy    String    @map("requested_by")
+  requestedAt    DateTime  @default(now()) @map("requested_at") @db.Timestamptz
+  completedAt    DateTime? @map("completed_at") @db.Timestamptz
+
+  @@index([requestedAt], map: "idx_gdpr_deletion_log_requested_at")
+  @@map("gdpr_deletion_log")
+}
+
+model Payment {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String?  @map("user_id") @db.Uuid
+  analisiId        String?  @map("analisi_id") @db.Uuid
+  satispayPaymentId String  @default("") @map("satispay_payment_id")
+  stripeSessionId  String?  @map("stripe_session_id")
+  productId        String   @map("product_id")
+  amountCents      Int      @map("amount_cents")
+  currency         String   @default("eur")
+  status           String   @default("pending")
+  metadata         Json     @default("{}")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  analisi Analisi? @relation(fields: [analisiId], references: [id], onDelete: SetNull)
+
+  @@index([userId], map: "idx_payments_user_id")
+  @@map("payments")
+}
+
+model Subscription {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  stripeSubscriptionId  String    @unique @map("stripe_subscription_id")
+  status                String
+  currentPeriodStart    DateTime? @map("current_period_start") @db.Timestamptz
+  currentPeriodEnd      DateTime? @map("current_period_end") @db.Timestamptz
+  canceledAt            DateTime? @map("canceled_at") @db.Timestamptz
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("subscriptions")
+}

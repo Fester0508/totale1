@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
 
 async function sha256(text: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -15,40 +15,48 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = createAdminClient();
 
-  // Recupera utente da auth
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.admin.getUserById(id);
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: { profile: true },
+  });
 
-  if (error || !user) {
+  if (!user) {
     return NextResponse.json(
       { error: "Utente non trovato" },
       { status: 404 }
     );
   }
 
-  // Recupera profilo e analisi in parallelo
-  const [profileRes, analisiRes] = await Promise.all([
-    supabase.from("user_profiles").select("*").eq("id", id).single(),
-    supabase
-      .from("analisi")
-      .select("id, stato, semaforo, file_type, numero_anomalie, created_at")
-      .eq("user_id", id)
-      .order("created_at", { ascending: false }),
-  ]);
+  const analisi = await prisma.analisi.findMany({
+    where: { userId: id },
+    select: {
+      id: true,
+      stato: true,
+      semaforo: true,
+      fileType: true,
+      numeroAnomalie: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return NextResponse.json({
     user: {
       id: user.id,
       email: user.email,
-      created_at: user.created_at,
-      last_sign_in_at: user.last_sign_in_at,
+      created_at: user.createdAt,
+      last_sign_in_at: user.updatedAt,
     },
-    profile: profileRes.data,
-    analisi: analisiRes.data ?? [],
+    profile: user.profile,
+    analisi: analisi.map((a) => ({
+      id: a.id,
+      stato: a.stato,
+      semaforo: a.semaforo,
+      file_type: a.fileType,
+      numero_anomalie: a.numeroAnomalie,
+      created_at: a.createdAt,
+    })),
   });
 }
 
@@ -57,15 +65,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = createAdminClient();
 
-  // Recupera utente per email (per il log)
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.admin.getUserById(id);
+  const user = await prisma.user.findUnique({ where: { id } });
 
-  if (userError || !user) {
+  if (!user) {
     return NextResponse.json(
       { error: "Utente non trovato" },
       { status: 404 }
@@ -73,29 +76,24 @@ export async function DELETE(
   }
 
   // Conta analisi utente per il log
-  const { data: analisi } = await supabase
-    .from("analisi")
-    .select("id")
-    .eq("user_id", id);
-
-  const analisiCount = analisi?.length ?? 0;
+  const analisiCount = await prisma.analisi.count({ where: { userId: id } });
 
   // Log GDPR
   const emailHash = await sha256(user.email ?? "");
-  await supabase.from("gdpr_deletion_log").insert({
-    user_email_hash: emailHash,
-    deletion_type: "admin_request",
-    items_deleted: {
-      analisi_count: analisiCount,
+  await prisma.gdprDeletionLog.create({
+    data: {
+      userEmailHash: emailHash,
+      deletionType: "admin_request",
+      itemsDeleted: { analisi_count: analisiCount },
+      requestedBy: "admin",
+      completedAt: new Date(),
     },
-    requested_by: "admin",
-    completed_at: new Date().toISOString(),
   });
 
-  // Elimina utente auth (CASCADE elimina profilo e analisi)
-  const { error: deleteError } = await supabase.auth.admin.deleteUser(id);
-
-  if (deleteError) {
+  // Elimina utente (CASCADE elimina profilo e analisi)
+  try {
+    await prisma.user.delete({ where: { id } });
+  } catch {
     return NextResponse.json(
       { error: "Errore nell'eliminazione dell'utente" },
       { status: 500 }

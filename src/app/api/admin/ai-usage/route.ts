@@ -1,41 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
-  const supabase = createAdminClient();
   const { searchParams } = new URL(request.url);
 
   const period = searchParams.get("period") || "month";
 
   const now = new Date();
-  let since: string;
+  let since: Date;
   switch (period) {
     case "today":
-      since = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      since = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       break;
     case "week":
-      since = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      since = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       break;
     case "all":
-      since = "2020-01-01T00:00:00Z";
+      since = new Date("2020-01-01T00:00:00Z");
       break;
     case "month":
     default:
-      since = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      since = new Date(now.getFullYear(), now.getMonth(), 1);
       break;
   }
 
-  const { data, error } = await supabase
-    .from("ai_usage")
-    .select("*")
-    .gte("created_at", since)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  const rows = data ?? [];
+  const rows = await prisma.aiUsage.findMany({
+    where: { createdAt: { gte: since } },
+    orderBy: { createdAt: "desc" },
+  });
 
   // Aggregazioni
   let totaleTokensInput = 0;
@@ -45,31 +37,31 @@ export async function GET(request: NextRequest) {
   const perModello: Record<string, { chiamate: number; tokens_input: number; tokens_output: number; costo_usd: number }> = {};
 
   for (const row of rows) {
-    totaleTokensInput += row.tokens_input;
-    totaleTokensOutput += row.tokens_output;
-    totaleCostoUsd += Number(row.costo_usd);
+    totaleTokensInput += row.tokensInput;
+    totaleTokensOutput += row.tokensOutput;
+    totaleCostoUsd += Number(row.costoUsd);
     if (row.errore) totaleErrori++;
 
     if (!perModello[row.modello]) {
       perModello[row.modello] = { chiamate: 0, tokens_input: 0, tokens_output: 0, costo_usd: 0 };
     }
     perModello[row.modello].chiamate++;
-    perModello[row.modello].tokens_input += row.tokens_input;
-    perModello[row.modello].tokens_output += row.tokens_output;
-    perModello[row.modello].costo_usd += Number(row.costo_usd);
+    perModello[row.modello].tokens_input += row.tokensInput;
+    perModello[row.modello].tokens_output += row.tokensOutput;
+    perModello[row.modello].costo_usd += Number(row.costoUsd);
   }
 
   // Aggregazione per giorno
   const perGiorno: Record<string, { chiamate: number; costo_usd: number; tokens_input: number; tokens_output: number }> = {};
   for (const row of rows) {
-    const giorno = row.created_at.substring(0, 10);
+    const giorno = row.createdAt.toISOString().substring(0, 10);
     if (!perGiorno[giorno]) {
       perGiorno[giorno] = { chiamate: 0, costo_usd: 0, tokens_input: 0, tokens_output: 0 };
     }
     perGiorno[giorno].chiamate++;
-    perGiorno[giorno].costo_usd += Number(row.costo_usd);
-    perGiorno[giorno].tokens_input += row.tokens_input;
-    perGiorno[giorno].tokens_output += row.tokens_output;
+    perGiorno[giorno].costo_usd += Number(row.costoUsd);
+    perGiorno[giorno].tokens_input += row.tokensInput;
+    perGiorno[giorno].tokens_output += row.tokensOutput;
   }
 
   return NextResponse.json({

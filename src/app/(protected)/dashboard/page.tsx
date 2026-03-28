@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
 import Link from "next/link";
 import {
   Card,
@@ -38,26 +38,27 @@ const semaforoBadge = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getUser();
   if (!user) redirect("/login");
 
-  const admin = createAdminClient();
-  const { data: analisi } = await admin
-    .from("analisi")
-    .select("id, stato, semaforo, numero_anomalie, created_at, file_type, risultato")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(50);
+  const items = await prisma.analisi.findMany({
+    where: { userId: user.id },
+    select: {
+      id: true,
+      stato: true,
+      semaforo: true,
+      numeroAnomalie: true,
+      createdAt: true,
+      fileType: true,
+      risultato: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
 
-  const items = analisi ?? [];
-
-  /* ── Compute summary stats ── */
+  /* -- Compute summary stats -- */
   const completedItems = items.filter((i) => i.stato === "completed");
-  const totalAnomalies = items.reduce((sum, i) => sum + (i.numero_anomalie ?? 0), 0);
+  const totalAnomalies = items.reduce((sum, i) => sum + (i.numeroAnomalie ?? 0), 0);
   const totalRecoverable = completedItems.reduce((sum, i) => {
     const r = i.risultato as Record<string, unknown> | null;
     return sum + (typeof r?.importo_recuperabile === "number" ? r.importo_recuperabile : 0);
@@ -176,7 +177,7 @@ export default async function DashboardPage() {
             const r = item.risultato as Record<string, unknown> | null;
             const score = typeof r?.score === "number" ? r.score : null;
             const recoverable = typeof r?.importo_recuperabile === "number" ? r.importo_recuperabile : null;
-            const date = new Date(item.created_at).toLocaleDateString("it-IT", {
+            const date = new Date(item.createdAt).toLocaleDateString("it-IT", {
               day: "numeric",
               month: "long",
               year: "numeric",
@@ -200,7 +201,7 @@ export default async function DashboardPage() {
                         </div>
                         <div>
                           <CardTitle className="text-base group-hover:text-brand-navy transition-colors">
-                            Analisi {item.file_type?.toUpperCase() || "documento"}
+                            Analisi {item.fileType?.toUpperCase() || "documento"}
                           </CardTitle>
                           <CardDescription>{date}</CardDescription>
                         </div>
@@ -221,13 +222,13 @@ export default async function DashboardPage() {
                         {badge && (
                           <Badge className={badge.className}>{badge.label}</Badge>
                         )}
-                        {item.numero_anomalie > 0 && (
+                        {item.numeroAnomalie > 0 && (
                           <Badge variant="outline" className="gap-1">
                             <AlertTriangle className="h-3 w-3" />
-                            {item.numero_anomalie} {item.numero_anomalie === 1 ? "anomalia" : "anomalie"}
+                            {item.numeroAnomalie} {item.numeroAnomalie === 1 ? "anomalia" : "anomalie"}
                           </Badge>
                         )}
-                        {item.semaforo === "verde" && item.numero_anomalie === 0 && (
+                        {item.semaforo === "verde" && item.numeroAnomalie === 0 && (
                           <CheckCircle2 className="h-5 w-5 text-green-500" />
                         )}
                       </div>

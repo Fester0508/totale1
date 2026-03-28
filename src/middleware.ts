@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSessionFromRequest } from "@/lib/auth";
-import { updateSession } from "@/lib/supabase/middleware";
+import { auth } from "@/lib/auth-config";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const USER_PROTECTED_PREFIXES = ["/dashboard", "/impostazioni", "/api/user"];
@@ -49,16 +49,9 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // --- Demo mode: skip user auth if Supabase not configured ---
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    return NextResponse.next();
-  }
-
-  // --- User auth: refresh sessione Supabase ---
-  const { user, supabaseResponse } = await updateSession(req);
+  // --- User auth: NextAuth.js session ---
+  const session = await auth();
+  const user = session?.user ?? null;
 
   // Route protette utente
   const isProtected = USER_PROTECTED_PREFIXES.some((prefix) =>
@@ -79,7 +72,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  return supabaseResponse;
+  return NextResponse.next();
 }
 
 export const config = {

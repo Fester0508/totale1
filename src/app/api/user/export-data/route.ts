@@ -1,34 +1,37 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
 
 export async function GET() {
-  const supabaseAuth = await createClient();
-  const {
-    data: { user },
-  } = await supabaseAuth.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Non autenticato" }, { status: 401 });
   }
 
-  const supabase = createAdminClient();
-
   // Recupera profilo utente
-  const { data: profile } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const profile = await prisma.userProfile.findUnique({
+    where: { id: user.id },
+  });
+
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
 
   // Recupera tutte le analisi dell'utente
-  const { data: analisi } = await supabase
-    .from("analisi")
-    .select(
-      "id, file_type, stato, semaforo, numero_anomalie, dati_estratti, risultato, created_at, expires_at"
-    )
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  const analisi = await prisma.analisi.findMany({
+    where: { userId: user.id },
+    select: {
+      id: true,
+      fileType: true,
+      stato: true,
+      semaforo: true,
+      numeroAnomalie: true,
+      datiEstratti: true,
+      risultato: true,
+      createdAt: true,
+      expiresAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   const exportData = {
     esportazione: {
@@ -38,24 +41,23 @@ export async function GET() {
     },
     profilo: {
       email: user.email,
-      registrato_il: user.created_at,
-      consenso_privacy: profile?.privacy_accepted_at ?? null,
-      consenso_termini: profile?.terms_accepted_at ?? null,
-      consenso_marketing: profile?.marketing_consent ?? false,
-      consenso_marketing_data: profile?.marketing_consent_at ?? null,
+      registrato_il: dbUser?.createdAt,
+      consenso_privacy: profile?.privacyAcceptedAt ?? null,
+      consenso_termini: profile?.termsAcceptedAt ?? null,
+      consenso_marketing: profile?.marketingConsent ?? false,
+      consenso_marketing_data: profile?.marketingConsentAt ?? null,
     },
-    analisi:
-      analisi?.map((a) => ({
-        id: a.id,
-        data_creazione: a.created_at,
-        data_scadenza: a.expires_at,
-        tipo_file: a.file_type,
-        stato: a.stato,
-        semaforo: a.semaforo,
-        numero_anomalie: a.numero_anomalie,
-        dati_estratti: a.dati_estratti,
-        risultato: a.risultato,
-      })) ?? [],
+    analisi: analisi.map((a) => ({
+      id: a.id,
+      data_creazione: a.createdAt,
+      data_scadenza: a.expiresAt,
+      tipo_file: a.fileType,
+      stato: a.stato,
+      semaforo: a.semaforo,
+      numero_anomalie: a.numeroAnomalie,
+      dati_estratti: a.datiEstratti,
+      risultato: a.risultato,
+    })),
   };
 
   return new NextResponse(JSON.stringify(exportData, null, 2), {

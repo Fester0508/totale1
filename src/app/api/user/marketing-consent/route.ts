@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getUser } from "@/lib/session";
+import { prisma } from "@/lib/db";
 
 export async function PATCH(request: NextRequest) {
-  const supabaseAuth = await createClient();
-  const {
-    data: { user },
-  } = await supabaseAuth.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Non autenticato" }, { status: 401 });
@@ -15,20 +12,16 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const marketing_consent = Boolean(body.marketing_consent);
 
-  const supabase = createAdminClient();
-
-  const { error } = await supabase
-    .from("user_profiles")
-    .update({
-      marketing_consent,
-      marketing_consent_at: marketing_consent
-        ? new Date().toISOString()
-        : null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", user.id);
-
-  if (error) {
+  try {
+    await prisma.userProfile.update({
+      where: { id: user.id },
+      data: {
+        marketingConsent: marketing_consent,
+        marketingConsentAt: marketing_consent ? new Date() : null,
+        updatedAt: new Date(),
+      },
+    });
+  } catch {
     return NextResponse.json(
       { error: "Errore nell'aggiornamento del consenso" },
       { status: 500 }
