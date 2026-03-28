@@ -42,6 +42,7 @@ function ThemeToggle() {
 const navLinks = [
   { href: "#analizza", label: "Analisi Busta Paga" },
   { href: "/servizi", label: "Servizi AI" },
+  { href: "/blog", label: "Blog" },
   { href: "#come-funziona", label: "Come funziona" },
   { href: "#prezzi", label: "Prezzi" },
   { href: "#faq", label: "FAQ" },

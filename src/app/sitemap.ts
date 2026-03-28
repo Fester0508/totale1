@@ -1,7 +1,15 @@
 import type { MetadataRoute } from "next";
+import { blogArticles } from "@/lib/blog-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://lavorochiaro.it";
+
+  const blogEntries: MetadataRoute.Sitemap = blogArticles.map((article) => ({
+    url: `${baseUrl}/blog/${article.slug}`,
+    lastModified: new Date(article.date),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
 
   return [
     {
@@ -9,6 +17,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/servizi`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/730`,
@@ -28,6 +48,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    ...blogEntries,
     {
       url: `${baseUrl}/privacy`,
       lastModified: new Date(),

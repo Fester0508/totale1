@@ -95,6 +95,9 @@ export function UploadZone({ documentType = "busta-paga" }: UploadZoneProps) {
   }, [isUploading]);
 
   const handleFile = useCallback((file: File) => {
+    if (typeof window !== "undefined" && window.umami) {
+      window.umami.track("upload-start");
+    }
     setError(null);
 
     const allowedTypes = [

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
 import { UploadZone } from "@/components/upload-zone";
+import { blogArticles } from "@/lib/blog-articles";
 import {
   FileSearch,
   FileText,
@@ -15,6 +16,7 @@ import {
   Brain,
   CheckCircle,
   ArrowRight,
+  Calendar,
 } from "lucide-react";
 
 /* ── JSON-LD ── */
@@ -23,7 +25,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      name: "LavoroChiaro",
+      name: "LavoroInChiaro",
       url: "https://lavoroinchiaro.it",
       description:
         "Il primo servizio italiano di analisi buste paga con intelligenza artificiale.",
@@ -32,6 +34,18 @@ const jsonLd = {
         email: "info@lavoroinchiaro.it",
         contactType: "customer service",
         availableLanguage: "Italian",
+      },
+    },
+    {
+      "@type": "WebSite",
+      name: "LavoroInChiaro",
+      url: "https://lavoroinchiaro.it",
+      description:
+        "Analisi buste paga con intelligenza artificiale. Gratuita, senza registrazione.",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://lavoroinchiaro.it/blog?q={search_term_string}",
+        "query-input": "required name=search_term_string",
       },
     },
     {
@@ -327,6 +341,11 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.2),transparent_50%)]" />
 
           <div className="relative container mx-auto flex flex-col items-center text-center gap-8">
+            {/* FREE badge */}
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-sm sm:text-base px-6 py-3 rounded-full shadow-lg shadow-emerald-500/30 border-2 border-emerald-300/40 animate-pulse">
+              &#10024; ANALISI BUSTA PAGA SEMPRE GRATUITA &#10024;
+            </div>
+
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 text-sm px-4 py-2 rounded-full border border-white/20">
               <Brain className="h-4 w-4" />
               Alimentato da intelligenza artificiale
@@ -340,15 +359,15 @@ export default function Home() {
             </h1>
 
             <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
-              Analisi buste paga con AI, calcolo NASPI, assistenza maternit&agrave;, redazione lettere e molto altro. Tutto in un&apos;unica piattaforma.
+              Carica la tua busta paga e scopri in 30 secondi se &egrave; tutto regolare. Nessun costo, nessuna registrazione.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
               <Link
                 href="#analizza"
-                className="inline-flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-bold text-base px-8 py-4 rounded-xl transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold text-lg px-10 py-5 rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] border-2 border-emerald-300/30"
               >
-                Analizza la tua busta paga
+                Analizza GRATIS la tua busta paga
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link
@@ -360,7 +379,7 @@ export default function Home() {
             </div>
 
             <p className="text-xs text-white/50 mt-2">
-              Prima analisi completa e gratuita &middot; Conforme GDPR &middot; 30 secondi
+              Sempre gratuita &middot; Conforme GDPR &middot; 30 secondi
             </p>
           </div>
         </section>
@@ -384,12 +403,18 @@ export default function Home() {
               {services.map((service) => {
                 const Icon = service.icon;
                 const colors = colorMap[service.color];
+                const trackClick = () => {
+                  if (typeof window !== "undefined" && window.umami) {
+                    window.umami.track("service-click", { service: service.title });
+                  }
+                };
 
                 if (service.flagship) {
                   return (
                     <Link
                       key={service.title}
                       href={service.href}
+                      onClick={trackClick}
                       className="sm:col-span-2 lg:col-span-2 group"
                     >
                       <div className={`relative h-full rounded-2xl border-2 ${colors.border} ${colors.bg} p-8 transition-all hover:shadow-xl hover:-translate-y-1 ring-1 ${colors.ring}`}>
@@ -416,6 +441,7 @@ export default function Home() {
                   <Link
                     key={service.title}
                     href={service.href}
+                    onClick={trackClick}
                     className="group"
                   >
                     <div className={`h-full rounded-2xl border ${colors.border} bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1`}>
@@ -595,6 +621,56 @@ export default function Home() {
                   </Link>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BLOG ── */}
+        <section className="py-20 md:py-28 bg-background">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase mb-3">
+                Risorse gratuite
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Leggi il blog
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Guide pratiche su busta paga, contratti, diritti dei lavoratori e molto altro.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {blogArticles.slice(0, 3).map((article) => (
+                <Link key={article.slug} href={`/blog/${article.slug}`} className="group">
+                  <article className="h-full rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {new Date(article.date).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })}
+                    </div>
+                    <h3 className="text-base font-bold text-foreground mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1 line-clamp-3">
+                      {article.metaDescription}
+                    </p>
+                    <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 dark:text-blue-400 group-hover:gap-2 transition-all">
+                      Leggi l&apos;articolo
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </article>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center mt-10">
+              <Link
+                href="/blog"
+                className="inline-flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground font-semibold text-sm px-8 py-3 rounded-xl transition-all"
+              >
+                Tutti gli articoli
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
