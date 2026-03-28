@@ -35,6 +35,8 @@ const agentDescriptions: Record<string, string> = {
     "Tutto quello che devi sapere sulla maternità: congedo obbligatorio, facoltativo, indennità INPS, diritti del padre, permessi allattamento e tutela del posto di lavoro.",
   professionisti:
     "Trova commercialisti, consulenti del lavoro e avvocati specializzati nella tua zona. Collegati con professionisti verificati per risolvere le tue questioni lavorative e fiscali.",
+  dimissioni:
+    "Assistenza completa per le dimissioni telematiche. Preavviso, documentazione, procedura online — ti seguiamo passo passo.",
   "controllo-multe":
     "Verifica la regolarità delle tue multe stradali. Controlla tempi di notifica, importi, prescrizioni e scopri se hai diritto a contestare o fare ricorso.",
   "contratti-colf":
@@ -47,6 +49,7 @@ const colorMap: Record<string, { bg: string; text: string; border: string }> = {
   Calculator: { bg: "bg-amber-50 dark:bg-amber-950/30", text: "text-amber-600 dark:text-amber-400", border: "border-amber-200 dark:border-amber-800" },
   Heart: { bg: "bg-pink-50 dark:bg-pink-950/30", text: "text-pink-600 dark:text-pink-400", border: "border-pink-200 dark:border-pink-800" },
   Users: { bg: "bg-teal-50 dark:bg-teal-950/30", text: "text-teal-600 dark:text-teal-400", border: "border-teal-200 dark:border-teal-800" },
+  LogOut: { bg: "bg-slate-50 dark:bg-slate-950/30", text: "text-slate-600 dark:text-slate-400", border: "border-slate-200 dark:border-slate-800" },
   Shield: { bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-600 dark:text-red-400", border: "border-red-200 dark:border-red-800" },
   Home: { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-600 dark:text-purple-400", border: "border-purple-200 dark:border-purple-800" },
 };
