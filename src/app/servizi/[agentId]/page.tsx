@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/header";
 import { AgentChat } from "@/components/agent-chat";
+export const dynamic = "force-dynamic";
 import { getAgentById, agents } from "@/lib/agents";
 import { Button } from "@/components/ui/button";
 
