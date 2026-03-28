@@ -222,10 +222,10 @@ export default async function DashboardPage() {
                         {badge && (
                           <Badge className={badge.className}>{badge.label}</Badge>
                         )}
-                        {item.numeroAnomalie > 0 && (
+                        {(item.numeroAnomalie ?? 0) > 0 && (
                           <Badge variant="outline" className="gap-1">
                             <AlertTriangle className="h-3 w-3" />
-                            {item.numeroAnomalie} {item.numeroAnomalie === 1 ? "anomalia" : "anomalie"}
+                            {(item.numeroAnomalie ?? 0)} {(item.numeroAnomalie ?? 0) === 1 ? "anomalia" : "anomalie"}
                           </Badge>
                         )}
                         {item.semaforo === "verde" && item.numeroAnomalie === 0 && (
