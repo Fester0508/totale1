@@ -41,6 +41,7 @@ function ThemeToggle() {
 
 const navLinks = [
   { href: "#come-funziona", label: "Come funziona" },
+  { href: "/servizi", label: "Servizi AI" },
   { href: "#prezzi", label: "Prezzi" },
   { href: "#faq", label: "FAQ" },
 ];
