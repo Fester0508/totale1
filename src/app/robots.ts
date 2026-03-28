@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://lavorochiaro.it";
+
   return {
     rules: [
       {
@@ -9,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/admin/*", "/api", "/api/*"],
       },
     ],
-    sitemap: "https://lavorochiaro.it/sitemap.xml",
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
