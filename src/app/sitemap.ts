@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { blogArticles } from "@/lib/blog-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://lavorochiaro.it";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.lavoroinchiaro.it";
 
   const blogEntries: MetadataRoute.Sitemap = blogArticles.map((article) => ({
     url: `${baseUrl}/blog/${article.slug}`,
@@ -47,6 +47,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/chi-siamo`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/richiesta-consulenza`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/accreditati`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     ...blogEntries,
     {
