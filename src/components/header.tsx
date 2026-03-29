@@ -44,9 +44,9 @@ const navLinks = [
   { href: "#servizi", label: "Servizi" },
   { href: "#come-funziona", label: "Come funziona" },
   { href: "#prezzi", label: "Prezzi" },
-  { href: "/servizi", label: "Servizi AI" },
+  { href: "#associati", label: "Associati" },
+  { href: "/chi-siamo", label: "Chi siamo" },
   { href: "/blog", label: "Blog" },
-  { href: "#faq", label: "FAQ" },
 ];
 
 export function Header() {

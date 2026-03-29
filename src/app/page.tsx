@@ -122,55 +122,72 @@ const services = [
     title: "Consulenza errori busta paga",
     desc: "Hai trovato anomalie? Un consulente del lavoro della nostra rete ti aiuta a capire come recuperare il dovuto.",
     price: "da \u20ac9,90",
-    href: "/servizi/professionisti",
-    cta: "Prenota consulenza",
+    bigPrice: "\u20ac9,90",
+    bigPriceColor: "text-brand-amber",
+    href: "/richiesta-consulenza",
+    cta: "Prenota una consulenza",
   },
   {
     title: "730 Fiscalisti",
     desc: "Dichiarazione dei redditi senza stress. Collegati con commercialisti e consulenti certificati.",
     price: "da \u20ac9,90",
-    href: "/servizi/professionisti",
-    cta: "Trova fiscalista",
+    bigPrice: "\u20ac9,90",
+    bigPriceColor: "text-brand-amber",
+    href: "/richiesta-consulenza",
+    cta: "Trova il tuo fiscalista",
   },
   {
     title: "Recupero differenze retributive",
     desc: "Analizziamo le tue buste paga degli ultimi 5 anni. Se ci sono differenze retributive, ti aiutiamo a recuperarle.",
     price: "fino a 5 anni \u00b7 media \u20ac2.400",
-    href: "/servizi/redazione-lettere",
+    bigPrice: "\u20ac2.400",
+    bigPriceColor: "text-brand-amber",
+    bigPriceLabel: "recupero medio",
+    href: "/richiesta-consulenza",
     cta: "Verifica ora",
   },
   {
     title: "Dimissioni Online",
     desc: "Fatti assistere da un consulente del lavoro. Carica carta d\u2019identit\u00e0, codice fiscale e ultima busta paga \u2014 al resto pensiamo noi.",
-    price: "upload documenti",
-    href: "/servizi/dimissioni",
+    price: "da \u20ac9,90",
+    bigPrice: "\u20ac9,90",
+    bigPriceColor: "text-brand-amber",
+    href: "/richiesta-consulenza",
     cta: "Inizia la pratica",
   },
   {
     title: "Calcolo NASPI",
     desc: "Scopri quanto ti spetta di indennit\u00e0 di disoccupazione e per quanto tempo. Simulazione gratuita.",
     price: "gratuito",
-    href: "/servizi/calcolo-naspi",
-    cta: "Calcola NASPI",
+    bigPrice: "GRATIS",
+    bigPriceColor: "text-emerald-500",
+    href: "/richiesta-consulenza",
+    cta: "Calcola la tua NASPI",
   },
   {
     title: "Maternit\u00e0",
     desc: "Congedo, indennit\u00e0 INPS, permessi allattamento. Il nostro agente AI ti guida passo passo.",
     price: "gratuito",
-    href: "/servizi/maternita",
+    bigPrice: "GRATIS",
+    bigPriceColor: "text-emerald-500",
+    href: "/richiesta-consulenza",
     cta: "Scopri i tuoi diritti",
   },
   {
     title: "Controllo Multe",
     desc: "Analisi automatica della tua multa: termini di notifica, vizi di forma, prescrizione.",
     price: "gratuito",
-    href: "/servizi/controllo-multe",
-    cta: "Controlla multa",
+    bigPrice: "GRATIS",
+    bigPriceColor: "text-emerald-500",
+    href: "/richiesta-consulenza",
+    cta: "Controlla la tua multa",
   },
   {
     title: "Colf e Badanti",
     desc: "Assistenza completa per contratti di lavoro domestico: assunzione, retribuzione, contributi INPS, TFR.",
     price: "Presto disponibile",
+    bigPrice: "",
+    bigPriceColor: "",
     href: "#",
     cta: "In arrivo",
     comingSoon: true,
@@ -612,9 +629,18 @@ export default function Home() {
                       PRESTO DISPONIBILE
                     </span>
                   )}
+                  {svc.bigPrice && (
+                    <div className="mb-3 text-center">
+                      <p className={`text-4xl lg:text-5xl font-bold font-accent ${svc.bigPriceColor}`}>
+                        {svc.bigPrice}
+                      </p>
+                      {svc.bigPriceLabel && (
+                        <p className="text-xs text-muted-foreground mt-1">{svc.bigPriceLabel}</p>
+                      )}
+                    </div>
+                  )}
                   <h3 className="font-bold text-foreground text-lg mb-2">{svc.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">{svc.desc}</p>
-                  <p className="text-sm font-bold text-brand-amber mb-4">{svc.price}</p>
                   {!svc.comingSoon ? (
                     <Link
                       href={svc.href}
@@ -634,13 +660,18 @@ export default function Home() {
         </section>
 
         {/* ── 7. ASSOCIATI ── */}
-        <section className="py-20 md:py-28 bg-brand-navy">
+        <section id="associati" className="py-20 md:py-28 bg-brand-navy scroll-mt-16">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4 text-balance">
               Ti sei trovato bene?{" "}
               <span className="text-brand-amber">Associati.</span>
             </h2>
             <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
+
+            <p className="text-5xl md:text-6xl font-bold font-accent text-brand-amber mb-4">
+              &euro;0,99<span className="text-2xl md:text-3xl text-primary-foreground/70">/mese</span>
+            </p>
+
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-4 leading-relaxed text-lg">
               Alla quota simbolica di &euro;0,99/mese predisponiamo in automatico la revoca alle trattenute in busta che potresti avere. Proteggi il tuo stipendio ogni mese.
             </p>
@@ -661,12 +692,8 @@ export default function Home() {
               ))}
             </div>
 
-            <p className="text-4xl md:text-5xl font-bold text-primary-foreground mb-10">
-              Solo <span className="text-brand-amber">&euro;0,99</span>/mese
-            </p>
-
             <Link
-              href="/registrati"
+              href="/richiesta-consulenza"
               className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-lg px-14 py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30"
             >
               Associati ora
