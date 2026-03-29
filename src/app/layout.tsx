@@ -28,9 +28,16 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://lavorochiaro.it"
+    process.env.NEXT_PUBLIC_BASE_URL || "https://www.lavoroinchiaro.it"
   ),
-  title: "LavoroChiaro - Analisi AI Busta Paga, 730, Cartelle e Multe",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.svg',
+  },
+  title: "LavoroInChiaro - Analisi AI Busta Paga, 730, Cartelle e Multe",
   description:
     "Carica la tua busta paga e scopri in 30 secondi se è corretta. Analisi AI gratuita, senza registrazione. Verifica stipendio, CCNL, trattenute INPS, contributi, TFR, ferie e straordinari. Controlla anche 730, cartelle esattoriali e multe.",
   keywords: [
@@ -51,17 +58,17 @@ export const metadata: Metadata = {
     "diritti lavoratori",
   ],
   openGraph: {
-    title: "LavoroChiaro - La tua busta paga è corretta?",
+    title: "LavoroInChiaro - La tua busta paga è corretta?",
     description:
-      "Il 67% dei lavoratori ha errori in busta paga. Scopri in 30 secondi se la tua è corretta con l'analisi AI gratuita di LavoroChiaro.",
+      "Il 67% dei lavoratori ha errori in busta paga. Scopri in 30 secondi se la tua è corretta con l'analisi AI gratuita di LavoroInChiaro.",
     type: "website",
-    url: "/",
-    siteName: "LavoroChiaro",
+    url: "https://www.lavoroinchiaro.it",
+    siteName: "LavoroInChiaro",
     locale: "it_IT",
   },
   twitter: {
     card: "summary_large_image",
-    title: "LavoroChiaro - La tua busta paga è corretta?",
+    title: "LavoroInChiaro - La tua busta paga è corretta?",
     description:
       "Il 67% dei lavoratori ha errori in busta paga. Scopri in 30 secondi se la tua è corretta con l'analisi AI gratuita.",
   },

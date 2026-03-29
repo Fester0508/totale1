@@ -6,9 +6,9 @@ import { ShieldCheck } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - LavoroChiaro",
+  title: "Privacy Policy - LavoroInChiaro",
   description:
-    "Informativa sulla privacy e sul trattamento dei dati personali di LavoroChiaro, ai sensi del GDPR (Reg. UE 2016/679).",
+    "Informativa sulla privacy e sul trattamento dei dati personali di LavoroInChiaro, ai sensi del GDPR (Reg. UE 2016/679).",
 };
 
 export default function PrivacyPage() {
@@ -26,7 +26,7 @@ export default function PrivacyPage() {
           </div>
 
           <p className="text-sm text-muted-foreground mb-8">
-            Ultimo aggiornamento: Febbraio 2026
+            Ultimo aggiornamento: Marzo 2026
           </p>
 
           <div className="space-y-8">
@@ -36,14 +36,13 @@ export default function PrivacyPage() {
                 1. Titolare del trattamento
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Il titolare del trattamento dei dati personali è LavoroChiaro.
-                Per qualsiasi richiesta relativa alla privacy, puoi scrivere
-                a{" "}
+                Il titolare del trattamento dei dati personali è LAERTE LTD, con
+                sede operativa in Italia. Email:{" "}
                 <a
-                  href="mailto:privacy@lavorochiaro.it"
+                  href="mailto:privacy@lavoroinchiaro.it"
                   className="text-brand-navy underline"
                 >
-                  privacy@lavorochiaro.it
+                  privacy@lavoroinchiaro.it
                 </a>
                 .
               </p>
@@ -191,11 +190,30 @@ export default function PrivacyPage() {
 
             <Separator />
 
-            {/* 6. Conservazione */}
+            {/* 6. Agenti di Intelligenza Artificiale */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                6. Conservazione dei dati
+                6. Agenti di Intelligenza Artificiale
               </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Utilizziamo agenti di intelligenza artificiale per fornire
+                servizi di consulenza automatizzata (calcolo NASPI, maternità,
+                redazione lettere, ecc.). Questi agenti non conservano
+                conversazioni personali oltre la sessione corrente.
+              </p>
+            </section>
+
+            <Separator />
+
+            {/* 7. Hosting e conservazione dei dati */}
+            <section>
+              <h2 className="text-xl font-semibold text-foreground mb-3">
+                7. Hosting e conservazione dei dati
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                I dati sono conservati su server Microsoft Azure in Europa
+                (North Europe), conformi al GDPR.
+              </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 I documenti caricati e i relativi risultati di analisi vengono{" "}
                 <strong>eliminati automaticamente dopo 30 giorni</strong> dalla
@@ -205,14 +223,19 @@ export default function PrivacyPage() {
                 conservati per un massimo di 12 mesi per finalità di sicurezza e
                 monitoraggio.
               </p>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+                I documenti caricati vengono eliminati automaticamente dopo 30
+                giorni. I dati dell&apos;account vengono eliminati su richiesta
+                dell&apos;utente (diritto alla cancellazione art. 17 GDPR).
+              </p>
             </section>
 
             <Separator />
 
-            {/* 7. Condivisione */}
+            {/* 8. Condivisione */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                7. Condivisione dei dati
+                8. Condivisione dei dati
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 I dati personali <strong>non vengono ceduti a terzi</strong> per
@@ -238,6 +261,13 @@ export default function PrivacyPage() {
                 <li className="flex gap-2">
                   <span className="text-brand-navy font-bold">&bull;</span>
                   <span>
+                    <strong>Microsoft Azure</strong> — per l&apos;hosting dei
+                    servizi AI e dell&apos;infrastruttura applicativa
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-brand-navy font-bold">&bull;</span>
+                  <span>
                     <strong>Vercel</strong> — per l&apos;hosting
                     dell&apos;applicazione web
                   </span>
@@ -247,10 +277,10 @@ export default function PrivacyPage() {
 
             <Separator />
 
-            {/* 8. Diritti */}
+            {/* 9. Diritti */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                8. Diritti dell&apos;interessato
+                9. Diritti dell&apos;interessato
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                 Ai sensi degli artt. 15-22 del GDPR, hai diritto di:
@@ -299,10 +329,10 @@ export default function PrivacyPage() {
                 </Link>
                 . Per altre richieste, scrivi a{" "}
                 <a
-                  href="mailto:privacy@lavorochiaro.it"
+                  href="mailto:privacy@lavoroinchiaro.it"
                   className="text-brand-navy underline"
                 >
-                  privacy@lavorochiaro.it
+                  privacy@lavoroinchiaro.it
                 </a>
                 . Hai inoltre il diritto di presentare reclamo al{" "}
                 <strong>Garante per la protezione dei dati personali</strong>{" "}
@@ -321,10 +351,10 @@ export default function PrivacyPage() {
 
             <Separator />
 
-            {/* 9. Cookie */}
+            {/* 10. Cookie */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                9. Cookie
+                10. Cookie
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Questo sito utilizza esclusivamente{" "}
@@ -362,10 +392,10 @@ export default function PrivacyPage() {
 
             <Separator />
 
-            {/* 10. Modifiche */}
+            {/* 11. Modifiche */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                10. Modifiche alla Privacy Policy
+                11. Modifiche alla Privacy Policy
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Ci riserviamo il diritto di modificare questa informativa in
@@ -378,19 +408,19 @@ export default function PrivacyPage() {
 
             <Separator />
 
-            {/* 11. Contatti */}
+            {/* 12. Contatti */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3">
-                11. Contatti
+                12. Contatti
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Per qualsiasi domanda relativa alla presente informativa o al
                 trattamento dei tuoi dati personali, contattaci a{" "}
                 <a
-                  href="mailto:privacy@lavorochiaro.it"
+                  href="mailto:privacy@lavoroinchiaro.it"
                   className="text-brand-navy underline"
                 >
-                  privacy@lavorochiaro.it
+                  privacy@lavoroinchiaro.it
                 </a>
                 .
               </p>
