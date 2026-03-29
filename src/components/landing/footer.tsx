@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-10 md:gap-8">
           {/* Brand column */}
-          <div className="md:col-span-2">
+          <div>
             <Link href="/" className="flex items-center gap-1 mb-4">
               <span className="text-lg font-bold uppercase tracking-wider">
                 <span className="text-brand-navy">LAVORO</span>
@@ -15,7 +15,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-              LavoroChiaro è il primo servizio italiano di analisi documenti con
+              LavoroInChiaro &egrave; il primo servizio italiano di analisi documenti con
               intelligenza artificiale. Controlliamo buste paga, dichiarazioni
               dei redditi, cartelle esattoriali e multe in pochi secondi,
               proteggendo i diritti e il portafoglio dei lavoratori italiani.
@@ -43,7 +43,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi/professionisti"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Consulenza Errori
@@ -51,23 +51,23 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi/professionisti"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  730 Fiscalisti
+                  Rete Fiscalisti (730)
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/servizi/redazione-lettere"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Recupero Differenze
+                  Recupero Differenze Retributive
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/servizi/dimissioni"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Dimissioni Online
@@ -75,7 +75,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi/calcolo-naspi"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Calcolo NASPI
@@ -83,7 +83,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi/maternita"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Maternit&agrave;
@@ -91,7 +91,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi/controllo-multe"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Controllo Multe
@@ -99,10 +99,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/servizi"
+                  href="/richiesta-consulenza"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Tutti i servizi &rarr;
+                  Contratti Colf e Badanti
                 </Link>
               </li>
             </ul>
@@ -116,7 +116,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               <li>
                 <Link
-                  href="#come-funziona"
+                  href="/#come-funziona"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Come funziona
@@ -124,7 +124,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#prezzi"
+                  href="/#prezzi"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Prezzi
@@ -132,7 +132,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#faq"
+                  href="/#faq"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   FAQ
@@ -156,11 +156,36 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:info@lavorochiaro.it"
+                  href="mailto:info@lavoroinchiaro.it"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Contattaci
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Per Professionisti */}
+          <div>
+            <h3 className="font-semibold text-sm text-foreground mb-4">
+              Per Professionisti
+            </h3>
+            <ul className="space-y-2.5">
+              <li>
+                <Link
+                  href="/accreditati"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Accreditati
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/chi-siamo"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Chi siamo
+                </Link>
               </li>
             </ul>
           </div>
@@ -186,7 +211,7 @@ export function Footer() {
                 Termini
               </Link>
               <a
-                href="mailto:info@lavorochiaro.it"
+                href="mailto:info@lavoroinchiaro.it"
                 className="hover:text-foreground transition-colors"
               >
                 Contatti
@@ -194,7 +219,7 @@ export function Footer() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground/60 mt-4 max-w-2xl mx-auto text-center leading-relaxed">
-            LavoroChiaro non sostituisce un consulente del lavoro, un
+            LavoroInChiaro non sostituisce un consulente del lavoro, un
             commercialista o un avvocato. Le analisi hanno valore puramente
             informativo e non costituiscono parere professionale. In caso di
             anomalie rilevanti o contenziosi, rivolgiti sempre a un
