@@ -43,10 +43,34 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/servizi/professionisti"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Consulenza Errori
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/servizi/professionisti"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  730 Fiscalisti
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/servizi/redazione-lettere"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Redazione Lettere
+                  Recupero Differenze
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/servizi/dimissioni"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Dimissioni Online
                 </Link>
               </li>
               <li>
@@ -62,7 +86,7 @@ export function Footer() {
                   href="/servizi/maternita"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Consulenza Maternit&agrave;
+                  Maternit&agrave;
                 </Link>
               </li>
               <li>
