@@ -3,7 +3,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
 import { UploadZone } from "@/components/upload-zone";
 import { RotatingHeadline } from "@/components/rotating-headline";
-import { FileSearch, AlertTriangle, Users, ArrowRight } from "lucide-react";
+import { FileSearch, AlertTriangle, Eye, ArrowRight } from "lucide-react";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -111,12 +111,6 @@ const jsonLd = {
 };
 
 /* ── Data ── */
-const steps = [
-  { num: "01", title: "Carica", desc: "Scatta una foto o carica il PDF della tua busta paga." },
-  { num: "02", title: "Analisi AI", desc: "La nostra AI legge ogni voce e la confronta con il tuo CCNL." },
-  { num: "03", title: "Referto", desc: "Ricevi un report chiaro con errori, anomalie e soldi da recuperare." },
-];
-
 const services = [
   {
     title: "Consulenza errori busta paga",
@@ -324,51 +318,86 @@ export default function Home() {
 
       <main>
         {/* ── 1. HERO ── */}
-        <section className="relative px-6 pt-24 pb-16 md:pt-32 md:pb-24 bg-brand-navy">
+        <section className="relative min-h-screen flex items-center justify-center px-6 py-24 bg-brand-navy">
           <div className="container mx-auto flex flex-col items-center text-center gap-8 md:gap-10">
 
-            {/* SEMPRE GRATUITO badge */}
+            {/* Green pill badge */}
             <div className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-full shadow-lg shadow-emerald-500/30 tracking-wide uppercase">
-              SEMPRE GRATUITO
+              ANALISI BASE SEMPRE GRATUITA
             </div>
 
-            {/* TITOLO GIGANTE */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05]">
-              <span className="text-primary-foreground">La tua busta paga</span>
-              <br />
-              <span className="text-brand-amber">ti mente?</span>
+            {/* Headline */}
+            <h1 className="text-5xl md:text-7xl font-heading font-bold text-white leading-[1.05]">
+              La tua busta paga è corretta?
             </h1>
 
-            {/* LINEA */}
-            <div className="w-20 h-[2px] bg-brand-amber" />
+            {/* Subtitle */}
+            <p className="text-lg text-white/70 max-w-2xl">
+              Carica il tuo cedolino e scoprilo in 30 secondi. L&apos;analisi base è gratuita, per sempre.
+            </p>
 
-            {/* 3-STEP VALUE PROP */}
-            <div className="max-w-2xl mx-auto space-y-3 text-left">
-              <p className="text-primary-foreground/90 text-base md:text-lg">
-                <span className="font-bold text-emerald-400">1. Analizza gratis</span>{" "}
-                <span className="text-primary-foreground/70">&mdash; Carica la tua busta paga, è sempre gratuito</span>
-              </p>
-              <p className="text-primary-foreground/90 text-base md:text-lg">
-                <span className="font-bold text-brand-amber">2. Errori trovati?</span>{" "}
-                <span className="text-primary-foreground/70">&mdash; Scopri quali per soli &euro;3,99</span>
-              </p>
-              <p className="text-primary-foreground/90 text-base md:text-lg">
-                <span className="font-bold text-brand-amber">3. Errori significativi?</span>{" "}
-                <span className="text-primary-foreground/70">&mdash; Fatti aiutare da un nostro consulente a recuperare i crediti</span>
-              </p>
-            </div>
+            {/* Rotating Headline */}
+            <RotatingHeadline />
 
-            {/* CTA BUTTON */}
+            {/* CTA Button */}
             <Link
               href="#analizza"
               className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Analizza ora — È gratis
+              Analizza ora — È gratis →
             </Link>
 
-            {/* TRUST BADGES */}
-            <p className="text-xs text-primary-foreground/40">
-              Analisi sempre gratuita &middot; Conforme GDPR &middot; 30 secondi
+            {/* Three info cards */}
+            <div className="flex flex-col md:flex-row items-stretch gap-4 w-full max-w-4xl mt-4">
+              {/* Card 1 — Analisi base gratuita */}
+              <div className="flex-1 bg-white/10 backdrop-blur rounded-xl p-6 text-left">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mb-3">
+                  <FileSearch className="w-5 h-5 text-emerald-400" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-1">Analisi base gratuita</h3>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Verifica stipendio, CCNL, trattenute e contributi.
+                </p>
+              </div>
+
+              {/* Arrow (desktop only) */}
+              <div className="hidden md:flex items-center justify-center">
+                <ArrowRight className="w-5 h-5 text-brand-amber" />
+              </div>
+
+              {/* Card 2 — Report errori */}
+              <div className="flex-1 bg-white/10 backdrop-blur rounded-xl p-6 text-left">
+                <div className="w-10 h-10 rounded-full bg-brand-amber/20 flex items-center justify-center mb-3">
+                  <AlertTriangle className="w-5 h-5 text-brand-amber" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-1">
+                  Report errori — <span className="font-accent text-3xl">€3,99</span>
+                </h3>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Sblocca il report dettagliato con importi e raccomandazioni.
+                </p>
+              </div>
+
+              {/* Arrow (desktop only) */}
+              <div className="hidden md:flex items-center justify-center">
+                <ArrowRight className="w-5 h-5 text-brand-amber" />
+              </div>
+
+              {/* Card 3 — Vedi esempio report */}
+              <Link href="#report-esempio" className="flex-1 bg-white/10 backdrop-blur rounded-xl p-6 text-left hover:bg-white/15 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-3">
+                  <Eye className="w-5 h-5 text-blue-400" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-1">Vedi esempio report</h3>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Guarda un report completo.
+                </p>
+              </Link>
+            </div>
+
+            {/* Trust line */}
+            <p className="text-xs text-white/40">
+              Conforme GDPR · 30 secondi · Nessuna registrazione
             </p>
 
           </div>
@@ -392,92 +421,6 @@ export default function Home() {
                   <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── 3. COME FUNZIONA ── */}
-        <section id="come-funziona" className="py-16 md:py-24 bg-card">
-          <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-12">
-              Come funziona
-            </h2>
-            <div className="grid md:grid-cols-3 gap-10 max-w-4xl mx-auto">
-              {steps.map((step) => (
-                <div key={step.num} className="text-center md:text-left">
-                  <p className="text-5xl font-bold text-brand-amber mb-3">{step.num}</p>
-                  <h3 className="text-xl font-bold text-brand-navy mb-2">{step.title}</h3>
-                  <p className="text-sm text-foreground/60 leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── FLUSSO — 3 Step Visual Flow ── */}
-        <section className="py-16 md:py-24 bg-card">
-          <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
-              Come ti aiutiamo
-            </h2>
-            <p className="text-center text-2xl md:text-3xl font-bold text-brand-navy mb-14 text-balance">
-              Tre passi per proteggere il tuo stipendio
-            </p>
-
-            <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_auto_1fr_auto_1fr] items-start gap-6 md:gap-0">
-              {/* Step 1 */}
-              <div className="flex flex-col items-center text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                  <FileSearch className="w-8 h-8 text-emerald-600" />
-                </div>
-                <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-emerald-500 text-white mb-3">
-                  GRATUITO
-                </span>
-                <h3 className="text-lg font-bold text-brand-navy mb-2">Analizza gratis</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Carica la tua busta paga. L&apos;analisi è sempre gratuita, senza limiti.
-                </p>
-              </div>
-
-              {/* Arrow 1 */}
-              <div className="hidden md:flex items-center justify-center pt-8">
-                <ArrowRight className="w-6 h-6 text-brand-amber" />
-              </div>
-
-              {/* Step 2 */}
-              <div className="flex flex-col items-center text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-                  <AlertTriangle className="w-8 h-8 text-amber-600" />
-                </div>
-                <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-brand-amber text-white mb-3">
-                  €3,99
-                </span>
-                <h3 className="text-lg font-bold text-brand-navy mb-2">Scopri gli errori</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Se troviamo anomalie, sblocca il report completo con tutti i dettagli per soli &euro;3,99.
-                </p>
-              </div>
-
-              {/* Arrow 2 */}
-              <div className="hidden md:flex items-center justify-center pt-8">
-                <ArrowRight className="w-6 h-6 text-brand-amber" />
-              </div>
-
-              {/* Step 3 */}
-              <div className="flex flex-col items-center text-center px-4">
-                <Link href="#servizi" className="flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 rounded-full bg-brand-navy/10 flex items-center justify-center mb-4 group-hover:bg-brand-navy/20 transition-colors">
-                    <Users className="w-8 h-8 text-brand-navy" />
-                  </div>
-                  <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-brand-navy text-white mb-3">
-                    CONSULENTE
-                  </span>
-                  <h3 className="text-lg font-bold text-brand-navy mb-2 group-hover:text-brand-amber transition-colors">Recupera i tuoi crediti</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Se gli errori sono significativi, un nostro consulente ti aiuta a recuperare fino a 5 anni di differenze retributive.
-                  </p>
-                </Link>
-              </div>
             </div>
           </div>
         </section>
@@ -580,7 +523,7 @@ export default function Home() {
         </section>
 
         {/* ── 4. REPORT PREVIEW ── */}
-        <section className="py-16 md:py-20 bg-background">
+        <section id="report-esempio" className="py-16 md:py-20 bg-background scroll-mt-16">
           <div className="container mx-auto px-6">
             <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
               Ecco cosa ottieni
