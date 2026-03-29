@@ -13,6 +13,7 @@ import {
   LogOut,
   LayoutDashboard,
   Settings,
+  ChevronDown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -41,12 +42,8 @@ function ThemeToggle() {
 
 const navLinks = [
   { href: "#analizza", label: "Analizza" },
-  { href: "#servizi", label: "Servizi" },
-  { href: "#come-funziona", label: "Come funziona" },
+  { href: "/servizi", label: "Servizi" },
   { href: "#prezzi", label: "Prezzi" },
-  { href: "#associati", label: "Associati" },
-  { href: "/chi-siamo", label: "Chi siamo" },
-  { href: "/blog", label: "Blog" },
 ];
 
 export function Header() {
@@ -83,6 +80,35 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="relative group">
+            <Link
+              href="#associati"
+              className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-muted flex items-center gap-1"
+            >
+              Associati
+              <ChevronDown className="h-3 w-3" />
+            </Link>
+            <div className="absolute top-full left-0 mt-1 w-48 bg-background border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <Link
+                href="#associati"
+                className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-foreground hover:bg-muted rounded-t-lg"
+              >
+                Associati — €0,99/mese
+              </Link>
+              <Link
+                href="/chi-siamo"
+                className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-foreground hover:bg-muted"
+              >
+                Chi siamo
+              </Link>
+              <Link
+                href="/blog"
+                className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-foreground hover:bg-muted rounded-b-lg"
+              >
+                Blog
+              </Link>
+            </div>
+          </div>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -174,6 +200,30 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="px-3 pt-2 pb-1 text-xs font-semibold text-foreground/50 uppercase tracking-wider">
+            Associati
+          </div>
+          <Link
+            href="#associati"
+            onClick={() => setMobileOpen(false)}
+            className="block text-sm font-medium text-foreground/70 hover:text-foreground transition-colors pl-6 pr-3 py-2.5 rounded-lg hover:bg-muted"
+          >
+            Associati — €0,99/mese
+          </Link>
+          <Link
+            href="/chi-siamo"
+            onClick={() => setMobileOpen(false)}
+            className="block text-sm font-medium text-foreground/70 hover:text-foreground transition-colors pl-6 pr-3 py-2.5 rounded-lg hover:bg-muted"
+          >
+            Chi siamo
+          </Link>
+          <Link
+            href="/blog"
+            onClick={() => setMobileOpen(false)}
+            className="block text-sm font-medium text-foreground/70 hover:text-foreground transition-colors pl-6 pr-3 py-2.5 rounded-lg hover:bg-muted"
+          >
+            Blog
+          </Link>
           <div className="pt-2">
             {user ? (
               <div className="space-y-1">
