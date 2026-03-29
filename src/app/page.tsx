@@ -40,7 +40,7 @@ const jsonLd = {
         {
           "@type": "Offer",
           name: "Consulenza",
-          price: "9.90",
+          price: "14.90",
           priceCurrency: "EUR",
           description: "Consulenza professionale una tantum",
         },
@@ -70,7 +70,7 @@ const jsonLd = {
           name: "Quanto costa usare LavoroInChiaro?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "L'analisi della busta paga e' sempre gratuita e illimitata. Per consulenze professionali il costo parte da 9,90 euro. L'abbonamento associativo costa 0,99 euro/mese. Il piano Pro + Chatbot costa 9,99 euro/mese.",
+            text: "L'analisi della busta paga e' sempre gratuita e illimitata. Per consulenze professionali il costo parte da 14,90 euro. L'abbonamento associativo costa 0,99 euro/mese. Il piano Pro + Chatbot costa 9,99 euro/mese.",
           },
         },
         {
@@ -121,8 +121,8 @@ const services = [
   {
     title: "Consulenza errori busta paga",
     desc: "Hai trovato anomalie? Un consulente del lavoro della nostra rete ti aiuta a capire come recuperare il dovuto.",
-    price: "da \u20ac9,90",
-    bigPrice: "\u20ac9,90",
+    price: "da \u20ac14,90",
+    bigPrice: "\u20ac14,90",
     bigPriceColor: "text-brand-amber",
     href: "/richiesta-consulenza",
     cta: "Prenota una consulenza",
@@ -130,8 +130,8 @@ const services = [
   {
     title: "730 Fiscalisti",
     desc: "Dichiarazione dei redditi senza stress. Collegati con commercialisti e consulenti certificati.",
-    price: "da \u20ac9,90",
-    bigPrice: "\u20ac9,90",
+    price: "da \u20ac19,90",
+    bigPrice: "\u20ac19,90",
     bigPriceColor: "text-brand-amber",
     href: "/richiesta-consulenza",
     cta: "Trova il tuo fiscalista",
@@ -139,18 +139,18 @@ const services = [
   {
     title: "Recupero differenze retributive",
     desc: "Analizziamo le tue buste paga degli ultimi 5 anni. Se ci sono differenze retributive, ti aiutiamo a recuperarle.",
-    price: "fino a 5 anni \u00b7 media \u20ac2.400",
-    bigPrice: "\u20ac2.400",
+    price: "10% delle somme recuperate",
+    bigPrice: "10%",
     bigPriceColor: "text-brand-amber",
-    bigPriceLabel: "recupero medio",
+    bigPriceLabel: "delle somme recuperate",
     href: "/richiesta-consulenza",
     cta: "Verifica ora",
   },
   {
     title: "Dimissioni Online",
     desc: "Fatti assistere da un consulente del lavoro. Carica carta d\u2019identit\u00e0, codice fiscale e ultima busta paga \u2014 al resto pensiamo noi.",
-    price: "da \u20ac9,90",
-    bigPrice: "\u20ac9,90",
+    price: "da \u20ac4,90",
+    bigPrice: "\u20ac4,90",
     bigPriceColor: "text-brand-amber",
     href: "/richiesta-consulenza",
     cta: "Inizia la pratica",
@@ -214,7 +214,7 @@ const plans = [
   },
   {
     name: "Consulenza",
-    price: "9,90",
+    price: "14,90",
     period: " una tantum",
     desc: "Consulenza professionale con un esperto della nostra rete",
     features: [
@@ -285,7 +285,7 @@ const faqs = [
   },
   {
     q: "Cosa succede se trovo errori nella busta paga?",
-    a: "Puoi prenotare una consulenza con un esperto della nostra rete a partire da \u20ac9,90. Il consulente analizzer\u00e0 le anomalie e ti guider\u00e0 nel recupero del dovuto.",
+    a: "Puoi prenotare una consulenza con un esperto della nostra rete a partire da \u20ac14,90. Il consulente analizzer\u00e0 le anomalie e ti guider\u00e0 nel recupero del dovuto.",
   },
   {
     q: "Come funziona il recupero delle differenze retributive?",

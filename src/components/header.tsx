@@ -121,22 +121,28 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
-              <Button
-                variant="default"
-                size="sm"
-                asChild
-                className="bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
-              >
-                <Link href="/login">Accedi</Link>
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                asChild
-                className="bg-brand-amber hover:bg-brand-amber-dark text-white"
-              >
-                <Link href="/accreditati">Accreditati</Link>
-              </Button>
+              <div className="flex flex-col items-center">
+                <Button
+                  variant="default"
+                  size="sm"
+                  asChild
+                  className="bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
+                >
+                  <Link href="/login">Accedi</Link>
+                </Button>
+                <span className="text-[10px] text-muted-foreground mt-0.5">per i lavoratori</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Button
+                  variant="default"
+                  size="sm"
+                  asChild
+                  className="bg-brand-amber hover:bg-brand-amber-dark text-white"
+                >
+                  <Link href="/accreditati">Accreditati</Link>
+                </Button>
+                <span className="text-[10px] text-muted-foreground mt-0.5">per i professionisti</span>
+              </div>
             </div>
           )}
 
@@ -214,26 +220,32 @@ export function Header() {
               </div>
             ) : (
               <div className="space-y-2">
-                <Button
-                  variant="default"
-                  size="sm"
-                  asChild
-                  className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
-                >
-                  <Link href="/login" onClick={() => setMobileOpen(false)}>
-                    Accedi
-                  </Link>
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  asChild
-                  className="w-full bg-brand-amber hover:bg-brand-amber-dark text-white"
-                >
-                  <Link href="/accreditati" onClick={() => setMobileOpen(false)}>
-                    Accreditati
-                  </Link>
-                </Button>
+                <div className="flex flex-col items-center">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    asChild
+                    className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
+                  >
+                    <Link href="/login" onClick={() => setMobileOpen(false)}>
+                      Accedi
+                    </Link>
+                  </Button>
+                  <span className="text-[10px] text-muted-foreground mt-0.5">per i lavoratori</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    asChild
+                    className="w-full bg-brand-amber hover:bg-brand-amber-dark text-white"
+                  >
+                    <Link href="/accreditati" onClick={() => setMobileOpen(false)}>
+                      Accreditati
+                    </Link>
+                  </Button>
+                  <span className="text-[10px] text-muted-foreground mt-0.5">per i professionisti</span>
+                </div>
               </div>
             )}
           </div>
