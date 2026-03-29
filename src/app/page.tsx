@@ -176,11 +176,12 @@ const services = [
   {
     title: "Controllo Multe",
     desc: "Analisi automatica della tua multa: termini di notifica, vizi di forma, prescrizione.",
-    price: "gratuito",
-    bigPrice: "GRATIS",
-    bigPriceColor: "text-emerald-500",
-    href: "/richiesta-consulenza",
-    cta: "Controlla la tua multa",
+    price: "Presto disponibile",
+    bigPrice: "",
+    bigPriceColor: "",
+    href: "#",
+    cta: "In arrivo",
+    comingSoon: true,
   },
   {
     title: "Colf e Badanti",
@@ -413,101 +414,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 4. REPORT PREVIEW ── */}
-        <section className="py-16 md:py-20 bg-background">
-          <div className="container mx-auto px-6">
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
-              Ecco cosa ottieni
-            </h2>
-            <p className="text-center text-xl md:text-2xl font-bold text-brand-navy mb-10 text-balance">
-              Un referto chiaro, in 30 secondi
-            </p>
-
-            <div className="max-w-md mx-auto">
-              <div className="bg-card rounded-xl border shadow-xl overflow-hidden">
-                {/* Report header */}
-                <div className="p-5 border-b">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">Intestatario cedolino</p>
-                      <p className="text-lg font-bold text-foreground">Laura Ferretti</p>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-amber-200">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      Anomalie Rilevate
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    CCNL Metalmeccanici &middot; Livello 4&deg; &middot; Novembre 2024
-                  </p>
-                </div>
-
-                {/* Score bar */}
-                <div className="px-5 py-4 flex items-center gap-4 border-b bg-muted/30">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground font-medium">Score</span>
-                      <span className="text-sm font-bold text-brand-navy">61/100</span>
-                    </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-green-500" style={{ width: "61%" }} />
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground">Recuperabile</p>
-                    <p className="text-lg font-bold text-brand-amber">&euro;234/mese</p>
-                  </div>
-                </div>
-
-                {/* Risultanze */}
-                <div className="p-5 space-y-3">
-                  {reportVoci.map((v) => {
-                    const border = v.tipo === "errore" ? "border-l-red-500" : v.tipo === "avviso" ? "border-l-amber-500" : "border-l-green-500";
-                    const badge = v.tipo === "errore" ? "bg-red-100 text-red-700" : v.tipo === "avviso" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700";
-                    const badgeLabel = v.tipo === "errore" ? "ERRORE" : v.tipo === "avviso" ? "VERIFICA" : "CORRETTO";
-                    return (
-                      <div key={v.codice} className={`border-l-4 ${border} rounded-r-lg bg-muted/20 p-3`}>
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-[10px] text-muted-foreground font-mono">{v.codice} &middot; {v.cat}</p>
-                            <p className="text-sm font-semibold text-foreground leading-snug">{v.titolo}</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            {v.importo && <p className="text-sm font-bold text-foreground">{v.importo}</p>}
-                            <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${badge}`}>{badgeLabel}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Blur overlay + CTA */}
-                <div className="relative">
-                  <div className="p-5 space-y-3 blur-[6px] select-none pointer-events-none" aria-hidden="true">
-                    <div className="border-l-4 border-l-red-500 rounded-r-lg bg-muted/20 p-3">
-                      <p className="text-[10px] text-muted-foreground font-mono">ERR-002 &middot; TFR</p>
-                      <p className="text-sm font-semibold text-foreground">Accantonamento TFR non aggiornato</p>
-                    </div>
-                    <div className="border-l-4 border-l-green-500 rounded-r-lg bg-muted/20 p-3">
-                      <p className="text-[10px] text-muted-foreground font-mono">OK-002 &middot; FERIE</p>
-                      <p className="text-sm font-semibold text-foreground">Residuo ferie calcolato correttamente</p>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
-                    <Link
-                      href="#analizza"
-                      className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-sm px-8 py-3 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-md"
-                    >
-                      Analizza la tua busta paga
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ── FLUSSO — 3 Step Visual Flow ── */}
         <section className="py-16 md:py-24 bg-card">
           <div className="container mx-auto px-6">
@@ -572,34 +478,6 @@ export default function Home() {
                   </p>
                 </Link>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 5. UPLOAD SECTION ── */}
-        <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-brand-navy">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4">
-                Carica il tuo cedolino.
-              </h2>
-              <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
-              <p className="text-primary-foreground/70 leading-relaxed">
-                PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
-              </p>
-              <p className="text-sm font-bold text-brand-amber mt-3">
-                Analisi SEMPRE GRATUITA &mdash; senza registrazione
-              </p>
-            </div>
-            <div className="max-w-2xl mx-auto">
-              <UploadZone />
-            </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-primary-foreground/40">
-              <span>AES-256 encryption</span>
-              <span className="hidden sm:inline">&middot;</span>
-              <span>Server EU / GDPR</span>
-              <span className="hidden sm:inline">&middot;</span>
-              <span>Eliminazione automatica 30gg</span>
             </div>
           </div>
         </section>
@@ -698,6 +576,129 @@ export default function Home() {
             >
               Associati ora
             </Link>
+          </div>
+        </section>
+
+        {/* ── 4. REPORT PREVIEW ── */}
+        <section className="py-16 md:py-20 bg-background">
+          <div className="container mx-auto px-6">
+            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
+              Ecco cosa ottieni
+            </h2>
+            <p className="text-center text-xl md:text-2xl font-bold text-brand-navy mb-10 text-balance">
+              Un referto chiaro, in 30 secondi
+            </p>
+
+            <div className="max-w-md mx-auto">
+              <div className="bg-card rounded-xl border shadow-xl overflow-hidden">
+                {/* Report header */}
+                <div className="p-5 border-b">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground">Intestatario cedolino</p>
+                      <p className="text-lg font-bold text-foreground">Laura Ferretti</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-md border border-amber-200">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      Anomalie Rilevate
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    CCNL Metalmeccanici &middot; Livello 4&deg; &middot; Novembre 2024
+                  </p>
+                </div>
+
+                {/* Score bar */}
+                <div className="px-5 py-4 flex items-center gap-4 border-b bg-muted/30">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground font-medium">Score</span>
+                      <span className="text-sm font-bold text-brand-navy">61/100</span>
+                    </div>
+                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-green-500" style={{ width: "61%" }} />
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground">Recuperabile</p>
+                    <p className="text-lg font-bold text-brand-amber">&euro;234/mese</p>
+                  </div>
+                </div>
+
+                {/* Risultanze */}
+                <div className="p-5 space-y-3">
+                  {reportVoci.map((v) => {
+                    const border = v.tipo === "errore" ? "border-l-red-500" : v.tipo === "avviso" ? "border-l-amber-500" : "border-l-green-500";
+                    const badge = v.tipo === "errore" ? "bg-red-100 text-red-700" : v.tipo === "avviso" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700";
+                    const badgeLabel = v.tipo === "errore" ? "ERRORE" : v.tipo === "avviso" ? "VERIFICA" : "CORRETTO";
+                    return (
+                      <div key={v.codice} className={`border-l-4 ${border} rounded-r-lg bg-muted/20 p-3`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-muted-foreground font-mono">{v.codice} &middot; {v.cat}</p>
+                            <p className="text-sm font-semibold text-foreground leading-snug">{v.titolo}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            {v.importo && <p className="text-sm font-bold text-foreground">{v.importo}</p>}
+                            <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${badge}`}>{badgeLabel}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Blur overlay + CTA */}
+                <div className="relative">
+                  <div className="p-5 space-y-3 blur-[6px] select-none pointer-events-none" aria-hidden="true">
+                    <div className="border-l-4 border-l-red-500 rounded-r-lg bg-muted/20 p-3">
+                      <p className="text-[10px] text-muted-foreground font-mono">ERR-002 &middot; TFR</p>
+                      <p className="text-sm font-semibold text-foreground">Accantonamento TFR non aggiornato</p>
+                    </div>
+                    <div className="border-l-4 border-l-green-500 rounded-r-lg bg-muted/20 p-3">
+                      <p className="text-[10px] text-muted-foreground font-mono">OK-002 &middot; FERIE</p>
+                      <p className="text-sm font-semibold text-foreground">Residuo ferie calcolato correttamente</p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
+                    <Link
+                      href="#analizza"
+                      className="inline-flex items-center justify-center bg-brand-amber text-accent-foreground font-bold text-sm px-8 py-3 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-md"
+                    >
+                      Analizza la tua busta paga
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 5. UPLOAD SECTION ── */}
+        <section id="analizza" className="py-20 md:py-28 scroll-mt-16 bg-brand-navy">
+          <div className="container mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4">
+                Carica il tuo cedolino.
+              </h2>
+              <div className="w-16 h-[2px] bg-brand-amber mx-auto mb-6" />
+              <p className="text-primary-foreground/70 leading-relaxed">
+                PDF, foto o scansione. L&apos;analisi parte in automatico e il referto arriva in 30 secondi.
+              </p>
+              <p className="text-sm font-bold text-brand-amber mt-3">
+                Analisi SEMPRE GRATUITA &mdash; senza registrazione
+              </p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <UploadZone />
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-primary-foreground/40">
+              <span>AES-256 encryption</span>
+              <span className="hidden sm:inline">&middot;</span>
+              <span>Server EU / GDPR</span>
+              <span className="hidden sm:inline">&middot;</span>
+              <span>Eliminazione automatica 30gg</span>
+            </div>
           </div>
         </section>
 
