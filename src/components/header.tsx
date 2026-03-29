@@ -40,11 +40,12 @@ function ThemeToggle() {
 }
 
 const navLinks = [
-  { href: "#analizza", label: "Analisi Busta Paga" },
-  { href: "/servizi", label: "Servizi AI" },
-  { href: "/blog", label: "Blog" },
+  { href: "#analizza", label: "Analizza" },
+  { href: "#servizi", label: "Servizi" },
   { href: "#come-funziona", label: "Come funziona" },
   { href: "#prezzi", label: "Prezzi" },
+  { href: "/servizi", label: "Servizi AI" },
+  { href: "/blog", label: "Blog" },
   { href: "#faq", label: "FAQ" },
 ];
 
@@ -119,14 +120,24 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              variant="default"
-              size="sm"
-              asChild
-              className="hidden sm:inline-flex bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
-            >
-              <Link href="/login">Accedi</Link>
-            </Button>
+            <div className="hidden sm:flex items-center gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                asChild
+                className="bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
+              >
+                <Link href="/login">Accedi</Link>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                asChild
+                className="bg-brand-amber hover:bg-brand-amber-dark text-white"
+              >
+                <Link href="/accreditati">Accreditati</Link>
+              </Button>
+            </div>
           )}
 
           {/* Mobile hamburger */}
@@ -202,16 +213,28 @@ export function Header() {
                 </Button>
               </div>
             ) : (
-              <Button
-                variant="default"
-                size="sm"
-                asChild
-                className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
-              >
-                <Link href="/login" onClick={() => setMobileOpen(false)}>
-                  Accedi
-                </Link>
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  variant="default"
+                  size="sm"
+                  asChild
+                  className="w-full bg-brand-navy hover:bg-brand-navy-light text-primary-foreground"
+                >
+                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                    Accedi
+                  </Link>
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  asChild
+                  className="w-full bg-brand-amber hover:bg-brand-amber-dark text-white"
+                >
+                  <Link href="/accreditati" onClick={() => setMobileOpen(false)}>
+                    Accreditati
+                  </Link>
+                </Button>
+              </div>
             )}
           </div>
         </div>

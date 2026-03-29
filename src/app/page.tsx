@@ -3,6 +3,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/landing/footer";
 import { UploadZone } from "@/components/upload-zone";
 import { RotatingHeadline } from "@/components/rotating-headline";
+import { FileSearch, AlertTriangle, Users, ArrowRight } from "lucide-react";
 
 /* ── JSON-LD ── */
 const jsonLd = {
@@ -313,14 +314,6 @@ export default function Home() {
               SEMPRE GRATUITO
             </div>
 
-            {/* CTA BUTTON */}
-            <Link
-              href="#analizza"
-              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Controlla la busta paga
-            </Link>
-
             {/* TITOLO GIGANTE */}
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05]">
               <span className="text-primary-foreground">La tua busta paga</span>
@@ -331,8 +324,29 @@ export default function Home() {
             {/* LINEA */}
             <div className="w-20 h-[2px] bg-brand-amber" />
 
-            {/* FRASI ROTANTI */}
-            <RotatingHeadline />
+            {/* 3-STEP VALUE PROP */}
+            <div className="max-w-2xl mx-auto space-y-3 text-left">
+              <p className="text-primary-foreground/90 text-base md:text-lg">
+                <span className="font-bold text-emerald-400">1. Analizza gratis</span>{" "}
+                <span className="text-primary-foreground/70">&mdash; Carica la tua busta paga, è sempre gratuito</span>
+              </p>
+              <p className="text-primary-foreground/90 text-base md:text-lg">
+                <span className="font-bold text-brand-amber">2. Errori trovati?</span>{" "}
+                <span className="text-primary-foreground/70">&mdash; Scopri quali per soli &euro;3,99</span>
+              </p>
+              <p className="text-primary-foreground/90 text-base md:text-lg">
+                <span className="font-bold text-brand-amber">3. Errori significativi?</span>{" "}
+                <span className="text-primary-foreground/70">&mdash; Fatti aiutare da un nostro consulente a recuperare i crediti</span>
+              </p>
+            </div>
+
+            {/* CTA BUTTON */}
+            <Link
+              href="#analizza"
+              className="inline-flex items-center justify-center bg-brand-amber text-white font-bold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-sm uppercase tracking-wider hover:bg-brand-amber-dark transition-colors shadow-lg shadow-brand-amber/30 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Analizza ora — È gratis
+            </Link>
 
             {/* TRUST BADGES */}
             <p className="text-xs text-primary-foreground/40">
@@ -472,6 +486,74 @@ export default function Home() {
                     </Link>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FLUSSO — 3 Step Visual Flow ── */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container mx-auto px-6">
+            <h2 className="text-[11px] tracking-[0.2em] uppercase text-brand-gray text-center mb-4">
+              Come ti aiutiamo
+            </h2>
+            <p className="text-center text-2xl md:text-3xl font-bold text-brand-navy mb-14 text-balance">
+              Tre passi per proteggere il tuo stipendio
+            </p>
+
+            <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_auto_1fr_auto_1fr] items-start gap-6 md:gap-0">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center text-center px-4">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                  <FileSearch className="w-8 h-8 text-emerald-600" />
+                </div>
+                <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-emerald-500 text-white mb-3">
+                  GRATUITO
+                </span>
+                <h3 className="text-lg font-bold text-brand-navy mb-2">Analizza gratis</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Carica la tua busta paga. L&apos;analisi è sempre gratuita, senza limiti.
+                </p>
+              </div>
+
+              {/* Arrow 1 */}
+              <div className="hidden md:flex items-center justify-center pt-8">
+                <ArrowRight className="w-6 h-6 text-brand-amber" />
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center text-center px-4">
+                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-8 h-8 text-amber-600" />
+                </div>
+                <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-brand-amber text-white mb-3">
+                  €3,99
+                </span>
+                <h3 className="text-lg font-bold text-brand-navy mb-2">Scopri gli errori</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Se troviamo anomalie, sblocca il report completo con tutti i dettagli per soli &euro;3,99.
+                </p>
+              </div>
+
+              {/* Arrow 2 */}
+              <div className="hidden md:flex items-center justify-center pt-8">
+                <ArrowRight className="w-6 h-6 text-brand-amber" />
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center text-center px-4">
+                <Link href="#servizi" className="flex flex-col items-center text-center group">
+                  <div className="w-16 h-16 rounded-full bg-brand-navy/10 flex items-center justify-center mb-4 group-hover:bg-brand-navy/20 transition-colors">
+                    <Users className="w-8 h-8 text-brand-navy" />
+                  </div>
+                  <span className="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full bg-brand-navy text-white mb-3">
+                    CONSULENTE
+                  </span>
+                  <h3 className="text-lg font-bold text-brand-navy mb-2 group-hover:text-brand-amber transition-colors">Recupera i tuoi crediti</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Se gli errori sono significativi, un nostro consulente ti aiuta a recuperare fino a 5 anni di differenze retributive.
+                  </p>
+                </Link>
               </div>
             </div>
           </div>
